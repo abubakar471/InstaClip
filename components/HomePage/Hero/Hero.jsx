@@ -5,11 +5,12 @@ import { FiSend } from "react-icons/fi"
 import { IoColorPaletteOutline } from 'react-icons/io5'
 import { BackgroundLines } from '@/components/ui/BackgroundLines'
 import HeroVideoContainer from './HeroVideoContainer'
+import Navbar from '../Navbar/Navbar'
 
 const Hero = () => {
     return (
         <BackgroundLines className={`w-[90%] mx-auto`}>
-            <div className="min-h-screen w-full mt-20 z-50">
+            <div className="min-h-screen w-full mt-20 ">
                 <div className="flex items-center justify-center">
                     <div className="w-fit px-4 py-[5px] rounded-full flex items-center gap-x-2 bg-gradient-to-b from-[#445c73]/10 via-[#1E1F40] to-[#445c73]/10 border border-white/10">
                         <RiSparklingFill className="text-[#c1dcf1] text-xs" />

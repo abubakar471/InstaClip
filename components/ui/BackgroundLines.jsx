@@ -11,10 +11,12 @@ export const BackgroundLines = ({
   return (
     (<div
       className={cn("min-h-screen w-full bg-transparent", className)}>
-      <div className="hidden lg:block">
-        <SVG svgOptions={svgOptions} />
+      <div className="hidden lg:block !-z-50">
+        <SVG svgOptions={svgOptions} className="" />
       </div>
-      {children}
+      <div className="">
+        {children}
+      </div>
     </div>)
   );
 };
@@ -86,7 +88,7 @@ const SVG = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="absolute inset-0 w-full h-full">
+      className="absolute inset-0 w-full h-full -z-40">
       {paths.map((path, idx) => (
         <motion.path
           d={path}

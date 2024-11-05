@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
       </Head>
       <body className={poppins.className}>
         {/* <AOSInitiator>
-     
+    
         </AOSInitiator> */}
         {children}
         {/* <CookieConsent /> */}
