@@ -23,8 +23,8 @@ const FooterBottom = () => {
                 </div>
 
                 <div className='flex items-center gap-2'>
-                    <span className='text-white'>Copyright &copy; 2024</span>
-                    <span className='text-neutral-300 text-glow-footer-logo'>InstaClip</span>
+                    <span className='text-neutral-200'>Copyright &copy; 2024</span>
+                    <span className='text-neutral-300 text-glow-footer-logo underline'>InstaClip</span>
                 </div>
             </div>
         </footer>
