@@ -17,8 +17,7 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  /* background: #202124; */
+  background-color: rgb(0, 13, 24);
   overflow-x: hidden !important;
 }
 
