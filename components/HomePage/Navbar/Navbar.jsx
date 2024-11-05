@@ -8,8 +8,8 @@ import Image from 'next/image';
 
 const Navbar = () => {
     return (
-        <div className='mt-10 w-[90%] md:w-full mx-auto'>
-            <nav className='lg:w-[60%] mx-auto flex items-center justify-between'>
+        <div className='mt-10 w-[90%] lg:w-full mx-auto'>
+            <nav className='w-full lg:w-[70%] xl:w-[60%] mx-auto flex items-center justify-between'>
                 <Link href={"/"} className='flex items-start text-[#c1dcf1] gap-x-2'>
                     <Image src={"/assets/images/logo3.png"} alt='InstaClip' width={120} height={120} className='w-[30px] h-[30px]' />
 
