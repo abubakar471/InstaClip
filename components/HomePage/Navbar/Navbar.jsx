@@ -26,13 +26,9 @@ const Navbar = () => {
                 </div>
 
                 <div className='flex items-center gap-x-4'>
-                    <Link href={"/sign-in"} className="text-neutral-200 text-sm">
-                        Sign in
-                    </Link>
-                    <Link href={"/sign-up"} className="bg-gradient-to-b from-[#6ab0d1]/40 via-transparent to-[#22a5e2]/40  backdrop:backdrop-blur-3xl text-xs text-neutral-300 rounded-full px-4 py-2 hidden lg:inline-block border border-cyan-100/50 drop-shadow-lg shadow-cyan-500/50 shadow-md">
-                        Get Started
-                    </Link>
+                    <Link href={"/sign-in"} class="hidden lg:inline-flex items-center justify-center font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 px-3 rounded-2xl border border-white/30 text-sm bg-white/10 text-white h-8 hover:bg-white/30">Sign in</Link>
 
+                    <Link href={"/sign-up"} class="hidden md:inline-flex items-center justify-center font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 px-3 rounded-2xl border border-violet-300/30 text-sm bg-[#1D1A34] text-violet-300 h-8 hover:bg-violet-300/30">Get Started</Link>
                     {/* <Link href={"/"} className='bg-gradient-to-b from-[#445c73] via-[#1E1F40] to-[#445c73] text-white px-5 py-3 rounded-full flex md:hidden items-center gap-x-2'>
                         <HiOutlineMenuAlt3 />
                     </Link> */}

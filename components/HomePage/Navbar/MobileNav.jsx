@@ -29,7 +29,7 @@ export function MobileNav() {
                 </Button>
             </SheetTrigger> */}
 
-            <button className='bg-gradient-to-b from-[#445c73] via-[#1E1F40] to-[#445c73] text-white px-5 py-2 rounded-full flex lg:hidden items-center gap-x-2' onClick={() => setSheetOpen(true)}>     <Menu /></button>
+            <button className='bg-gradient-to-b from-[#445c73] via-[#1E1F40] to-[#445c73] text-white px-5 py-1 rounded-full flex lg:hidden items-center gap-x-2' onClick={() => setSheetOpen(true)}>     <Menu /></button>
 
             <SheetContent side="left" className="bg-[#13203f] border-none">
                 <SheetHeader>
