@@ -1,3 +1,4 @@
+import FAQ from "@/components/HomePage/FAQ/FAQ";
 import Footer from "@/components/HomePage/Footer/Footer";
 import FooterBottom from "@/components/HomePage/FooterBottom/FooterBottom";
 import Hero from "@/components/HomePage/Hero/Hero";
@@ -9,6 +10,7 @@ export default function Home() {
     <main>
       <Navbar />
       <Hero />
+      <FAQ />
       <JoinDiscordCommunity />
       <Footer />
       <FooterBottom />
