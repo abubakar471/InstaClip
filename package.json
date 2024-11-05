@@ -1,0 +1,41 @@
+{
+  "name": "octor-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@react-spring/three": "^9.7.3",
+    "@react-three/drei": "^9.105.1",
+    "@react-three/fiber": "^8.16.1",
+    "aos": "^2.3.4",
+    "axios": "^1.6.8",
+    "cookies-next": "^4.1.1",
+    "framer-motion": "^11.0.24",
+    "framer-motion-3d": "^11.3.2",
+    "next": "14.1.4",
+    "react": "^18",
+    "react-card-flip": "^1.2.2",
+    "react-cookie": "^7.1.4",
+    "react-cookie-consent": "^9.0.0",
+    "react-dom": "^18",
+    "react-icons": "^5.0.1",
+    "react-slick": "^0.30.2",
+    "react-three-fiber": "^6.0.13",
+    "react-use-gesture": "^9.1.3",
+    "slick-carousel": "^1.8.1",
+    "three": "^0.163.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0"
+  }
+}
