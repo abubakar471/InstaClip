@@ -3,12 +3,12 @@ import React from 'react'
 import { RiFolderVideoLine } from "react-icons/ri";
 import { MdSlowMotionVideo } from "react-icons/md";
 import { HiOutlineMenuAlt3 } from 'react-icons/hi';
-// import { MobileNav } from './MobileNav';
+import { MobileNav } from './MobileNav';
 import Image from 'next/image';
 
 const Navbar = () => {
     return (
-        <div className='mt-10'>
+        <div className='mt-10 w-[90%] md:w-full mx-auto'>
             <nav className='lg:w-[60%] mx-auto flex items-center justify-between'>
                 <Link href={"/"} className='flex items-start text-[#c1dcf1] gap-x-2'>
                     <Image src={"/assets/images/logo3.png"} alt='InstaClip' width={120} height={120} className='w-[30px] h-[30px]' />
@@ -37,7 +37,7 @@ const Navbar = () => {
                         <HiOutlineMenuAlt3 />
                     </Link> */}
 
-                    {/* <MobileNav /> */}
+                    <MobileNav />
                 </div>
             </nav>
         </div>
