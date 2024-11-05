@@ -33,7 +33,7 @@ export function FAQAccordion() {
         <Accordion type="single" collapsible className="w-full lg:w-[60%] mt-10">
             {
                 faqs.map((item, i) => (
-                    <AccordionItem key={i} value={item?.id} className="border-[#c1dcf1]">
+                    <AccordionItem key={i} value={item?.id} className="border-[#c1dcf1] border-none">
                         <AccordionTrigger>
                             <div className="!text-neutral-200 flex items-start lg:items-center gap-x-2 text-xl">
                                 <FaPlus className="text-[#c1dcf1]/50" />
