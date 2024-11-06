@@ -1,8 +1,9 @@
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 // import Navbar from "@/components/Navbar/Navbar";
-import Head from "next/head"
 import ScrollToTopBtn from "@/components/ScrollToTopBtn/ScrollToTopBtn";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark, neobrutalism,shadesOfPurple } from '@clerk/themes'
 // import Footer from "@/components/Footer/Footer";
 // import AOSInitiator from "@/lib/aos-initiator";
 // import Link from "next/link";
@@ -19,30 +20,22 @@ export const metadata = {
 export default function RootLayout({ children }) {
 
   return (
-    <html lang="en">
-      <Head>
-        <link
-          rel="stylesheet"
-          type="text/css"
-          charset="UTF-8"
-          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
-        />
-        <link
-          rel="stylesheet"
-          type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-        />
-      </Head>
-      <body className={poppins.className}>
-        {/* <AOSInitiator>
+    <ClerkProvider   appearance={{
+      baseTheme: shadesOfPurple,
+    }}>
+      <html lang="en">
+        
+        <body className={poppins.className}>
+          {/* <AOSInitiator>
     
         </AOSInitiator> */}
-        {children}
-        {/* <CookieConsent /> */}
+          {children}
+          {/* <CookieConsent /> */}
 
-        <ScrollToTopBtn />
-      </body>
+          <ScrollToTopBtn />
+        </body>
 
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }

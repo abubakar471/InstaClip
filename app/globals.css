@@ -173,3 +173,67 @@ body {
 .container .btn:active a {
   color: #ba55d3;
 }
+
+/* clerk js css */
+.cl-internal-1p733cp{
+  /* background-color: #0c2130; */
+  color: black;
+  border-radius: 0px;
+}
+
+.cl-headerTitle{
+  color: white;
+}
+
+/* .cl-internal-14tc293{
+  background-color: rgb(15, 73, 139);
+  padding: 10px 0;
+  border-radius: 20px;
+  color: white;
+} */
+
+.cl-internal-1dauvpw {
+  display: none;
+  background-color: #051119;
+}
+
+.cl-footer{
+  background-color: #051119;
+}
+
+.cl-internal-1hp5nqm{
+  display: none;
+}
+
+/* ----------------------------- */
+
+.sidebar-transition{
+  transition: width 2s, height 4s;
+}
+
+/* ------shadcn sidebar------ */
+@layer base {
+  :root {
+    /* --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%; */
+  }
+ 
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+/* ------------------------- */

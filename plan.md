@@ -3,6 +3,6 @@
 Navbar => done
 Hero Section => done
 Features =>
-Pricing => 
+Pricing => done
 Join Discord Section => done
 Footer => done
