@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import UploadVideo from '../UploadVideo/UploadVideo'
 
-const AssetContainer = () => {
+const AssetContainer = ({userId}) => {
     const [videoUrl, setVideoUrl] = useState('');
 
     const sendVideoForSegmentation = async () => {
@@ -33,14 +33,7 @@ const AssetContainer = () => {
 
     return (
         <div>
-            <UploadVideo />
-
-            {/* <div>
-                <input type='text' onChange={e => setVideoUrl(e.target.value)} placeholder='Video URL' className='w-full border rounded-lg p-2 indent-4 ring-0 focus:ring-0 outline-none' />
-                <button onClick={() => sendVideoForSegmentation()} className='bg-blue-500 text-white rounded-lg px-4 py-2 mt-4'>
-                    Segment
-                </button>
-            </div> */}
+            <UploadVideo userId={userId} />            
         </div>
     )
 }

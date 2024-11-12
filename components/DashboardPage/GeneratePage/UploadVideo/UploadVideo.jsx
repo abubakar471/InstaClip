@@ -7,8 +7,12 @@ import { ImSpinner3 } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
 import { MdCloudUpload } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
+import { DefaultPlayer as Video } from 'react-html5video';
+import 'react-html5video/dist/styles.css'
 
-const UploadVideo = () => {
+const UploadVideo = ({userId}) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -20,6 +24,8 @@ const UploadVideo = () => {
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
     const router = useRouter();
+
+    const { user } = useUser();
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -108,11 +114,26 @@ const UploadVideo = () => {
             });
             console.log("export response:", response?.data);
             console.log("exported paths : ", response?.data?.details?.paths);
-            setExportedVideos(response?.data?.details?.paths)
+
+
+            if (response?.data?.details?.paths?.length > 0) {
+                const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/create-asset`, {
+                    user_id: userId,
+                    paths: response?.data?.details?.paths
+                })
+
+                if (res?.data?.success) {
+                    setExportedVideos(response?.data?.details?.paths);
+                    setIsExporting(false);
+                    setPreviewUrl(null);
+                    setSelectedFile(null);
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = ""; // Reset the file input value
+                    }
+                }
+            }
         } catch (error) {
             console.error("Error sending video filepath:", error);
-        } finally {
-            setIsExporting(false);
         }
     };
 
@@ -156,32 +177,68 @@ const UploadVideo = () => {
         <div>
             <label
                 htmlFor="dropzone-file"
-                className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 relative"
+                className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-lg cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
             >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <svg
-                        className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 20 16"
-                    >
-                        <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                        />
-                    </svg>
-                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        <span className="font-semibold">Click to upload</span> or drag and
-                        drop
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Video files only
-                    </p>
-                </div>
+                {
+                    (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg
+                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 16"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                />
+                            </svg>
+                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span className="font-semibold">Click to upload</span> or drag and
+                                drop
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                Video files only
+                            </p>
+                        </div>
+                    )
+                }
+
+                {
+                    (isUploading || isSegmenting || isSegmentingCandidates || isExporting) && (
+                        <div className='w-full flex flex-col items-center justify-center mt-4'>
+                            <div className='flex flex-col items-center gap-x-2 text-neutral-500 text-sm'>
+                                <ImSpinner3 className='animate-spin text-3xl' />
+                                <span className='font-semibold mt-2'>
+                                    {
+                                        isUploading && ("Uploding")
+                                    }
+
+                                    {
+                                        isSegmenting && ("Segmenting Video")
+                                    }
+
+                                    {
+                                        isSegmentingCandidates && ("Segmenting Candidates")
+                                    }
+
+                                    {
+                                        isExporting && ("Exporting Clips")
+                                    }
+                                </span>
+                            </div>
+
+                            <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-purple-600 rounded-lg px-4 py-1'>
+                                <span>ETA:</span>
+                                <span>2-3 Minutes</span>
+                            </div>
+                        </div>
+                    )
+                }
                 <input
                     id="dropzone-file"
                     type="file"
@@ -189,23 +246,20 @@ const UploadVideo = () => {
                     accept="video/*"
                     ref={fileInputRef}
                     onChange={handleFileChange}
+                    disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
                 />
-
-                {previewUrl && (
-                    <div className="mt-4">
-                        <video
-                            src={previewUrl}
-                            controls
-                            className="w-full h-full rounded-lg shadow-lg absolute top-0 left-0"
-                        />
-                    </div>
-                )}
-
             </label>
 
 
 
             <div className=''>
+                {
+                    previewUrl && (
+                        <div className='bg-green-600/40 text-white py-2 rounded-lg px-4 w-fit text-xs mt-2'>
+                            File Selected : {previewUrl}
+                        </div>
+                    )
+                }
                 {
                     (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
                         <div className='flex items-center gap-x-4'>
@@ -215,9 +269,6 @@ const UploadVideo = () => {
                                 className="mt-4 mb-4 px-4 py-2 bg-[#4a2ac0] text-white rounded-lg hover:bg-[#392a6e] flex items-center gap-x-2 transition-all duration-300 ease-in-out"
                                 disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
                             >
-                                {/* {
-                    isUploading ? "Uploading..." : (isSegmenting ? "Video Segmenting..." : (isSegmentingCandidates ? "Segmanting Video Candidates" : (isExporting ? "Exporting..." : "Upload Video")))
-                } */}
                                 <MdCloudUpload />
                                 Upload Video
                             </button>
@@ -237,49 +288,22 @@ const UploadVideo = () => {
                         </div>
                     )
                 }
-
-                {
-                    (isUploading || isSegmenting || isSegmentingCandidates || isExporting) && (
-                        <div className='w-full flex items-center justify-center'>
-                            <div className='flex items-center gap-x-2'>
-                                <ImSpinner3 className='animate-spin' />
-                                <span>
-                                    {
-                                        isUploading && ("Uploding")
-                                    }
-
-                                    {
-                                        isSegmenting && ("Segmenting Video")
-                                    }
-
-                                    {
-                                        isSegmentingCandidates && ("Segmenting Candidates")
-                                    }
-
-                                    {
-                                        isExporting && ("Exporting Clips")
-                                    }
-                                </span>
-                            </div>
-                        </div>
-                    )
-                }
             </div>
-            {/* <button onClick={() => sendVideoSegmentation()} className='mx-4 bg-gray-500/20 rounded-lg px-4 py-2'>
-                {
-                    isSegmenting ? "video segmenting" : "Make Video Segment"
-                }
-            </button> */}
-
             {
                 exportedVideos?.length > 0 && (
-                    <div>
-                        <h3 className='text-3xl mt-4'>Your Generated Short Clips:</h3>
+                    <div className='mb-10'>
+                        <h3 className='text-xl text-neutral-200 mt-12'>Your Generated Short Clips:</h3>
 
                         <div>
                             <ExportedVideoPreviews videoPaths={exportedVideos} />
                         </div>
                     </div>
+                )
+            }
+
+            {
+                exportedVideos?.length == 0 && (
+                    <RecentCreatedVideos userId={userId} />
                 )
             }
         </div >

@@ -146,7 +146,7 @@ const Sidebar = React.forwardRef((
     return (
       (<div
         className={cn(
-          "flex h-full w-[--sidebar-width] flex-col bg-[#07101F] text-sidebar-foreground",
+          "flex h-full w-[--sidebar-width] flex-col !bg-[#07101F] text-sidebar-foreground",
           className
         )}
         ref={ref}
@@ -162,7 +162,7 @@ const Sidebar = React.forwardRef((
         <SheetContent
           data-sidebar="sidebar"
           data-mobile="true"
-          className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+          className="w-[--sidebar-width] !bg-[#07101F] p-0 text-sidebar-foreground [&>button]:hidden border border-gray-500/20"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE
@@ -202,7 +202,7 @@ const Sidebar = React.forwardRef((
           // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
-            : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
+            : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] !border-[#555]/40 group-data-[side=left]:border-r group-data-[side=right]:border-l",
           className
         )}
         {...props}>
@@ -226,13 +226,13 @@ const SidebarTrigger = React.forwardRef(({ className, onClick, ...props }, ref) 
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("h-7 w-7 bg-gray-500/20 hover:bg-gray-600/20", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}>
-      <PanelLeft />
+      <PanelLeft className="text-white bg-transparent" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>)
   );

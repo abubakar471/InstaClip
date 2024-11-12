@@ -5,7 +5,7 @@ export default function DashboardLayout({ children }) {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <main className="bg-[#f6f6f6] w-full px-10 pt-4">
+            <main className="w-full px-10 pt-4">
                 <SidebarTrigger />
                 {children}
             </main>

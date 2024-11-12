@@ -16,6 +16,7 @@ import { BiHome } from "react-icons/bi"
 import { CiGrid42 } from "react-icons/ci";
 import { LiaPhotoVideoSolid } from "react-icons/lia";
 import { RiAiGenerate } from "react-icons/ri"
+import { LuClapperboard } from "react-icons/lu";
 
 
 export function AppSidebar() {
@@ -43,12 +44,16 @@ export function AppSidebar() {
 
                 <div className="px-4 mt-10 flex flex-col gap-y-4">
                     <Link href={"/dashboard"} className={`w-full rounded-lg ${activeLink === '/dashboard' && "bg-[#2d4b7e] bg-opacity-40 border border-[#2d4b7e]"} text-neutral-200 text-sm flex items-center gap-x-2 px-4 py-2 `}>
-                        <BiHome />
+                        <BiHome className="text-lg" />
                         Overview
                     </Link>
                     <Link href={"/dashboard/generate"} className={`w-full rounded-lg ${activeLink === '/dashboard/generate' && "bg-[#2d4b7e] bg-opacity-40 border border-[#2d4b7e]"} text-neutral-200 text-sm flex items-center gap-x-2 px-4 py-2 `}>
-                        <RiAiGenerate />
+                        <RiAiGenerate className="text-lg" />
                         Generate
+                    </Link>
+                    <Link href={"/dashboard/videos"} className={`w-full rounded-lg ${activeLink === '/dashboard/videos' && "bg-[#2d4b7e] bg-opacity-40 border border-[#2d4b7e]"} text-neutral-200 text-sm flex items-center gap-x-2 px-4 py-2 `}>
+                        <LuClapperboard className="text-lg" />
+                        Videos
                     </Link>
                 </div>
             </SidebarContent>
