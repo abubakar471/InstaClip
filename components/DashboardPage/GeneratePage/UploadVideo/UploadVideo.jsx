@@ -12,7 +12,7 @@ import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
 import { DefaultPlayer as Video } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
 
-const UploadVideo = ({userId}) => {
+const UploadVideo = ({ userId }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -20,6 +20,7 @@ const UploadVideo = ({userId}) => {
     const [isSegmentingCandidates, setIsSegmentingCandidates] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [exportedVideos, setExportedVideos] = useState([]);
+    const [uploadedData, setUploadedData] = useState(null);
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -48,14 +49,14 @@ const UploadVideo = ({userId}) => {
         }
     };
 
-    const sendVideoSegmentation = async (videoFilePath) => {
+    const sendVideoSegmentation = async (videoFilePath, local_video_filepath) => {
         setIsSegmenting(true);
 
         const formData = new FormData();
         formData.append("video_filepath", videoFilePath);
 
         try {
-            const response = await axios.post("http://localhost:5000/api/v1/video/segmentation", formData, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/segmentation`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -63,7 +64,7 @@ const UploadVideo = ({userId}) => {
             console.log("segment response:", response?.data);
 
             if (response?.data) {
-                sendVideSegmentCandidates(response?.data);
+                sendVideSegmentCandidates(response?.data, local_video_filepath);
             }
         } catch (error) {
             console.error("Error sending video filepath:", error);
@@ -72,14 +73,14 @@ const UploadVideo = ({userId}) => {
         }
     };
 
-    const sendVideSegmentCandidates = async (segments) => {
+    const sendVideSegmentCandidates = async (segments, local_video_filepath) => {
         setIsSegmentingCandidates(true);
 
         const formData = new FormData();
         formData.append("segments", JSON.stringify(segments));
 
         try {
-            const response = await axios.post("http://localhost:5000/api/v1/video/segment_candidates", formData, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/segment_candidates`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -87,10 +88,12 @@ const UploadVideo = ({userId}) => {
             console.log("segment candidate response:", response?.data);
 
             if (response?.data) {
-                console.log('C:/Users/AB/Downloads/Bingo Game Plan.mp4 => ', response?.data);
+                // console.log('C:/Users/AB/Downloads/Bingo Game Plan.mp4 => ', response?.data);
                 // const convertedData = convertTimestamps(response?.data);
                 // console.log("converted data : ", convertedData)
-                exportVideos('C:/Users/AB/Downloads/Bingo Game Plan.mp4', response?.data);
+
+                console.log("uploadedData?.local_video_filepath : ", local_video_filepath);
+                exportVideos(local_video_filepath, response?.data);
             }
         } catch (error) {
             console.error("Error sending video filepath:", error);
@@ -105,9 +108,10 @@ const UploadVideo = ({userId}) => {
         const formData = new FormData();
         formData.append("video_filepath", video_filepath);
         formData.append("candidates", JSON.stringify(candidates));
+        formData.append("user_id", user?.id);
 
         try {
-            const response = await axios.post("http://localhost:5000/api/v1/video/export", formData, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/export`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -127,6 +131,7 @@ const UploadVideo = ({userId}) => {
                     setIsExporting(false);
                     setPreviewUrl(null);
                     setSelectedFile(null);
+                    setUploadedData(null)
                     if (fileInputRef.current) {
                         fileInputRef.current.value = ""; // Reset the file input value
                     }
@@ -147,21 +152,31 @@ const UploadVideo = ({userId}) => {
 
         const formData = new FormData();
         formData.append("file", selectedFile);
+        formData.append("user_id", user?.id);
 
         try {
-            const response = await axios.post("http://localhost:5000/api/v1/video/upload", formData, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/upload`, {
+                method: "POST",
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    // When using FormData, do not set Content-Type manually;
+                    // fetch will set it correctly for multipart form data.
                 },
+                body: formData,
             });
-            console.log("response : ", response.data);
-            if (response?.data) {
-                // alert("File uploaded successfully!");
-                console.log("sending this for video segmenting : ", response?.data?.details?.paths?.audio_location);
 
-                // this is what it supposed to do, but for firebasee cors error we are hardcoding
-                // sendVideoSegmentation(response?.data?.details?.paths?.audio_location);
-                sendVideoSegmentation('C:/Users/AB/Downloads/Bingo Game Plan.mp4.mp3');
+            if (!response.ok) {
+                throw new Error("Failed to upload file");
+            }
+
+            const data = await response.json();
+            console.log("response : ", data);
+            if (data) {
+                console.log("sending this for video segmenting : ", data?.details?.firebase_paths?.audio_location);
+
+                sendVideoSegmentation(
+                    `${data?.details?.local_audio_filepath}`,
+                    data?.details?.local_video_filepath
+                );
             } else {
                 alert("Failed to upload file.");
             }
@@ -171,7 +186,7 @@ const UploadVideo = ({userId}) => {
         } finally {
             setIsUploading(false);
         }
-    };
+    }
 
     return (
         <div>

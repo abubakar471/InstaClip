@@ -17,9 +17,13 @@ const RecentCreatedVideos = ({ userId }) => {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-recent-created-video?user_id=${userId}`);
 
             if (response?.data?.success && response?.data?.video) {
-                const filename = response?.data?.video?.location?.split('/').pop();
-                setVideo(`/api/videos/${filename}`);
-                setIsLoading(false);
+                // const filename = response?.data?.video?.location?.split('/').pop();
+                // setVideo(`/api/videos/${filename}`);
+                // setIsLoading(false);
+
+                const file_location = response?.data?.video?.location;
+                setVideo(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`)
+                setIsLoading(false)
             }
         } catch (err) {
             console.log(err);

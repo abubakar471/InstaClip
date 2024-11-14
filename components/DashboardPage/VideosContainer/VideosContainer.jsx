@@ -23,8 +23,8 @@ const VideosContainer = ({ userId }) => {
             if (response?.data?.success) {
                 setVideos([...videos, ...response?.data?.videos]);
                 const urls = response?.data?.videos?.map((v) => {
-                    const filename = v?.location?.split('/').pop();
-                    return `/api/videos/${filename}`;
+                    const file_location = v?.location;
+                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`;
                 });
                 console.log("urls : ", urls)
                 setVideoUrls([...videoUrls, ...urls]);

@@ -32,8 +32,7 @@ const ExportedVideoPreviews = ({ videoPaths }) => {
     useEffect(() => {
         // Convert file paths to API URLs
         const urls = videoPaths.map((path) => {
-            const filename = path.split('/').pop();
-            return `/api/videos/${filename}`;
+            return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${path}`;
         });
         setVideoUrls(urls);
     }, [videoPaths]);
