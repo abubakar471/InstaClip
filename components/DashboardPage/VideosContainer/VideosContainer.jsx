@@ -6,6 +6,7 @@ import 'react-html5video/dist/styles.css'
 import axios from 'axios';
 import { IoMdCloudDownload } from 'react-icons/io';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 const VideosContainer = ({ userId }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -13,12 +14,15 @@ const VideosContainer = ({ userId }) => {
     const [videoUrls, setVideoUrls] = useState([]);
     const [totalVideos, setTotalVideos] = useState(0);
     const [page, setPage] = useState(1);
+    const limit = 12;
+
+    const {toast} = useToast();
 
     const fetchVideos = async () => {
         try {
             setIsLoading(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=12&&page=${page}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&page=${page}`);
 
             if (response?.data?.success) {
                 setVideos([...videos, ...response?.data?.videos]);
@@ -35,6 +39,10 @@ const VideosContainer = ({ userId }) => {
         } catch (err) {
             console.log(err);
             setIsLoading(false);
+            toast({
+                variant: "destructive",
+                description: "Something went wrong!",
+            })
         }
     }
 
@@ -56,6 +64,10 @@ const VideosContainer = ({ userId }) => {
             URL.revokeObjectURL(downloadUrl);
         } catch (error) {
             console.error("Failed to download file:", error);
+            toast({
+                variant: "destructive",
+                description: "Download Failed",
+            })
         }
     };
 

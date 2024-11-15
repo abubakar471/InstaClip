@@ -11,6 +11,7 @@ import { useUser } from '@clerk/nextjs';
 import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
 import { DefaultPlayer as Video } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
+import { useToast } from '@/hooks/use-toast';
 
 const UploadVideo = ({ userId }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -25,6 +26,7 @@ const UploadVideo = ({ userId }) => {
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
     const router = useRouter();
+    const { toast } = useToast();
 
     const { user } = useUser();
 
@@ -68,6 +70,10 @@ const UploadVideo = ({ userId }) => {
             }
         } catch (error) {
             console.error("Error sending video filepath:", error);
+            toast({
+                variant: "destructive",
+                description: "Segmenting Video File Failed!",
+            })
         } finally {
             setIsSegmenting(false);
         }
@@ -97,6 +103,10 @@ const UploadVideo = ({ userId }) => {
             }
         } catch (error) {
             console.error("Error sending video filepath:", error);
+            toast({
+                variant: "destructive",
+                description: "Segmenting Candidates Failed!",
+            })
         } finally {
             setIsSegmentingCandidates(false);
         }
@@ -139,14 +149,83 @@ const UploadVideo = ({ userId }) => {
             }
         } catch (error) {
             console.error("Error sending video filepath:", error);
+            setIsExporting(false);
+            setPreviewUrl(null);
+            setSelectedFile(null);
+            setUploadedData(null)
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ""; // Reset the file input value
+            }
+
+            toast({
+                variant: "destructive",
+                description: "Exporting Clips Failed!",
+            })
         }
     };
 
     const handleUpload = async () => {
         if (!selectedFile) {
-            alert("No file selected.");
+            toast({
+                variant: "destructive",
+                title: "Upload Failed",
+                description: "No File Selected",
+            })
             return;
         }
+
+        // checking duration of selected video file
+
+
+        try {
+            // Create a blob URL to load the video file
+            const videoBlob = URL.createObjectURL(selectedFile);
+            const videoElement = document.createElement("video");
+
+            // Use a promise to load the video and fetch its duration
+            const getVideoDuration = () =>
+                new Promise((resolve, reject) => {
+                    videoElement.preload = "metadata";
+                    videoElement.src = videoBlob;
+
+                    videoElement.onloadedmetadata = () => {
+                        resolve(videoElement.duration); // Duration in seconds
+                        URL.revokeObjectURL(videoBlob); // Free up memory
+                    };
+
+                    videoElement.onerror = (error) => {
+                        reject("Failed to load video metadata");
+                        URL.revokeObjectURL(videoBlob); // Free up memory
+                    };
+                });
+
+            const duration = await getVideoDuration();
+
+            console.log("Video Duration:", duration, "seconds");
+
+            // Check if the video is less than 3 minutes (180 seconds)
+            if (duration < 180) {
+                toast({
+                    variant: "destructive",
+                    title: "Upload Failed",
+                    description: "Video is less than 3 minutes",
+                })
+                handleClear();
+                return;
+            }
+        } catch (error) {
+            console.error("Error checking video duration:", error);
+            toast({
+                variant: "destructive",
+                title: "Upload Failed",
+                description: "Failed to check video duration",
+            })
+            handleClear();
+            return;
+        }
+
+
+        // video duration check completed
 
         setIsUploading(true);
 
@@ -187,6 +266,7 @@ const UploadVideo = ({ userId }) => {
             setIsUploading(false);
         }
     }
+
 
     return (
         <div>
@@ -262,6 +342,7 @@ const UploadVideo = ({ userId }) => {
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
+                    required
                 />
             </label>
 

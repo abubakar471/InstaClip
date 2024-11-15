@@ -4,6 +4,7 @@ import "./globals.css";
 import ScrollToTopBtn from "@/components/ScrollToTopBtn/ScrollToTopBtn";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark, neobrutalism,shadesOfPurple } from '@clerk/themes'
+import { Toaster } from "@/components/ui/toaster"
 // import Footer from "@/components/Footer/Footer";
 // import AOSInitiator from "@/lib/aos-initiator";
 // import Link from "next/link";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
           {/* <CookieConsent /> */}
 
           <ScrollToTopBtn />
+          <Toaster />
         </body>
 
       </html>
