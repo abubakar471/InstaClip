@@ -10,7 +10,7 @@ import { SignedIn, SignedOut } from '@clerk/nextjs';
 const Navbar = () => {
     return (
         <div className='mt-10 w-[90%] lg:w-full mx-auto'>
-            <nav className='w-full lg:w-[70%] xl:w-[60%] mx-auto flex items-center justify-between'>
+            <nav className='relative w-full lg:w-[70%] xl:w-[60%] mx-auto flex items-center justify-between'>
                 <Link href={"/"} className='flex items-start text-[#c1dcf1] gap-x-2'>
                     <Image src={"/assets/images/logo3.png"} alt='InstaClip' width={120} height={120} className='w-[30px] h-[30px]' />
 
@@ -19,7 +19,8 @@ const Navbar = () => {
                         {/* <span className='text-xs text-gray-500'>Make Clips EZ</span> */}
                     </div>
                 </Link>
-                <div className='hidden md:flex items-center justify-between gap-x-6 border-r-2 border-l-2 border-white/10 px-8 mx-2 '>
+
+                <div className='absolute left-[50%] -translate-x-1/2 hidden lg:flex items-center justify-between gap-x-6 border-r-0 xl:border-r-2 borlder-l-0 xl:border-l-2 border-white/10 px-8 mx-2 '>
                     <Link href={"#"} className='text-[#c1dcf1] text-sm'>Home</Link>
                     <Link href={"#"} className='text-[#c1dcf1] text-sm'>Features</Link>
                     <Link href={"/#pricing"} className='text-[#c1dcf1] text-sm'>Pricing</Link>
