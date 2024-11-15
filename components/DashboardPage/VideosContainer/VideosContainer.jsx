@@ -7,6 +7,7 @@ import axios from 'axios';
 import { IoMdCloudDownload } from 'react-icons/io';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import VideosFilter from './VideosFilter';
 
 const VideosContainer = ({ userId }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -82,6 +83,8 @@ const VideosContainer = ({ userId }) => {
 
     return (
         <div>
+            <VideosFilter />
+
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
                 {
                     videoUrls?.length > 0 && (
