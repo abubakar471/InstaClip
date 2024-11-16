@@ -11,13 +11,40 @@ import {
 import { IoFilter } from 'react-icons/io5'
 import { FaArrowDownWideShort, FaArrowUpWideShort } from 'react-icons/fa6'
 import { MdOutlinePhotoSizeSelectLarge, MdOutlinePhotoSizeSelectSmall } from 'react-icons/md'
+import axios from 'axios'
+import { useToast } from '@/hooks/use-toast';
 
-const VideosFilter = () => {
-    const [selectedFilter, setSelectedFilter] = useState('');
+const VideosFilter = ({ userId, filterPage, setFilterPage, totalVideos, setTotalVideos, isFiltering, setIsFiltering, selectedFilter, setSelectedFilter, filteredVideos, setFilteredVideos, filteredVideoUrls, setFilteredVideoUrls,filteringFunction }) => {
+    const limit = 12;
+    const { toast } = useToast();
 
-    useEffect(() => {
-        console.log("selected filter : ", selectedFilter)
-    }, [selectedFilter])
+    
+
+
+    const handleFilter = async (filter) => {
+        setIsFiltering(true);
+
+        try {
+            switch (filter) {
+                case 'LATEST':
+                    console.log("filter : ", filter)
+
+                case 'OLDEST':
+                    filteringFunction(filter)
+                case 'SHORTEST':
+                    console.log("filter : ", filter)
+
+                case 'LONGEST':
+                    console.log("filter : ", filter)
+
+            }
+        } catch (err) {
+            console.log('err in video filtering : ', err);
+        } finally {
+            setIsFiltering(false);
+        }
+    }
+
 
     return (
         <div className='mb-8 flex justify-end'>
@@ -27,7 +54,7 @@ const VideosFilter = () => {
                     Filter:
                 </p> */}
 
-                <Select onValueChange={(value) => setSelectedFilter(value)}>
+                <Select onValueChange={(value) => handleFilter(value)}>
                     <SelectTrigger className="w-[180px] text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 rounded-none">
                         <div className='flex items-center gap-x-2'>
                             <IoFilter />
