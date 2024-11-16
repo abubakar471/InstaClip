@@ -40,7 +40,7 @@ const OverviewHeading = () => {
                 localStatus === "MORNING" && (`Good Morning! Let's kickstart your day 🌅`)
               }
               {
-                localStatus === "AFTERNOON" && (`Good Afternoon! Here' what's happening 🕶️`)
+                localStatus === "AFTERNOON" && (`Good Afternoon! Here's what's happening 🕶️`)
               }
               {
                 localStatus === "EVENING" && (`Evening Overview: Here's what's left 📋`)
