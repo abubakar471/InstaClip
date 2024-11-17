@@ -34,7 +34,7 @@ const OverviewHeading = () => {
     <div>
       {
         user && (
-          <h1 className='flex items-center flex-wrap gap-x-2 font-semibold bg-gradient-to-r bg-clip-text from-[#728ee9] via-purple-700 to-[#30a4da] text-transparent text-3xl md:text-4xl pt-6 pb-4 border-b border-[#162845]/50 '>
+          <h1 className='flex items-center flex-wrap gap-x-2 font-semibold bg-gradient-to-r bg-clip-text from-[#728ee9] via-purple-700 to-[#30a4da] text-transparent text-3xl md:text-4xl pt-4 pb-4 border-b border-[#162845]/50 '>
             <span className='text-neutral-300 leading-normal'>
               {
                 localStatus === "MORNING" && (`Good Morning! Let's kickstart your day 🌅`)
