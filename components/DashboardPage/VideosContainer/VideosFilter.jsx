@@ -14,36 +14,39 @@ import { MdOutlinePhotoSizeSelectLarge, MdOutlinePhotoSizeSelectSmall } from 're
 import axios from 'axios'
 import { useToast } from '@/hooks/use-toast';
 
-const VideosFilter = ({ userId, filterPage, setFilterPage, totalVideos, setTotalVideos, isFiltering, setIsFiltering, selectedFilter, setSelectedFilter, filteredVideos, setFilteredVideos, filteredVideoUrls, setFilteredVideoUrls,filteringFunction }) => {
+const VideosFilter = ({ userId, filterPage, setFilterPage, totalVideos, setTotalVideos, isFiltering, setIsFiltering, selectedFilter, setSelectedFilter, filteredVideos, setFilteredVideos, filteredVideoUrls, setFilteredVideoUrls, filteringFunction }) => {
     const limit = 12;
     const { toast } = useToast();
 
-    
+    const handleFilterChange = (filter) => {
+        setFilterPage(1);
+        setSelectedFilter(filter);
+    };
 
 
-    const handleFilter = async (filter) => {
-        setIsFiltering(true);
+    // const handleFilter = async (filter) => {
+    //     try {
+    //         switch (filter) {
+    //             case 'LATEST':
+    //                 console.log("filter : ", filter)
+    //                 setFilterPage(1);
+    //                 setSelectedFilter(filter)
+    //                 filteringFunction(filter)
+    //             case 'OLDEST':
+    //                 setFilterPage(1);
+    //                 setSelectedFilter(filter)
+    //                 filteringFunction(filter)
+    //             case 'SHORTEST':
+    //                 console.log("filter : ", filter)
 
-        try {
-            switch (filter) {
-                case 'LATEST':
-                    console.log("filter : ", filter)
+    //             case 'LONGEST':
+    //                 console.log("filter : ", filter)
 
-                case 'OLDEST':
-                    filteringFunction(filter)
-                case 'SHORTEST':
-                    console.log("filter : ", filter)
-
-                case 'LONGEST':
-                    console.log("filter : ", filter)
-
-            }
-        } catch (err) {
-            console.log('err in video filtering : ', err);
-        } finally {
-            setIsFiltering(false);
-        }
-    }
+    //         }
+    //     } catch (err) {
+    //         console.log('err in video filtering : ', err);
+    //     }
+    // }
 
 
     return (
@@ -54,7 +57,7 @@ const VideosFilter = ({ userId, filterPage, setFilterPage, totalVideos, setTotal
                     Filter:
                 </p> */}
 
-                <Select onValueChange={(value) => handleFilter(value)}>
+                <Select onValueChange={(value) => handleFilterChange(value)}>
                     <SelectTrigger className="w-[180px] text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 rounded-none">
                         <div className='flex items-center gap-x-2'>
                             <IoFilter />

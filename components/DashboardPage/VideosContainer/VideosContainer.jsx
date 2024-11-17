@@ -21,7 +21,7 @@ const VideosContainer = ({ userId }) => {
     const [totalVideosFiltering, setTotalVideosFiltering] = useState(0);
     const [page, setPage] = useState(1);
     const [filterPage, setFilterPage] = useState(1);
-    const limit = 1;
+    const limit = 16;
 
     const { toast } = useToast();
 
@@ -79,6 +79,44 @@ const VideosContainer = ({ userId }) => {
     };
 
     const filteringFunction = async (filter) => {
+        if (!filter) {
+            return;
+        }
+        try {
+            console.log("filter : ", filter)
+            setIsFiltering(true);
+
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos-by-filter?user_id=${userId}&&limit=${limit}&&page=1&&filter=${filter}`);
+
+            if (response?.data?.success) {
+                setFilteredVideos([...response?.data?.videos]);
+                const urls = response?.data?.videos?.map((v) => {
+                    const file_location = v?.location;
+                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`;
+                });
+
+                setFilteredVideoUrls([...urls]);
+                setTotalVideosFiltering(response?.data?.totalVideos)
+                setFilterPage(filterPage + 1);
+                setIsFiltering(false);
+                setVideos([])
+                setVideoUrls([]);
+                setTotalVideos(0);
+            }
+        } catch (err) {
+            console.log(err);
+            setIsFiltering(false);
+            toast({
+                variant: "destructive",
+                description: "Something went wrong!",
+            })
+        }
+    }
+
+    const filteringLoadMoreFunction = async (filter) => {
+        if (!filter) {
+            return;
+        }
         try {
             console.log("filter : ", filter)
             setIsFiltering(true);
@@ -113,11 +151,19 @@ const VideosContainer = ({ userId }) => {
 
 
     useEffect(() => {
+        if (filterPage === 1) {
+            filteringFunction(selectedFilter);
+        }
+    }, [filterPage, selectedFilter]);
+
+    useEffect(() => {
         if (userId) {
             fetchVideos();
         }
 
     }, [userId])
+
+
 
     return (
         <div>
@@ -195,7 +241,7 @@ const VideosContainer = ({ userId }) => {
                 }
 
                 {
-                    (isLoading || isFiltering) && (
+                    (isFiltering) && (
                         Array.from(new Array(12))?.map((item, index) => (
                             <div key={index} className='flex flex-col gap-y-4'>
                                 <Skeleton className={`h-[300px] bg-gray-500/40 flex items-center justify-center`}>
@@ -220,7 +266,7 @@ const VideosContainer = ({ userId }) => {
             {
                 (!isFiltering && filteredVideoUrls?.length < totalVideosFiltering) && (
                     <div className='pt-6 pb-2 flex items-center justify-center'>
-                        <button onClick={() => filteringFunction(selectedFilter)} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
+                        <button onClick={() => filteringLoadMoreFunction(selectedFilter)} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
                     </div>
                 )
             }
