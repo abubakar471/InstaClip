@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { IoMdCloudDownload } from "react-icons/io";
 import { DefaultPlayer as Video } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
+import CreateTitleModal from "../CreateTitleModal/CreateTitleModal";
+import { FaDeleteLeft } from "react-icons/fa6";
+import DeleteClipModal from "../DeleteClipModal/DeleteClipModal";
 
 const ExportedVideoPreviews = ({ videoPaths }) => {
     const [videoUrls, setVideoUrls] = useState([]);
@@ -29,7 +32,9 @@ const ExportedVideoPreviews = ({ videoPaths }) => {
         }
     };
 
+
     useEffect(() => {
+        console.log('new exported urls adding...', videoPaths);
         // Convert file paths to API URLs
         const urls = videoPaths.map((path) => {
             return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${path}`;
@@ -40,20 +45,24 @@ const ExportedVideoPreviews = ({ videoPaths }) => {
     return (
         <div className="mt-4 flex items-center gap-x-10 gap-y-6 flex-wrap lg:flex-nowrap">
             {videoUrls.map((url, index) => (
-                <div key={index} className="flex flex-col gap-y-2 w-full lg:w-1/5 ">
-                    <Video className="h-[300px] rounded-lg">
+                <div key={index} className="flex flex-col gap-y-2 w-full xl:w-1/5 ">
+                    <Video className="w-full h-[300px] rounded-lg">
                         <source src={`${url}`} type='video/mp4' className='' />
                     </Video>
 
-                    <button
+                    {/* <button
                         onClick={() => handleDownload(url, url)}
                         className="mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2"
                     >
                         Download
 
                         <IoMdCloudDownload className="" />
-                    </button>
+                    </button> */}
 
+                    <div className="flex items-center justify-between gap-x-2 w-full">
+                        <CreateTitleModal asset_url={videoPaths[index]} />
+                        {/* <DeleteClipModal asset_url={videoPaths[index]} videoUrls={videoUrls} setVideoUrls={setVideoUrls} /> */}
+                    </div>
                 </div>
             ))}
         </div>

@@ -113,6 +113,7 @@ const UploadVideo = ({ userId }) => {
     };
 
     const exportVideos = async (video_filepath, candidates) => {
+        setExportedVideos([]);
         setIsExporting(true);
 
         const formData = new FormData();
@@ -131,25 +132,47 @@ const UploadVideo = ({ userId }) => {
 
 
             if (response?.data?.details?.paths?.length > 0) {
-                const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/create-asset`, {
-                    user_id: userId,
-                    paths: response?.data?.details?.paths
-                })
+                // const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/create-asset`, {
+                //     user_id: userId,
+                //     paths: response?.data?.details?.paths
+                // })
 
-                if (res?.data?.success) {
-                    setExportedVideos(response?.data?.details?.paths);
-                    setIsExporting(false);
-                    setPreviewUrl(null);
-                    setSelectedFile(null);
-                    setUploadedData(null)
-                    if (fileInputRef.current) {
-                        fileInputRef.current.value = ""; // Reset the file input value
-                    }
+                setExportedVideos(response?.data?.details?.paths);
+                setIsExporting(false);
+                setIsSegmenting(false);
+                setIsSegmentingCandidates(false);
+                setPreviewUrl(null);
+                setSelectedFile(null);
+                setUploadedData(null)
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""; // Reset the file input value
                 }
+
+            }
+
+            if (response?.data?.details?.paths?.length === 0) {
+                setExportedVideos([]);
+                setIsExporting(false);
+                setIsSegmenting(false);
+                setIsSegmentingCandidates(false);
+                setPreviewUrl(null);
+                setSelectedFile(null);
+                setUploadedData(null)
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""; // Reset the file input value
+                }
+
+                toast({
+                    variant: "destructive",
+                    title : "Exporting Clips Failed!",
+                    description: "Try uploading again",
+                })
             }
         } catch (error) {
             console.error("Error sending video filepath:", error);
             setIsExporting(false);
+            setIsSegmenting(false);
+            setIsSegmentingCandidates(false);
             setPreviewUrl(null);
             setSelectedFile(null);
             setUploadedData(null)
@@ -398,7 +421,7 @@ const UploadVideo = ({ userId }) => {
             }
 
             {
-                exportedVideos?.length == 0 && (
+                (exportedVideos?.length == 0 && !isExporting) && (
                     <RecentCreatedVideos userId={userId} />
                 )
             }

@@ -8,6 +8,11 @@ import { IoMdCloudDownload } from 'react-icons/io';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import VideosFilter from './VideosFilter';
+import DeleteClipModal from '../GeneratePage/DeleteClipModal/DeleteClipModal';
+import { useUser } from '@clerk/nextjs';
+import { ImSpinner3 } from 'react-icons/im';
+import { MdDelete } from 'react-icons/md';
+import { useRouter } from 'next/navigation';
 
 const VideosContainer = ({ userId }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -21,26 +26,60 @@ const VideosContainer = ({ userId }) => {
     const [totalVideosFiltering, setTotalVideosFiltering] = useState(0);
     const [page, setPage] = useState(1);
     const [filterPage, setFilterPage] = useState(1);
-    const limit = 16;
+    const [isOpen, setIsOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [videoRenderKey, setVideoRenderKey] = useState(0);
+    const limit = 18;
 
     const { toast } = useToast();
+    const { user, isLoaded, isSignedIn } = useUser();
+    const router = useRouter();
 
-    const fetchVideos = async () => {
+    const fetchVideos = async (currentPage) => {
         try {
             setIsLoading(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&page=${page}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&page=${currentPage ? currentPage : page}`);
 
             if (response?.data?.success) {
                 setVideos([...videos, ...response?.data?.videos]);
                 const urls = response?.data?.videos?.map((v) => {
-                    const file_location = v?.location;
-                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`;
+                    let file_location = v?.location;
+                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`
                 });
 
                 setVideoUrls([...videoUrls, ...urls]);
                 setTotalVideos(response?.data?.totalVideos)
                 setPage(page + 1);
+                setIsLoading(false);
+            }
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+            toast({
+                variant: "destructive",
+                description: "Something went wrong!",
+            })
+        }
+    }
+
+    const fetchFreshVideos = async (currentPage) => {
+        try {
+            setIsLoading(true);
+
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&page=1`);
+
+            if (response?.data?.success) {
+                setVideos([...response?.data?.videos]);
+                const urls = response?.data?.videos?.map((v) => {
+                    let file_location = v?.location;
+                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`
+                });
+
+                setVideoUrls([...urls]);
+                setTotalVideos(response?.data?.totalVideos)
+                setPage(page + 1);
+                setVideoRenderKey((prevKey) => prevKey + 1);
                 setIsLoading(false);
             }
         } catch (err) {
@@ -148,6 +187,188 @@ const VideosContainer = ({ userId }) => {
         }
     }
 
+    const handleDelete = async (asset_url, v, fetchFreshFunc) => {
+        if (!asset_url) return;
+
+        const confirm = window.confirm("Are you sure you want to delete this clip?");
+
+        if (!confirm) {
+            return;
+        }
+
+        setIsDeleting(true);
+
+        try {
+            const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${asset_url}`);
+            if (res?.data?.success) {
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/delete-asset`, {
+                    user_id: user?.id,
+                    asset_url: asset_url,
+                });
+
+                if (response?.data?.success) {
+                    toast({
+                        variant: "success",
+                        description: "Clip Deleted",
+                    });
+                    window.location.reload();
+                    // console.log("asset url : ", asset_url)
+                    // const targetUrl = `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${asset_url}`;
+                    // console.log("target url : ", targetUrl)
+                    // let filteredVideosArr = videos?.filter(item => String(item?.location) !== String(asset_url));
+                    // console.log('filteredVideosArr : ', filteredVideosArr);
+                    // let filteredVideoUrlsArr = videoUrls?.filter(item => String(item) !== String(targetUrl));
+                    // console.log("filteredVideoUrls : ", filteredVideoUrlsArr)
+
+                    // setVideos(filteredVideosArr);
+                    // setVideoUrls(filteredVideoUrlsArr);
+                    // setTotalVideos((prevTotal) => prevTotal - 1);
+                    // setVideoRenderKey((prevKey) => prevKey + 1);
+
+
+
+
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            toast({
+                variant: "destructive",
+                description: "Failed to delete clip",
+            });
+        } finally {
+            setIsDeleting(false);
+            setIsOpen(false);
+        }
+
+        // const confirm = window.confirm("Are you sure you want to delete this clip?");
+
+        // if (!confirm) {
+        //     return;
+        // }
+
+        // console.log("deleting video url: ", asset_url)
+        // console.log("deleting v : ", v)
+        // try {
+        //     const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${asset_url}`);
+        //     if (res?.data?.success) {
+        //         const response = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/delete-asset`, {
+        //             user_id: user?.id,
+        //             asset_url: asset_url,
+        //         });
+
+        //         if (response?.data?.success) {
+        //             toast({
+        //                 variant: "success",
+        //                 description: "Clip Deleted",
+        //             });
+
+        //             fetchFreshFunc()
+        //         }
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        //     toast({
+        //         variant: "destructive",
+        //         description: "Failed to delete clip",
+        //     });
+        // } finally {
+        //     setIsDeleting(false);
+        //     setIsOpen(false);
+        // }
+
+    };
+
+    const handleDeleteForFilter = async (asset_url, v, fetchFreshFunc) => {
+        if (!asset_url) return;
+
+        const confirm = window.confirm("Are you sure you want to delete this clip?");
+
+        if (!confirm) {
+            return;
+        }
+
+        setIsDeleting(true);
+
+        try {
+            const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${asset_url}`);
+            if (res?.data?.success) {
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/delete-asset`, {
+                    user_id: user?.id,
+                    asset_url: asset_url,
+                });
+
+                if (response?.data?.success) {
+                    toast({
+                        variant: "success",
+                        description: "Clip Deleted",
+                    });
+                    window.location.reload();
+                    // console.log("asset url : ", asset_url)
+                    // const targetUrl = `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${asset_url}`;
+                    // console.log("target url : ", targetUrl)
+                    // let filteredVideosArr = filteredVideos?.filter(item => String(item?.location) !== String(asset_url));
+                    // console.log('filteredVideos : ', filteredVideos);
+                    // let filteredVideoUrlsArr = filteredVideoUrls?.filter(item => String(item) !== String(targetUrl));
+                    // console.log("filteredVideoUrls : ", filteredVideoUrls)
+                    // setFilteredVideos(filteredVideosArr);
+                    // setFilteredVideoUrls(filteredVideoUrlsArr);
+                    // setTotalVideosFiltering((prevTotal) => prevTotal - 1);
+                    // setVideoRenderKey((prevKey) => prevKey + 1);
+
+
+
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            toast({
+                variant: "destructive",
+                description: "Failed to delete clip",
+            });
+        } finally {
+            setIsDeleting(false);
+            setIsOpen(false);
+        }
+
+        // const confirm = window.confirm("Are you sure you want to delete this clip?");
+
+        // if (!confirm) {
+        //     return;
+        // }
+
+        // console.log("deleting video url: ", asset_url)
+        // console.log("deleting v : ", v)
+        // try {
+        //     const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${asset_url}`);
+        //     if (res?.data?.success) {
+        //         const response = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/delete-asset`, {
+        //             user_id: user?.id,
+        //             asset_url: asset_url,
+        //         });
+
+        //         if (response?.data?.success) {
+        //             toast({
+        //                 variant: "success",
+        //                 description: "Clip Deleted",
+        //             });
+
+        //             fetchFreshFunc()
+        //         }
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        //     toast({
+        //         variant: "destructive",
+        //         description: "Failed to delete clip",
+        //     });
+        // } finally {
+        //     setIsDeleting(false);
+        //     setIsOpen(false);
+        // }
+
+    };
+
 
 
     useEffect(() => {
@@ -166,123 +387,156 @@ const VideosContainer = ({ userId }) => {
 
 
     return (
-        <div>
-            <VideosFilter
-                userId={userId}
-                filterPage={filterPage}
-                setFilterPage={setFilterPage}
-                totalVideos={totalVideos}
-                setTotalVideos={setTotalVideos}
-                isFiltering={isFiltering}
-                setIsFiltering={setIsFiltering}
-                selectedFilter={selectedFilter}
-                setSelectedFilter={setSelectedFilter}
-                filteredVideos={filteredVideos}
-                setFilteredVideos={setFilteredVideos}
-                filteredVideoUrls={filteredVideoUrls}
-                setFilteredVideoUrls={setFilteredVideoUrls}
-                filteringFunction={filteringFunction}
-            />
+        (isLoaded && isSignedIn) && (
+            <div className='relative'>
+                <VideosFilter
+                    userId={userId}
+                    filterPage={filterPage}
+                    setFilterPage={setFilterPage}
+                    totalVideos={totalVideos}
+                    setTotalVideos={setTotalVideos}
+                    isFiltering={isFiltering}
+                    setIsFiltering={setIsFiltering}
+                    selectedFilter={selectedFilter}
+                    setSelectedFilter={setSelectedFilter}
+                    filteredVideos={filteredVideos}
+                    setFilteredVideos={setFilteredVideos}
+                    filteredVideoUrls={filteredVideoUrls}
+                    setFilteredVideoUrls={setFilteredVideoUrls}
+                    filteringFunction={filteringFunction}
+                />
 
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
+                <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
+                    {
+                        (videoUrls?.length > 0 && filteredVideoUrls?.length === 0) && (
+                            videoUrls?.map((v, i) => (
+                                <div key={i} className='flex flex-col gap-y-2'>
+                                    <div className='text-neutral-400'>
+                                        {videos[i]?.title}
+                                    </div>
+                                    <Video className="h-[300px] rounded-lg">
+                                        <source src={`${v}`} type='video/mp4' />
+                                    </Video>
+
+                                    <div className='flex items-center gap-x-2'>
+                                        <button
+                                            onClick={() => handleDownload(v, videos[i]?.filename)}
+                                            className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
+                                        >
+                                            <span className='hidden md:inline-block'>Download</span>
+
+                                            <IoMdCloudDownload className="" />
+                                        </button>
+
+                                        <button disabled={isDeleting} onClick={() => handleDelete(videos[i]?.location, videos[i], fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
+                                            <MdDelete />
+                                        </button>
+
+                                        {/* <DeleteClipModal asset_url={videos[i]?.location} isDeleting={isDeleting} setIsDeleting={setIsDeleting} isOpen={isOpen} setIsOpen={setIsOpen} handleDelete={handleDelete} /> */}
+                                    </div>
+                                </div>
+                            ))
+                        )
+                    }
+
+                    {
+                        (isLoading || isFiltering) && (
+                            Array.from(new Array(12))?.map((item, index) => (
+                                <div key={index} className='flex flex-col gap-y-4'>
+                                    <Skeleton className={`h-[300px] bg-gray-500/40 flex items-center justify-center`}>
+                                        <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
+                                    </Skeleton>
+
+                                </div>
+                            ))
+                        )
+                    }
+                </div>
+
+                <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
+                    {
+                        (filteredVideoUrls?.length > 0 && !isFiltering) && (
+                            filteredVideoUrls?.map((v, i) => (
+                                <div key={i} className='flex flex-col gap-y-2'>
+                                    <div className='text-neutral-400'>
+                                        {filteredVideos[i]?.title}
+                                    </div>
+                                    <Video className="h-[300px] rounded-lg">
+                                        <source src={`${v}`} type='video/mp4' />
+                                    </Video>
+
+                                    <div className="flex items-center gap-x-2">
+                                        <button
+                                            onClick={() => handleDownload(v, filteredVideos[i]?.filename)}
+                                            className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
+                                        >
+                                            <span className='hidden md:inline-block'> Download</span>
+
+                                            <IoMdCloudDownload className="" />
+                                        </button>
+
+                                        <button disabled={isDeleting} onClick={() => handleDeleteForFilter(filteredVideos[i]?.location, filteredVideos[i], filteringFunction)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
+                                            <MdDelete />
+                                        </button>
+
+                                        {/* <DeleteClipModal asset_url={filteredVideos[i]?.location} videoUrls={filteredVideoUrls} setVideoUrls={setFilteredVideoUrls} totalVideos={totalVideosFiltering} setTotalVideos={setTotalVideosFiltering} /> */}
+                                    </div>
+                                </div>
+                            ))
+                        )
+                    }
+
+                    {
+                        (isFiltering) && (
+                            Array.from(new Array(12))?.map((item, index) => (
+                                <div key={index} className='flex flex-col gap-y-4'>
+                                    <Skeleton className={`h-[300px] bg-gray-500/40 flex items-center justify-center`}>
+                                        <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
+                                    </Skeleton>
+                                    {/* <Skeleton className={'bg-gray-500 w-full h-[40px] py-2'} /> */}
+                                </div>
+                            ))
+                        )
+                    }
+                </div>
+
                 {
-                    (videoUrls?.length > 0 && filteredVideoUrls?.length === 0) && (
-                        videoUrls?.map((v, i) => (
-                            <div key={i} className='flex flex-col gap-y-2'>
-                                <Video className="h-[300px] rounded-lg">
-                                    <source src={`${v}`} type='video/mp4' />
-                                </Video>
-                                <button
-                                    onClick={() => handleDownload(v, v)}
-                                    className="mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
-                                >
-                                    <span className='hidden md:inline-block'> Download</span>
+                    (!isLoading && videoUrls?.length < totalVideos) && (
+                        <div className='pt-6 pb-2 flex items-center justify-center'>
+                            <button onClick={() => fetchVideos()} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
+                        </div>
+                    )
+                }
 
-                                    <IoMdCloudDownload className="" />
-                                </button>
-                            </div>
-                        ))
+
+                {
+                    (!isFiltering && filteredVideoUrls?.length < totalVideosFiltering) && (
+                        <div className='pt-6 pb-2 flex items-center justify-center'>
+                            <button onClick={() => filteringLoadMoreFunction(selectedFilter)} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
+                        </div>
                     )
                 }
 
                 {
-                    (isLoading || isFiltering) && (
-                        Array.from(new Array(12))?.map((item, index) => (
-                            <div key={index} className='flex flex-col gap-y-4'>
-                                <Skeleton className={`h-[300px] bg-gray-500/40 flex items-center justify-center`}>
-                                    <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
-                                </Skeleton>
+                    isLoading && (
+                        <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mt-6 mb-6'>
 
+                        </div>
+                    )
+                }
+
+                {
+                    isDeleting && (
+                        <div className='absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-500/0 w-full h-[70vh] z-50'>
+                            <div className='w-[90%] md:w-[50%] h-[250px] bg-black/10 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center gap-y-2'>
+                                <ImSpinner3 className='animate-spin text-3xl text-white' />
+                                <p className=' text-white'>Deleting Clip</p>
                             </div>
-                        ))
+                        </div>
                     )
                 }
             </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
-                {
-                    (filteredVideoUrls?.length > 0 && !isFiltering) && (
-                        filteredVideoUrls?.map((v, i) => (
-                            <div key={i} className='flex flex-col gap-y-2'>
-                                <Video className="h-[300px] rounded-lg">
-                                    <source src={`${v}`} type='video/mp4' />
-                                </Video>
-                                <button
-                                    onClick={() => handleDownload(v, v)}
-                                    className="mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
-                                >
-                                    <span className='hidden md:inline-block'> Download</span>
-
-                                    <IoMdCloudDownload className="" />
-                                </button>
-                            </div>
-                        ))
-                    )
-                }
-
-                {
-                    (isFiltering) && (
-                        Array.from(new Array(12))?.map((item, index) => (
-                            <div key={index} className='flex flex-col gap-y-4'>
-                                <Skeleton className={`h-[300px] bg-gray-500/40 flex items-center justify-center`}>
-                                    <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
-                                </Skeleton>
-                                {/* <Skeleton className={'bg-gray-500 w-full h-[40px] py-2'} /> */}
-                            </div>
-                        ))
-                    )
-                }
-            </div>
-
-            {
-                (!isLoading && videoUrls?.length < totalVideos) && (
-                    <div className='pt-6 pb-2 flex items-center justify-center'>
-                        <button onClick={() => fetchVideos()} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
-                    </div>
-                )
-            }
-
-
-            {
-                (!isFiltering && filteredVideoUrls?.length < totalVideosFiltering) && (
-                    <div className='pt-6 pb-2 flex items-center justify-center'>
-                        <button onClick={() => filteringLoadMoreFunction(selectedFilter)} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
-                    </div>
-                )
-            }
-
-            {
-                isLoading && (
-                    <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mt-6 mb-6'>
-
-                    </div>
-                )
-            }
-
-            <div>
-
-            </div>
-        </div>
+        )
     )
 }
 
