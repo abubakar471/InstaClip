@@ -344,7 +344,9 @@ const UploadVideo = ({ userId }) => {
                 console.log("response : ", data);
                 if (data?.success) {
                     console.log("video uploaded");
+                    setSocialVideoLink("");
                     setExportedVideos([data?.file_path]);
+                    setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
                     setIsImportingSocialVideo(false);
                 } else {
                     toast({

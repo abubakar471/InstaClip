@@ -43,12 +43,6 @@ const VideosContainer = ({ userId }) => {
 
             if (response?.data?.success) {
                 setVideos([...videos, ...response?.data?.videos]);
-                const urls = response?.data?.videos?.map((v) => {
-                    let file_location = v?.location;
-                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`
-                });
-
-                setVideoUrls([...videoUrls, ...urls]);
                 setTotalVideos(response?.data?.totalVideos)
                 setPage(page + 1);
                 setIsLoading(false);
@@ -75,8 +69,6 @@ const VideosContainer = ({ userId }) => {
                     let file_location = v?.location;
                     return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`
                 });
-
-                setVideoUrls([...urls]);
                 setTotalVideos(response?.data?.totalVideos)
                 setPage(page + 1);
                 setVideoRenderKey((prevKey) => prevKey + 1);
@@ -129,12 +121,6 @@ const VideosContainer = ({ userId }) => {
 
             if (response?.data?.success) {
                 setFilteredVideos([...response?.data?.videos]);
-                const urls = response?.data?.videos?.map((v) => {
-                    const file_location = v?.location;
-                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`;
-                });
-
-                setFilteredVideoUrls([...urls]);
                 setTotalVideosFiltering(response?.data?.totalVideos)
                 setFilterPage(filterPage + 1);
                 setIsFiltering(false);
@@ -164,12 +150,6 @@ const VideosContainer = ({ userId }) => {
 
             if (response?.data?.success) {
                 setFilteredVideos([...filteredVideos, ...response?.data?.videos]);
-                const urls = response?.data?.videos?.map((v) => {
-                    const file_location = v?.location;
-                    return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`;
-                });
-
-                setFilteredVideoUrls([...filteredVideoUrls, ...urls]);
                 setTotalVideosFiltering(response?.data?.totalVideos)
                 setFilterPage(filterPage + 1);
                 setIsFiltering(false);
@@ -199,37 +179,40 @@ const VideosContainer = ({ userId }) => {
         setIsDeleting(true);
 
         try {
-            const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${asset_url}`);
-            if (res?.data?.success) {
+            const delete_url_arr = asset_url.split("/");
+            console.log("delete_url : ", delete_url_arr);
+            const delete_url_str = `/${delete_url_arr[6]}/${delete_url_arr[7]}`;
+
+            if (delete_url_str) {
                 const response = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/delete-asset`, {
                     user_id: user?.id,
                     asset_url: asset_url,
                 });
 
                 if (response?.data?.success) {
-                    toast({
-                        variant: "success",
-                        description: "Clip Deleted",
-                    });
-                    window.location.reload();
-                    // console.log("asset url : ", asset_url)
-                    // const targetUrl = `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${asset_url}`;
-                    // console.log("target url : ", targetUrl)
-                    // let filteredVideosArr = videos?.filter(item => String(item?.location) !== String(asset_url));
-                    // console.log('filteredVideosArr : ', filteredVideosArr);
-                    // let filteredVideoUrlsArr = videoUrls?.filter(item => String(item) !== String(targetUrl));
-                    // console.log("filteredVideoUrls : ", filteredVideoUrlsArr)
-
-                    // setVideos(filteredVideosArr);
-                    // setVideoUrls(filteredVideoUrlsArr);
-                    // setTotalVideos((prevTotal) => prevTotal - 1);
-                    // setVideoRenderKey((prevKey) => prevKey + 1);
-
-
-
-
+                    const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${delete_url_str}`);
+                    if (res?.data?.success) {
+                        toast({
+                            variant: "success",
+                            description: "Clip Deleted",
+                        });
+                        window.location.reload();
+                    } else {
+                        toast({
+                            variant: "success",
+                            description: "Clip Deleted",
+                        });
+                        window.location.reload();
+                    }
                 }
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: "Failed to delete clip",
+                });
+                return;
             }
+
         } catch (err) {
             console.error(err);
             toast({
@@ -291,34 +274,45 @@ const VideosContainer = ({ userId }) => {
         setIsDeleting(true);
 
         try {
-            const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${asset_url}`);
-            if (res?.data?.success) {
+            const delete_url_arr = asset_url.split("/");
+            console.log("delete_url : ", delete_url_arr);
+            const delete_url_str = `/${delete_url_arr[6]}/${delete_url_arr[7]}`;
+
+
+            if (delete_url_str) {
+
                 const response = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/delete-asset`, {
                     user_id: user?.id,
                     asset_url: asset_url,
                 });
 
                 if (response?.data?.success) {
-                    toast({
-                        variant: "success",
-                        description: "Clip Deleted",
-                    });
-                    window.location.reload();
-                    // console.log("asset url : ", asset_url)
-                    // const targetUrl = `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${asset_url}`;
-                    // console.log("target url : ", targetUrl)
-                    // let filteredVideosArr = filteredVideos?.filter(item => String(item?.location) !== String(asset_url));
-                    // console.log('filteredVideos : ', filteredVideos);
-                    // let filteredVideoUrlsArr = filteredVideoUrls?.filter(item => String(item) !== String(targetUrl));
-                    // console.log("filteredVideoUrls : ", filteredVideoUrls)
-                    // setFilteredVideos(filteredVideosArr);
-                    // setFilteredVideoUrls(filteredVideoUrlsArr);
-                    // setTotalVideosFiltering((prevTotal) => prevTotal - 1);
-                    // setVideoRenderKey((prevKey) => prevKey + 1);
+                    const res = await axios.delete(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/delete-upload${delete_url_str}`);
 
-
+                    if (res?.data?.success) {
+                        toast({
+                            variant: "success",
+                            description: "Clip Deleted",
+                        });
+                        window.location.reload();
+                    } else {
+                        toast({
+                            variant: "success",
+                            description: "Clip Deleted",
+                        });
+                        window.location.reload();
+                    }
 
                 }
+                if (response?.data?.success) {
+
+                }
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: "Failed to delete clip",
+                });
+                return;
             }
         } catch (err) {
             console.error(err);
@@ -406,21 +400,21 @@ const VideosContainer = ({ userId }) => {
                     filteringFunction={filteringFunction}
                 />
 
-                <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
+                <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
                     {
-                        (videoUrls?.length > 0 && filteredVideoUrls?.length === 0) && (
-                            videoUrls?.map((v, i) => (
+                        (videos?.length > 0 && filteredVideos?.length === 0) && (
+                            videos?.map((v, i) => (
                                 <div key={i} className='flex flex-col gap-y-2'>
-                                    <div className='text-neutral-400'>
-                                        {videos[i]?.title}
+                                    <div className='text-neutral-400 text-sm mx-2'>
+                                        {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
                                     </div>
                                     <Video className="h-[300px] rounded-lg">
-                                        <source src={`${v}`} type='video/mp4' />
+                                        <source src={`${v?.location}`} type='video/mp4' />
                                     </Video>
 
                                     <div className='flex items-center gap-x-2'>
                                         <button
-                                            onClick={() => handleDownload(v, videos[i]?.filename)}
+                                            onClick={() => handleDownload(v?.location, v?.filename)}
                                             className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
                                         >
                                             <span className='hidden md:inline-block'>Download</span>
@@ -428,7 +422,7 @@ const VideosContainer = ({ userId }) => {
                                             <IoMdCloudDownload className="" />
                                         </button>
 
-                                        <button disabled={isDeleting} onClick={() => handleDelete(videos[i]?.location, videos[i], fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
+                                        <button disabled={isDeleting} onClick={() => handleDelete(v?.location, v, fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
                                             <MdDelete />
                                         </button>
 
@@ -453,21 +447,21 @@ const VideosContainer = ({ userId }) => {
                     }
                 </div>
 
-                <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
+                <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
                     {
-                        (filteredVideoUrls?.length > 0 && !isFiltering) && (
-                            filteredVideoUrls?.map((v, i) => (
+                        (filteredVideos?.length > 0 && !isFiltering) && (
+                            filteredVideos?.map((v, i) => (
                                 <div key={i} className='flex flex-col gap-y-2'>
-                                    <div className='text-neutral-400'>
-                                        {filteredVideos[i]?.title}
+                                    <div className='text-neutral-400 text-sm mx-2'>
+                                        {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
                                     </div>
                                     <Video className="h-[300px] rounded-lg">
-                                        <source src={`${v}`} type='video/mp4' />
+                                        <source src={`${v?.location}`} type='video/mp4' />
                                     </Video>
 
                                     <div className="flex items-center gap-x-2">
                                         <button
-                                            onClick={() => handleDownload(v, filteredVideos[i]?.filename)}
+                                            onClick={() => handleDownload(v?.location, v?.filename)}
                                             className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
                                         >
                                             <span className='hidden md:inline-block'> Download</span>
@@ -475,7 +469,7 @@ const VideosContainer = ({ userId }) => {
                                             <IoMdCloudDownload className="" />
                                         </button>
 
-                                        <button disabled={isDeleting} onClick={() => handleDeleteForFilter(filteredVideos[i]?.location, filteredVideos[i], filteringFunction)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
+                                        <button disabled={isDeleting} onClick={() => handleDeleteForFilter(v?.location, v, filteringFunction)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
                                             <MdDelete />
                                         </button>
 
@@ -501,7 +495,7 @@ const VideosContainer = ({ userId }) => {
                 </div>
 
                 {
-                    (!isLoading && videoUrls?.length < totalVideos) && (
+                    (!isLoading && videos?.length < totalVideos) && (
                         <div className='pt-6 pb-2 flex items-center justify-center'>
                             <button onClick={() => fetchVideos()} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
                         </div>
@@ -510,7 +504,7 @@ const VideosContainer = ({ userId }) => {
 
 
                 {
-                    (!isFiltering && filteredVideoUrls?.length < totalVideosFiltering) && (
+                    (!isFiltering && filteredVideos?.length < totalVideosFiltering) && (
                         <div className='pt-6 pb-2 flex items-center justify-center'>
                             <button onClick={() => filteringLoadMoreFunction(selectedFilter)} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
                         </div>

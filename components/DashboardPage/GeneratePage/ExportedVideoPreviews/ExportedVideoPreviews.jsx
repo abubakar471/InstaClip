@@ -8,7 +8,7 @@ import CreateTitleModal from "../CreateTitleModal/CreateTitleModal";
 import { FaDeleteLeft } from "react-icons/fa6";
 import DeleteClipModal from "../DeleteClipModal/DeleteClipModal";
 
-const ExportedVideoPreviews = ({ videoPaths }) => {
+const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => {
     const [videoUrls, setVideoUrls] = useState([]);
 
     const handleDownload = async (url, filename) => {
@@ -34,16 +34,11 @@ const ExportedVideoPreviews = ({ videoPaths }) => {
 
 
     useEffect(() => {
-        console.log('new exported urls adding...', videoPaths);
-        // Convert file paths to API URLs
-        const urls = videoPaths.map((path) => {
-            return `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${path}`;
-        });
-        setVideoUrls(urls);
+        setVideoUrls(videoPaths);
     }, [videoPaths]);
 
     return (
-        <div className="mt-4 flex items-center gap-x-10 gap-y-6 flex-wrap lg:flex-nowrap">
+        <div key={socialExportedVideoRenderKey} className="mt-4 flex items-center gap-x-10 gap-y-6 flex-wrap lg:flex-nowrap">
             {videoUrls.map((url, index) => (
                 <div key={index} className="flex flex-col gap-y-2 w-full xl:w-1/5 ">
                     <Video className="w-full h-[300px] rounded-lg">

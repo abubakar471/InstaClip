@@ -22,7 +22,7 @@ const RecentCreatedVideos = ({ userId }) => {
                 // setIsLoading(false);
 
                 const file_location = response?.data?.video?.location;
-                setVideo(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads${file_location}`)
+                setVideo(file_location)
                 setIsLoading(false)
             }
         } catch (err) {
