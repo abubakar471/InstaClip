@@ -12,6 +12,7 @@ import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
 import { DefaultPlayer as Video } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
 import { useToast } from '@/hooks/use-toast';
+import SocialVideoImport from './SocialVideoImport';
 
 const UploadVideo = ({ userId }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -22,6 +23,9 @@ const UploadVideo = ({ userId }) => {
     const [isExporting, setIsExporting] = useState(false);
     const [exportedVideos, setExportedVideos] = useState([]);
     const [uploadedData, setUploadedData] = useState(null);
+    const [isImportingSocialVideo, setIsImportingSocialVideo] = useState(false);
+    const [socialVideoLink, setSocialVideoLink] = useState('');
+    const [socialExportedVideoRenderKey, setSocialExportedVideoRenderKey] = useState(1);
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -164,7 +168,7 @@ const UploadVideo = ({ userId }) => {
 
                 toast({
                     variant: "destructive",
-                    title : "Exporting Clips Failed!",
+                    title: "Exporting Clips Failed!",
                     description: "Try uploading again",
                 })
             }
@@ -290,6 +294,112 @@ const UploadVideo = ({ userId }) => {
         }
     }
 
+    const urlOrigin = (url) => {
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]+/;
+        const instagramRegex = /^(https?:\/\/)?(www\.)?instagram\.com\/(p|reel|tv)\/[A-Za-z0-9_-]+/;
+        const tiktokRegex = /^(https?:\/\/)?(www\.)?tiktok\.com\/@[A-Za-z0-9._-]+\/video\/[0-9]+/;
+
+        if (youtubeRegex.test(url)) {
+            return "youtube";
+        } else if (instagramRegex.test(url)) {
+            return "instagram";
+        } else if (tiktokRegex.test(url)) {
+            return "tiktok";
+        } else {
+            return null; // Not a recognized video link
+        }
+    }
+
+    const handleSocialVideoImport = async (e) => {
+        e.preventDefault();
+
+        if (socialVideoLink?.length === 0) {
+            return;
+        }
+
+        setIsImportingSocialVideo(true);
+
+        try {
+            const origin = urlOrigin(socialVideoLink);
+
+            if (origin === "youtube") {
+                const formData = new FormData();
+                formData.append("url", socialVideoLink);
+                formData.append("user_id", user?.id);
+
+                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-youtube-video`, {
+                    method: "POST",
+                    headers: {
+                        // When using FormData, do not set Content-Type manually;
+                        // fetch will set it correctly for multipart form data.
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to upload file");
+                }
+
+                const data = await response.json();
+                console.log("response : ", data);
+                if (data?.success) {
+                    console.log("video uploaded");
+                    setExportedVideos([data?.file_path]);
+                    setIsImportingSocialVideo(false);
+                } else {
+                    toast({
+                        variant: "destructive",
+                        title: "Upload Failed",
+                        description: "Importing Video Failed",
+                    })
+                }
+            }
+
+            if (origin === 'tiktok') {
+                const formData = new FormData();
+                formData.append("url", socialVideoLink);
+                formData.append("user_id", user?.id);
+
+                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-tiktok-video`, {
+                    method: "POST",
+                    headers: {
+                        // When using FormData, do not set Content-Type manually;
+                        // fetch will set it correctly for multipart form data.
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to upload file");
+                }
+
+                const data = await response.json();
+                console.log("response : ", data);
+                if (data?.success) {
+                    console.log("video uploaded: ", data);
+                    setSocialVideoLink("");
+                    setExportedVideos([data?.file_path]);
+                    setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
+                    setIsImportingSocialVideo(false);
+                } else {
+                    toast({
+                        variant: "destructive",
+                        title: "Upload Failed",
+                        description: "Importing Video Failed",
+                    })
+                }
+            }
+        } catch (err) {
+            console.error("Error checking video duration:", err);
+            toast({
+                variant: "destructive",
+                title: "Upload Failed",
+                description: "Failed to check video duration",
+            })
+            setIsImportingSocialVideo(false);
+        }
+    }
+
 
     return (
         <div>
@@ -370,7 +480,6 @@ const UploadVideo = ({ userId }) => {
             </label>
 
 
-
             <div className=''>
                 {
                     previewUrl && (
@@ -408,13 +517,18 @@ const UploadVideo = ({ userId }) => {
                     )
                 }
             </div>
+
+            {/* social link input field */}
+            <SocialVideoImport isImportingSocialVideo={isImportingSocialVideo} setIsImportingSocialVideo={setIsImportingSocialVideo} socialVideoLink={socialVideoLink} setSocialVideoLink={setSocialVideoLink} handleSocialVideoImport={handleSocialVideoImport} />
+
+
             {
                 exportedVideos?.length > 0 && (
                     <div className='mb-10'>
                         <h3 className='text-xl text-neutral-200 mt-12'>Your Generated Short Clips:</h3>
 
                         <div>
-                            <ExportedVideoPreviews videoPaths={exportedVideos} />
+                            <ExportedVideoPreviews socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} />
                         </div>
                     </div>
                 )
