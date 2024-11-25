@@ -5,13 +5,13 @@ import { auth } from '@clerk/nextjs/server'
 import React from 'react'
 
 const DashboardPage = async () => {
-  const {userId} = await auth();
+  const { userId } = await auth();
 
   return (
     <div>
       <OverviewHeading />
       <OverviewStats />
-      <RecentCreatedVideos userId={userId} />
+     
 
     </div>
   )

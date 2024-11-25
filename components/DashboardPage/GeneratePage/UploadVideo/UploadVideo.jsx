@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import ExportedVideoPreviews from '../ExportedVideoPreviews/ExportedVideoPreviews';
 import { ImSpinner3 } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
-import { MdCloudUpload } from 'react-icons/md';
+import { MdCloudUpload, MdOutlinePermMedia, MdPermMedia } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
@@ -13,6 +13,11 @@ import { DefaultPlayer as Video } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
 import { useToast } from '@/hooks/use-toast';
 import SocialVideoImport from './SocialVideoImport';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { FaYoutube } from 'react-icons/fa';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// import {GiFairyWand} from "react-icons/gi"
 
 const UploadVideo = ({ userId }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -26,6 +31,7 @@ const UploadVideo = ({ userId }) => {
     const [isImportingSocialVideo, setIsImportingSocialVideo] = useState(false);
     const [socialVideoLink, setSocialVideoLink] = useState('');
     const [socialExportedVideoRenderKey, setSocialExportedVideoRenderKey] = useState(1);
+    const [selectedTab, setSelectedTab] = useState('')
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -402,145 +408,220 @@ const UploadVideo = ({ userId }) => {
         }
     }
 
+    useEffect(() => {
+        setSelectedTab("AI")
+    }, [])
+
 
     return (
         <div>
-            <label
-                htmlFor="dropzone-file"
-                className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-lg cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
-            >
-                {
-                    (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg
-                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 16"
+            <div className='grid grid-cols-1 lg:grid-cols-10 2xl:grid-cols-12 gap-10 mt-4 mb-10'>
+                <div className='min-h-screen col-span-0 lg:col-span-4 2xl:col-span-4 bg-[#111d27] px-4 rounded-2xl w-full'>
+                    <Tabs defaultValue="create_clips" className="w-full mt-4 !bg-transparent">
+                        <TabsList className="w-full bg-gray-500/10">
+                            <TabsTrigger value="create_clips" className="w-1/2">
+                                <div className='flex items-center gap-x-2 text-xs'>
+                                    <MdOutlinePermMedia />
+
+                                    Create Clips
+                                </div>
+                            </TabsTrigger>
+                            <TabsTrigger value="password" className="w-1/2">
+                                <div className='flex items-center gap-x-2 text-xs'>
+                                    <FaYoutube />
+
+                                    Import Video
+                                </div>
+                            </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="create_clips">
+
+                            <label
+                                htmlFor="dropzone-file"
+                                className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-lg cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
                             >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                {
+                                    (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <svg
+                                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 20 16"
+                                            >
+                                                <path
+                                                    stroke="currentColor"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                                />
+                                            </svg>
+                                            <p className="mb-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center text-center flex-col 2xl:flex-row">
+                                                <span className="font-semibold">Click to upload</span> <span className='ml-0 2xl:ml-2'>or drag and
+                                                    drop</span>
+                                            </p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                                                Video files only
+                                            </p>
+                                        </div>
+                                    )
+                                }
+
+                                {
+                                    (isUploading || isSegmenting || isSegmentingCandidates || isExporting) && (
+                                        <div className='w-full flex flex-col items-center justify-center mt-4'>
+                                            <div className='flex flex-col items-center gap-x-2 text-neutral-500 text-sm'>
+                                                <ImSpinner3 className='animate-spin text-3xl' />
+                                                <span className='font-semibold mt-2'>
+                                                    {
+                                                        isUploading && ("Uploding")
+                                                    }
+
+                                                    {
+                                                        isSegmenting && ("Segmenting Video")
+                                                    }
+
+                                                    {
+                                                        isSegmentingCandidates && ("Segmenting Candidates")
+                                                    }
+
+                                                    {
+                                                        isExporting && ("Exporting Clips")
+                                                    }
+                                                </span>
+                                            </div>
+
+                                            <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-purple-600 rounded-lg px-4 py-1'>
+                                                <span>ETA:</span>
+                                                <span>2-3 Minutes</span>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                                <input
+                                    id="dropzone-file"
+                                    type="file"
+                                    className="hidden"
+                                    accept="video/*"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
+                                    required
                                 />
-                            </svg>
-                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                <span className="font-semibold">Click to upload</span> or drag and
-                                drop
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                Video files only
-                            </p>
-                        </div>
-                    )
-                }
+                            </label>
 
-                {
-                    (isUploading || isSegmenting || isSegmentingCandidates || isExporting) && (
-                        <div className='w-full flex flex-col items-center justify-center mt-4'>
-                            <div className='flex flex-col items-center gap-x-2 text-neutral-500 text-sm'>
-                                <ImSpinner3 className='animate-spin text-3xl' />
-                                <span className='font-semibold mt-2'>
-                                    {
-                                        isUploading && ("Uploding")
-                                    }
 
-                                    {
-                                        isSegmenting && ("Segmenting Video")
-                                    }
+                            <div className=''>
+                                {
+                                    previewUrl && (
+                                        <div className='bg-green-600/40 text-white py-2 rounded-lg px-4 text-xs mt-2 w-fit'>
+                                           * File Selected *
+                                        </div>
+                                    )
+                                }
 
-                                    {
-                                        isSegmentingCandidates && ("Segmenting Candidates")
-                                    }
+                                <p className='text-neutral-400 text-xs mt-4 px-2'>
+                                    Generate Short Clip from your uploded videos and create your own asset library.
+                                </p>
 
-                                    {
-                                        isExporting && ("Exporting Clips")
-                                    }
-                                </span>
+                                {
+                                    (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
+                                        <div className='flex items-center gap-x-4 flex-nowrap'>
+                                            <button
+                                                ref={uploadBtnRef}
+                                                onClick={handleUpload}
+                                                className="mt-4 mb-4 px-4 py-2 bg-[#4a2ac0] text-white text-sm rounded-lg hover:bg-[#392a6e] flex items-center justify-center gap-x-2 transition-all duration-300 ease-in-out w-full"
+                                                disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
+                                            >
+                                                <MdCloudUpload />
+                                                Upload Video
+                                            </button>
+
+                                            {
+                                                (selectedFile && previewUrl) && (
+                                                    <button
+                                                        onClick={() => handleClear()}
+                                                        className="mt-4 mb-4 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 flex items-center gap-x-2 transition-all duration-300 ease-in-out"
+                                                        disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
+                                                    >
+                                                        <RxCross1 />
+                                                        
+                                                    </button>
+                                                )
+                                            }
+                                        </div>
+                                    )
+                                }
+
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="password">
+                            {/* social link input field */}
+                            <SocialVideoImport isImportingSocialVideo={isImportingSocialVideo} setIsImportingSocialVideo={setIsImportingSocialVideo} socialVideoLink={socialVideoLink} setSocialVideoLink={setSocialVideoLink} handleSocialVideoImport={handleSocialVideoImport} />
+                        </TabsContent>
+                    </Tabs>
+
+                    {/* <div className=''>
+                        <div className="flex items-center gap-x-2 w-full">
+                            <div onClick={() => setSelectedTab("AI")} className={`w-fit ${selectedTab === "AI" && ("!bg-[#4a2ac0]")} bg-transparent
+        hover:bg-[#4a2ac0]/30 flex items-center text-white mt-6 px-2 rounded-lg cursor-pointer transition-all ease-in-out`}>
+                                <div className={`flex items-center gap-x-2 text-xs py-2 px-2 `}>
+                                    <MdOutlinePermMedia />
+                                    Create Clips
+                                </div>
                             </div>
 
-                            <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-purple-600 rounded-lg px-4 py-1'>
-                                <span>ETA:</span>
-                                <span>2-3 Minutes</span>
+                            <div onClick={() => setSelectedTab("YOUTUBE")} className={`w-fit ${selectedTab === "YOUTUBE" && ("!bg-[#4a2ac0]")} bg-transparent
+        hover:bg-[#4a2ac0]/30 flex items-center text-white mt-6 px-2 rounded-lg cursor-pointer transition-all ease-in-out`}>
+                                <div className={`flex items-center gap-x-2 text-xs py-2 px-2 `}>
+                                    <FaYoutube />
+
+                                    Import from YouTube
+                                </div>
                             </div>
                         </div>
-                    )
-                }
-                <input
-                    id="dropzone-file"
-                    type="file"
-                    className="hidden"
-                    accept="video/*"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
-                    required
-                />
-            </label>
+                    </div> */}
 
 
-            <div className=''>
-                {
-                    previewUrl && (
-                        <div className='bg-green-600/40 text-white py-2 rounded-lg px-4 w-fit text-xs mt-2'>
-                            File Selected : {previewUrl}
-                        </div>
-                    )
-                }
-                {
-                    (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
-                        <div className='flex items-center gap-x-4'>
-                            <button
-                                ref={uploadBtnRef}
-                                onClick={handleUpload}
-                                className="mt-4 mb-4 px-4 py-2 bg-[#4a2ac0] text-white rounded-lg hover:bg-[#392a6e] flex items-center gap-x-2 transition-all duration-300 ease-in-out"
-                                disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
-                            >
-                                <MdCloudUpload />
-                                Upload Video
-                            </button>
+                    {
+                        (exportedVideos?.length > 0 && !isImportingSocialVideo && !isExporting) && (
+                            <div className='mb-10'>
+                                <h3 className='text-lg text-neutral-200 mt-12'>Your Generated Short Clips:</h3>
 
-                            {
-                                (selectedFile && previewUrl) && (
-                                    <button
-                                        onClick={() => handleClear()}
-                                        className="mt-4 mb-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-x-2 transition-all duration-300 ease-in-out"
-                                        disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
-                                    >
-                                        <RxCross1 />
-                                        Cancel
-                                    </button>
-                                )
-                            }
-                        </div>
-                    )
-                }
+                                <div>
+                                    <ExportedVideoPreviews socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} />
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {
+                        (isExporting || isImportingSocialVideo) && (
+                            <div className='flex items-center gap-x-2'>
+                                <Skeleton className={`w-full lg:w-1/2 h-[300px] bg-gray-500/40 flex items-center justify-center`}>
+                                    <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
+                                </Skeleton>
+                                <Skeleton className={`w-full lg:w-1/2 h-[300px] bg-gray-500/40 flex items-center justify-center`}>
+                                    <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
+                                </Skeleton>
+                            </div>
+                        )
+                    }
+
+                    {
+                        (exportedVideos?.length == 0 && !isExporting && !isImportingSocialVideo) && (
+                            <RecentCreatedVideos userId={userId} />
+                        )
+                    }
+                </div>
+
+                <div className='col-span-0 lg:col-span-6 2xl:col-span-8'>
+                    mango squad
+                </div>
             </div>
-
-            {/* social link input field */}
-            <SocialVideoImport isImportingSocialVideo={isImportingSocialVideo} setIsImportingSocialVideo={setIsImportingSocialVideo} socialVideoLink={socialVideoLink} setSocialVideoLink={setSocialVideoLink} handleSocialVideoImport={handleSocialVideoImport} />
-
-
-            {
-                exportedVideos?.length > 0 && (
-                    <div className='mb-10'>
-                        <h3 className='text-xl text-neutral-200 mt-12'>Your Generated Short Clips:</h3>
-
-                        <div>
-                            <ExportedVideoPreviews socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} />
-                        </div>
-                    </div>
-                )
-            }
-
-            {
-                (exportedVideos?.length == 0 && !isExporting) && (
-                    <RecentCreatedVideos userId={userId} />
-                )
-            }
         </div >
     );
 }

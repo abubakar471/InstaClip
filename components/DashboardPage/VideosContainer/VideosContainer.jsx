@@ -13,6 +13,7 @@ import { useUser } from '@clerk/nextjs';
 import { ImSpinner3 } from 'react-icons/im';
 import { MdDelete } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
+import EditClipModal from '../EditClipModal/EditClipModal';
 
 const VideosContainer = ({ userId }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -413,14 +414,16 @@ const VideosContainer = ({ userId }) => {
                                     </Video>
 
                                     <div className='flex items-center gap-x-2'>
-                                        <button
+                                        {/* <button
                                             onClick={() => handleDownload(v?.location, v?.filename)}
                                             className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
                                         >
                                             <span className='hidden md:inline-block'>Download</span>
 
                                             <IoMdCloudDownload className="" />
-                                        </button>
+                                        </button> */}
+
+                                        <EditClipModal clip_url={v?.location} />
 
                                         <button disabled={isDeleting} onClick={() => handleDelete(v?.location, v, fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
                                             <MdDelete />

@@ -7,6 +7,7 @@ import { IoIosLink } from 'react-icons/io';
 import { useUser } from '@clerk/nextjs';
 import axios from 'axios';
 import { Skeleton } from '@/components/ui/skeleton';
+import RecentCreatedVideos from '../RecentCreatedVideos/RecentCreatedVideos';
 
 const OverviewStats = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -97,6 +98,10 @@ const OverviewStats = () => {
                                 <span className='text-lg font-semibold'>Free</span>
                             </div>
                         </div>
+                    </div>
+
+                    <div className='w-[50%] mt-10'>
+                        <RecentCreatedVideos userId={user?.id} />
                     </div>
                 </>
             )

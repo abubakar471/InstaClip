@@ -9,10 +9,10 @@ const GeneratePage = async () => {
 
     return (
         <div>
-            <h1 className='flex items-center gap-x-2 font-semibold bg-gradient-to-r bg-clip-text from-[#728ee9] via-purple-700 to-[#30a4da] text-transparent text-4xl pt-6 pb-4 border-b border-[#162845]/50 '>
+            {/* <h1 className='flex items-center gap-x-2 font-semibold bg-gradient-to-r bg-clip-text from-[#728ee9] via-purple-700 to-[#30a4da] text-transparent text-4xl pt-6 pb-4 border-b border-[#162845]/50 '>
                 <RiAiGenerate className='text-[#728ee9] text-3xl lg:text-3xl xl:text-4xl' />
                 Generate Clips
-            </h1>
+            </h1> */}
 
             <AssetContainer userId={userId} />
 
