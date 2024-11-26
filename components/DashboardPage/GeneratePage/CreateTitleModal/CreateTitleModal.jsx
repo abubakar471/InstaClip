@@ -67,7 +67,7 @@ const CreateTitleModal = ({ asset_url }) => {
         (isSignedIn && isLoaded) && (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="grow mt-2 bg-[#36339e] !text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 border-none">
+                    <Button variant="outline" className="grow mt-2 bg-[#36339e] !text-white !text-xs py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 border-none">
                         <FaSave />
 
                         Save to library

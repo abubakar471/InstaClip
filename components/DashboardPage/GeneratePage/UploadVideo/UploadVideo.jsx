@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import ExportedVideoPreviews from '../ExportedVideoPreviews/ExportedVideoPreviews';
 import { ImSpinner3 } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
-import { MdCloudUpload, MdOutlinePermMedia, MdPermMedia } from 'react-icons/md';
+import { MdCloudUpload, MdOutlinePermMedia, MdOutlinePhotoLibrary, MdPermMedia } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
@@ -16,6 +16,8 @@ import SocialVideoImport from './SocialVideoImport';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FaYoutube } from 'react-icons/fa';
 import { Skeleton } from '@/components/ui/skeleton';
+import PublicLibraryAssets from './PublicLibraryAssets';
+import FeaturedAssets from './FeaturedAssets';
 
 // import {GiFairyWand} from "react-icons/gi"
 
@@ -415,8 +417,8 @@ const UploadVideo = ({ userId }) => {
 
     return (
         <div>
-            <div className='grid grid-cols-1 lg:grid-cols-10 2xl:grid-cols-12 gap-10 mt-4 mb-10'>
-                <div className='min-h-screen col-span-0 lg:col-span-4 2xl:col-span-4 bg-[#111d27] px-4 rounded-2xl w-full'>
+            <div className='grid grid-cols-1 lg:grid-cols-10 2xl:grid-cols-12 gap-10 mt-4 mb-10 relative'>
+                <div className='min-h-screen max-h-fit col-span-0 lg:col-span-4 2xl:col-span-4 bg-[#111d27] px-4 rounded-2xl w-full'>
                     <Tabs defaultValue="create_clips" className="w-full mt-4 !bg-transparent">
                         <TabsList className="w-full bg-gray-500/10">
                             <TabsTrigger value="create_clips" className="w-1/2">
@@ -517,7 +519,7 @@ const UploadVideo = ({ userId }) => {
                                 {
                                     previewUrl && (
                                         <div className='bg-green-600/40 text-white py-2 rounded-lg px-4 text-xs mt-2 w-fit'>
-                                           * File Selected *
+                                            * File Selected *
                                         </div>
                                     )
                                 }
@@ -547,7 +549,7 @@ const UploadVideo = ({ userId }) => {
                                                         disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
                                                     >
                                                         <RxCross1 />
-                                                        
+
                                                     </button>
                                                 )
                                             }
@@ -619,7 +621,32 @@ const UploadVideo = ({ userId }) => {
                 </div>
 
                 <div className='col-span-0 lg:col-span-6 2xl:col-span-8'>
-                    mango squad
+                    <div>
+                        <div className='w-full px-0'>
+                            <div className='bg-gradient-to-r from-[#4a2ac0]/20 to-[#603ce2]/60 text-xs flex items-center gap-x-2 w-fit px-4 py-2 rounded-full text-white mb-2'>
+                                <MdOutlinePhotoLibrary />
+                                <span className='text-white'>Featured Assets</span>
+                            </div>
+                        </div>
+
+                        <div className='mt-4'>
+                            {/* <PublicLibraryAssets /> */}
+                            <FeaturedAssets />
+                        </div>
+
+                        <div className='w-full px-0 mt-10'>
+                            <div className='bg-gradient-to-r from-[#4a2ac0]/20 to-[#603ce2]/60 text-xs flex items-center gap-x-2 w-fit px-4 py-2 rounded-full text-white mb-2'>
+                                <MdOutlinePhotoLibrary />
+                                <span className='text-white'>Community Creations</span>
+                            </div>
+                        </div>
+
+                        <div className='mt-4'>
+                            <PublicLibraryAssets />
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div >
