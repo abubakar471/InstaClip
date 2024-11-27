@@ -52,7 +52,7 @@ export function AppSidebar() {
                 <div className="px-4 mt-10 flex flex-col gap-y-4">
                     {
                         isLoaded ? (
-                            <Link href={"/dashboard"} className={`w-full rounded-lg ${activeLink === '/dashboard' && "bg-[#2d4b7e] bg-opacity-40 border border-[#2d4b7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 `}>
+                            <Link href={"/dashboard"} className={`w-full rounded-lg hover:bg-[#2d2e7e]/20 ${activeLink === '/dashboard' && "bg-[#2d2e7e] bg-opacity-40 border border-[#2d2e7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 transition-all duration-200 ease-in-out outline-none ring-0 border-none`}>
                                 <BiHome className="text-lg" />
                                 Overview
                             </Link>
@@ -64,7 +64,7 @@ export function AppSidebar() {
                     }
                     {
                         isLoaded ? (
-                            <Link href={"/dashboard/generate"} className={`w-full rounded-lg ${activeLink === '/dashboard/generate' && "bg-[#2d4b7e] bg-opacity-40 border border-[#2d4b7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 `}>
+                            <Link href={"/dashboard/generate"} className={`w-full rounded-lg hover:bg-[#2d2e7e]/20 ${activeLink === '/dashboard/generate' && "bg-[#2d2e7e] bg-opacity-40 border border-[#2d2e7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 transition-all duration-200 ease-in-out outline-none ring-0 border-none`}>
                                 <RiAiGenerate className="text-lg" />
                                 Generate
                             </Link>
@@ -77,7 +77,7 @@ export function AppSidebar() {
 
                     {
                         isLoaded ? (
-                            <Link href={"/dashboard/library"} className={`w-full rounded-lg ${activeLink === '/dashboard/library' && "bg-[#2d4b7e] bg-opacity-40 border border-[#2d4b7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 `}>
+                            <Link href={"/dashboard/library"} className={`w-full rounded-lg hover:bg-[#2d2e7e]/20 ${activeLink === '/dashboard/library' && "bg-[#2d2e7e] bg-opacity-40 border border-[#2d2e7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 transition-all duration-200 ease-in-out outline-none ring-0 border-none`}>
                                 <LuClapperboard className="text-lg" />
                                 Library
                             </Link>
@@ -103,7 +103,7 @@ export function AppSidebar() {
                             {
                                 isLoaded ? (
                                     <div onClick={() => setOpenProfile(!openProfile)} className="flex items-center gap-x-2 text-sm text-neutral-100">
-                                        {/* <LuExternalLink /> */}
+                                        <LuExternalLink />
                                         View Profile
                                     </div>
                                 ) : (
@@ -114,7 +114,7 @@ export function AppSidebar() {
                             {
                                 isLoaded ? (
                                     <Link href={"#"} className="flex items-center gap-x-2 text-sm text-neutral-100 w-fit">
-                                        {/* <MdOutlineContactSupport /> */}
+                                        <MdOutlineContactSupport />
                                         Support
                                     </Link>
                                 ) : (
@@ -125,7 +125,7 @@ export function AppSidebar() {
                             {
                                 isLoaded ? (
                                     <Link href={"#"} className="flex items-center gap-x-2 text-sm text-neutral-100 w-fit">
-                                        {/* <AiOutlineDiscord /> */}
+                                        <AiOutlineDiscord />
                                         Discord
                                     </Link>
                                 ) : (
