@@ -1,3 +1,5 @@
+'use cache'
+
 import FAQ from "@/components/HomePage/FAQ/FAQ";
 import Footer from "@/components/HomePage/Footer/Footer";
 import FooterBottom from "@/components/HomePage/FooterBottom/FooterBottom";

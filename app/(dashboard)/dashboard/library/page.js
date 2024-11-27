@@ -1,3 +1,5 @@
+'use cache'
+
 import VideosContainer from '@/components/DashboardPage/VideosContainer/VideosContainer'
 import { MdCollections } from 'react-icons/md'
 import { auth } from '@clerk/nextjs/server'

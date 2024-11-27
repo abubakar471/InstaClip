@@ -1,3 +1,5 @@
+'use cache'
+
 import AssetContainer from '@/components/DashboardPage/GeneratePage/AssetContainer/AssetContainer'
 import RecentCreatedVideos from '@/components/DashboardPage/RecentCreatedVideos/RecentCreatedVideos'
 import { auth } from '@clerk/nextjs/server'

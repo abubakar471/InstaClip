@@ -1,3 +1,5 @@
+'use cache'
+
 import OverviewHeading from '@/components/DashboardPage/OverviewPage/OverviewHeading'
 import OverviewStats from '@/components/DashboardPage/OverviewPage/OverviewStats'
 import RecentCreatedVideos from '@/components/DashboardPage/RecentCreatedVideos/RecentCreatedVideos'

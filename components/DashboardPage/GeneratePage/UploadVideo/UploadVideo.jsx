@@ -545,7 +545,7 @@ const UploadVideo = ({ userId }) => {
                                                 (selectedFile && previewUrl) && (
                                                     <button
                                                         onClick={() => handleClear()}
-                                                        className="mt-4 mb-4 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 flex items-center gap-x-2 transition-all duration-300 ease-in-out"
+                                                        className="mt-4 mb-4 px-4 py-3 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 flex items-center gap-x-2 transition-all duration-300 ease-in-out"
                                                         disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
                                                     >
                                                         <RxCross1 />
