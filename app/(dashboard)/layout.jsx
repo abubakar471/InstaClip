@@ -8,6 +8,7 @@ export default function DashboardLayout({ children }) {
     return (
         <SidebarProvider>
             <AppSidebar />
+            {/*  px-10 pt-4 */}
             <main className="w-full px-10 pt-4">
                 <DashboardLayoutContainer children={children} />
             </main>

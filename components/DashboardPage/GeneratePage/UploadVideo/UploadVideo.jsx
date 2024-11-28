@@ -615,7 +615,7 @@ const UploadVideo = ({ userId }) => {
 
                     {
                         (exportedVideos?.length == 0 && !isExporting && !isImportingSocialVideo) && (
-                            <RecentCreatedVideos userId={userId} />
+                            <RecentCreatedVideos userId={userId} limit={1} />
                         )
                     }
                 </div>
