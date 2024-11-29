@@ -7,12 +7,12 @@ import PopularArticles from '@/components/DashboardPage/OverviewPage/PopularArti
 import YourStatistics from '@/components/DashboardPage/OverviewPage/YourStatistics'
 import RecentCreatedVideos from '@/components/DashboardPage/RecentCreatedVideos/RecentCreatedVideos'
 import { useUser } from '@clerk/nextjs'
-import { Orbitron } from 'next/font/google'
+import { Orbitron, Poppins } from 'next/font/google'
 // import { auth } from '@clerk/nextjs/server'
 import React from 'react'
 import { FaSquarePollVertical } from 'react-icons/fa6'
 
-const font = Orbitron({
+const font = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"]
 })

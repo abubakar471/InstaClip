@@ -3,13 +3,13 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { articles } from '@/data/articles'
 import { useUser } from '@clerk/nextjs'
-import { Orbitron } from 'next/font/google'
+import { Orbitron, Poppins } from 'next/font/google'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { FaLongArrowAltRight } from 'react-icons/fa'
 
-const font = Orbitron({
+const font = Poppins({
     subsets: ["latin"],
     weight: ["400", "500", "600", "700"]
 })

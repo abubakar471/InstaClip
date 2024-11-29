@@ -2,11 +2,11 @@
 
 import { useUser } from '@clerk/nextjs'
 import React, { useEffect, useState } from 'react'
-import { Orbitron } from 'next/font/google'
+import { Orbitron, Poppins } from 'next/font/google'
 import Image from 'next/image'
 import { MdVerified } from 'react-icons/md'
 
-const font = Orbitron({
+const font = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"]
 })

@@ -3,12 +3,12 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUser } from '@clerk/nextjs'
 import axios from 'axios'
-import { Orbitron } from 'next/font/google'
+import { Orbitron, Poppins } from 'next/font/google'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { FaSquarePollVertical } from 'react-icons/fa6'
 
-const font = Orbitron({
+const font = Poppins({
     subsets: ["latin"],
     weight: ["400", "500", "600", "700"]
 })
@@ -48,7 +48,7 @@ const YourStatistics = () => {
                         {
                             (isLoaded && !isLoading) && (
                                 // <Image src={`${user?.imageUrl}`} width={200} height={200} alt={`${user?.firstName}`} className='rounded-full w-[120px] h-[120px]' />
-                                <FaSquarePollVertical className='text-5xl text-yellow-500' />
+                                <FaSquarePollVertical className='text-5xl text-[#603ce2]' />
                             )
                         }
                     </div>
@@ -75,15 +75,15 @@ const YourStatistics = () => {
                     ) : (
                         <div className='flex items-center justify-center flex-wrap gap-4 w-full'>
                             <div className='flex items-center justify-center flex-col'>
-                                <p className='text-yellow-600 text-xl xl:text-3xl text-center'>{stats?.totalVideos}</p>
+                                <p className='text-[#603ce2] text-xl xl:text-3xl text-center'>{stats?.totalVideos}</p>
                                 <p className='text-sm text-neutral-300 text-center'>Assets Created</p>
                             </div>
                             <div className='flex items-center justify-center flex-col'>
-                                <p className='text-yellow-600 text-xl xl:text-3xl text-center'>1</p>
+                                <p className='text-[#603ce2] text-xl xl:text-3xl text-center'>1</p>
                                 <p className='text-sm text-neutral-300 text-center'>Connected Accounts</p>
                             </div>
                             <div className='flex items-center justify-center flex-col'>
-                                <p className='text-yellow-600 text-xl xl:text-3xl text-center'>Free</p>
+                                <p className='text-[#603ce2] text-xl xl:text-3xl text-center'>Free</p>
                                 <p className='text-sm text-neutral-300 text-center'>Your Plan</p>
                             </div>
 
