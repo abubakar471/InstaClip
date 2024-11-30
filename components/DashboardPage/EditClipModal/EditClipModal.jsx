@@ -13,22 +13,42 @@ import {
 } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@clerk/nextjs";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaVideo } from "react-icons/fa";
 import { MdOutlineSplitscreen } from "react-icons/md";
 import { DefaultPlayer as Video } from "react-html5video"
 import 'react-html5video/dist/styles.css'
 import { ImSpinner3 } from "react-icons/im";
+import { TbAssembly, TbHourglassEmpty } from "react-icons/tb";
+import axios from "axios";
+import PublishClipModal from "../PublishClipModal/PublishClipModal";
+import { assets as featured_assets } from "@/data/featured_assets";
+import { assets as public_assets } from "@/data/community_creations";
 
 const EditClipModal = ({ clip_url }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const [isCombined, setIsCombined] = useState(false);
+    const [combinedClip, setCombinedClip] = useState(null);
+    const [assets, setAssets] = useState([]);
+    const [publicAssetExists, setPublicAssetExists] = useState(false);
+    const [videoRenderKey, setVideoRenderKey] = useState(1);
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
 
     const { user, isLoaded, isSignedIn } = useUser();
     const { toast } = useToast();
+
+    const handleClear = () => {
+        setPreviewUrl(null);
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ""; // Reset the file input value
+        }
+    };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -43,28 +63,202 @@ const EditClipModal = ({ clip_url }) => {
         }
     };
 
+    const handleInputChange = (e) => {
+        console.log("assets : ", assets)
+        setVideoRenderKey(videoRenderKey + 1);
+
+        const exists = assets.find(item => item?.id === e.target.value);
+
+        if (exists) {
+            setPublicAssetExists(true);
+            setPreviewUrl(exists?.url)
+        } else {
+            setPublicAssetExists(false);
+            handleClear();
+        }
+    }
+
+    const handleUpload = async () => {
+        if (!selectedFile) {
+            toast({
+                variant: "destructive",
+                title: "Upload Failed",
+                description: "No File Selected",
+            })
+            return;
+        }
+
+        setIsUploading(true);
+
+        try {
+            const videoBlob = URL.createObjectURL(selectedFile);
+            const videoElement = document.createElement("video");
+
+            const getVideoDuration = () =>
+                new Promise((resolve, reject) => {
+                    videoElement.preload = "metadata";
+                    videoElement.src = videoBlob;
+
+                    videoElement.onloadedmetadata = () => {
+                        resolve(videoElement.duration); // Duration in seconds
+                        URL.revokeObjectURL(videoBlob); // Free up memory
+                    };
+
+                    videoElement.onerror = (error) => {
+                        reject("Failed to load video metadata");
+                        URL.revokeObjectURL(videoBlob); // Free up memory
+                    };
+                });
+
+            const duration = await getVideoDuration();
+
+            console.log("Video Duration:", duration, "seconds");
+
+            if (duration < 180) {
+                toast({
+                    variant: "destructive",
+                    title: "Upload Failed",
+                    description: "Video is less than 3 minutes",
+                })
+                handleClear();
+                return;
+            }
+        } catch (error) {
+            console.error("Error checking video duration:", error);
+            toast({
+                variant: "destructive",
+                title: "Upload Failed",
+                description: "Failed to check video duration",
+            })
+            setIsUploading(false);
+            handleClear();
+            return;
+        }
+
+
+
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("user_id", user?.id);
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/upload`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to upload file");
+            }
+
+            const data = await response.json();
+            console.log("response : ", data);
+
+            if (data?.success) {
+                function extractUploadsPath(url) {
+                    const match = url.match(/\/uploads\/(.+)$/);
+                    if (match) {
+                        return "/" + match[1]; // Adds a leading slash to the extracted path
+                    }
+                    return null; // Returns null if no match is found
+                }
+
+                const bodyData = new FormData();
+                bodyData.append("original_clip", String(extractUploadsPath(clip_url)));
+                bodyData.append("clip_to_combine", String(data?.details?.local_video_filepath));
+                bodyData.append("user_id", user?.id);
+
+                const res = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/split-screen`, {
+                    method: "POST",
+                    body: bodyData,
+                });
+
+                const resData = await res.json();
+
+                console.log("combined response : ", resData)
+
+                if (resData?.success) {
+                    setIsCombined(true);
+                    setCombinedClip(resData?.file_path)
+                }
+            }
+
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            alert("An error occurred during file upload.");
+        } finally {
+            setIsUploading(false);
+        }
+    }
+
+    const handleUploadPublicAsset = async () => {
+        if (!previewUrl || !publicAssetExists) {
+            toast({
+                variant: "destructive",
+                title: "Combine Failed",
+                description: "Invalid Public ID",
+            })
+            return;
+        }
+
+        setIsUploading(true);
+
+        try {
+            function extractUploadsPath(url) {
+                const match = url.match(/\/uploads\/(.+)$/);
+                if (match) {
+                    return "/" + match[1]; // Adds a leading slash to the extracted path
+                }
+                return null; // Returns null if no match is found
+            }
+
+            const bodyData = new FormData();
+            bodyData.append("original_clip", String(extractUploadsPath(clip_url)));
+            bodyData.append("clip_to_combine", String(extractUploadsPath(previewUrl)));
+            bodyData.append("user_id", user?.id);
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/split-screen`, {
+                method: "POST",
+                body: bodyData,
+            });
+
+            const resData = await res.json();
+
+            console.log("combined response : ", resData)
+
+            if (resData?.success) {
+                setIsCombined(true);
+                setCombinedClip(resData?.file_path)
+            }
+
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            alert("An error occurred during file upload.");
+        } finally {
+            setIsUploading(false);
+        }
+    }
+
+    useEffect(() => {
+        setAssets(featured_assets.concat(public_assets));
+
+    }, [user?.id])
+
     return (
         (isSignedIn && isLoaded) && (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="grow mt-2 bg-[#348546] !text-white py-2 px-3 rounded hover:bg-[#2a6e39] flex items-center justify-center gap-x-2 border-none">
+                    <Button variant="outline" className="grow mt-2 bg-[#533485] !text-white py-1 px-3 rounded hover:bg-[#462b72] flex items-center justify-start gap-x-2 border-none text-sm font-light">
                         <FaVideo />
                         Edit Clip
                     </Button>
                 </DialogTrigger>
 
                 <DialogContent className="sm:max-w-[425px] md:max-w-6xl lg::max-w-7xl h-[80vh] mx-auto !bg-[#162845] border-none flex flex-col gap-y-0 items-start justify-start">
-                    <DialogHeader>
-                        {/* <DialogTitle className="text-neutral-300">Are you sure you want to delete this clip?</DialogTitle> */}
-                        {/* <DialogDescription>
-                    Make changes to your profile here. Click save when you're done.
-                </DialogDescription> */}
-                    </DialogHeader>
-
-                    <div className="flex w-full mt-10 gap-x-6 relative">
-                        <div className="w-4/12 border-r border-[#4385c2]/20 flex-grow min-h-full">
+                    <div className="flex w-full mt-10 gap-x-6 relative flex-wrap xl:flex-nowrap">
+                        <div className="w-full xl:w-4/12 border-none xl:border-r border-[#4385c2]/20 flex-grow min-h-auto">
                             <div className="w-full">
-                                <div className="bg-[#235a8d]/40 backdrop-blur-2xl w-[70%] mx-auto text-center py-2 rounded-lg relative cursor-pointer">
+                                <div className="bg-[#235a8d]/40 backdrop-blur-2xl w-fit xl:w-[70%] mx-auto text-center py-2 rounded-lg relative cursor-pointer">
                                     <div className="text-[#61a6e7] text-center text-sm flex items-center gap-x-2 px-4">
                                         <MdOutlineSplitscreen />
 
@@ -77,73 +271,136 @@ const EditClipModal = ({ clip_url }) => {
                             </div>
                         </div>
 
-                        <div className="w-8/12 h-full">
-                            <div className="w-full">
-                                <label
-                                    htmlFor="dropzone-file"
-                                    className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-lg cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
-                                >
-                                    {
-                                        (!isUploading) && (
-                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <svg
-                                                    className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 20 16"
-                                                >
-                                                    <path
-                                                        stroke="currentColor"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                                    />
-                                                </svg>
-                                                <p className="mb-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center text-center flex-col 2xl:flex-row">
-                                                    <span className="font-semibold">Click to upload</span> <span className='ml-0 2xl:ml-2'>or drag and
-                                                        drop</span>
-                                                </p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                                                    Video files only
-                                                </p>
-                                            </div>
-                                        )
-                                    }
+                        <div className="w-full xl:w-8/12 h-full">
+                            {
+                                !isCombined ? (
+                                    <div className="w-full">
+                                        <label
+                                            htmlFor="dropzone-file"
+                                            className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-2xl cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
+                                        >
+                                            {
+                                                (!isUploading) && (
+                                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                        <svg
+                                                            className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                                            aria-hidden="true"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 20 16"
+                                                        >
+                                                            <path
+                                                                stroke="currentColor"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                                            />
+                                                        </svg>
+                                                        <p className="mb-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center text-center flex-col 2xl:flex-row">
+                                                            <span className="font-semibold">Click to upload</span> <span className='ml-0 2xl:ml-2'>or drag and
+                                                                drop</span>
+                                                        </p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                                                            Video files only
+                                                        </p>
+                                                    </div>
+                                                )
+                                            }
 
-                                    {
-                                        (isUploading) && (
-                                            <div className='w-full flex flex-col items-center justify-center mt-4'>
-                                                <div className='flex flex-col items-center gap-x-2 text-neutral-500 text-sm'>
-                                                    <ImSpinner3 className='animate-spin text-3xl' />
-                                                    <span className='font-semibold mt-2'>
-                                                        {
-                                                            isUploading && ("Uploding")
-                                                        }
-                                                    </span>
+                                            {
+                                                (isUploading) && (
+                                                    <div className='w-full flex flex-col items-center justify-center mt-4'>
+                                                        <div className='flex flex-col items-center gap-x-2 text-neutral-500 text-sm'>
+                                                            <ImSpinner3 className='animate-spin text-3xl' />
+                                                            <span className='font-semibold mt-2'>
+                                                                {
+                                                                    isUploading && ("Uploding")
+                                                                }
+                                                            </span>
+                                                        </div>
+
+                                                        <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-purple-600 rounded-lg px-4 py-1'>
+                                                            <span>ETA:</span>
+                                                            <span>2-3 Minutes</span>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+                                            <input
+                                                id="dropzone-file"
+                                                type="file"
+                                                className="hidden"
+                                                accept="video/*"
+                                                ref={fileInputRef}
+                                                onChange={handleFileChange}
+                                                disabled={isUploading || previewUrl}
+                                                required
+                                            />
+
+                                            {
+                                                previewUrl && (
+                                                    <div key={videoRenderKey} className="absolute top-0 left-0 right-0 bottom-0">
+                                                        <Video className="w-full h-64 rounded-2xl">
+                                                            <source src={`${previewUrl}`} type='video/mp4' className='' />
+                                                        </Video>
+                                                    </div>
+                                                )
+                                            }
+
+                                        </label>
+
+                                        {
+                                            (!publicAssetExists && !selectedFile) && (
+                                                <div className="flex items-center justify-center mt-2 text-gray-500">
+                                                    Or
                                                 </div>
+                                            )
+                                        }
 
-                                                <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-purple-600 rounded-lg px-4 py-1'>
-                                                    <span>ETA:</span>
-                                                    <span>2-3 Minutes</span>
-                                                </div>
-                                            </div>
-                                        )
-                                    }
-                                    <input
-                                        id="dropzone-file"
-                                        type="file"
-                                        className="hidden"
-                                        accept="video/*"
-                                        ref={fileInputRef}
-                                        onChange={handleFileChange}
-                                        disabled={isUploading}
-                                        required
-                                    />
-                                </label>
+                                        {
+                                            (!selectedFile) && (
+                                                <input
+                                                    type="text"
+                                                    placeholder="Paste public id" className="w-full py-2 px-4 rounded-lg bg-gray-50/5 hover:bg-gray-100/10 mt-2 focus:ring-0 outline-none border-none text-gray-200"
+                                                    onChange={e => handleInputChange(e)}
+                                                />
+                                            )
+                                        }
 
-                            </div>
+                                        <div className="mt-2 w-full">
+                                            <button 
+                                            disabled={isUploading}
+                                            onClick={() => {
+                                                if (publicAssetExists) {
+                                                    handleUploadPublicAsset()
+                                                } else {
+                                                    handleUpload()
+                                                }
+                                            }} className="bg-[#4A2AC0] text-white w-full py-2 px-4 rounded-lg flex items-center justify-center gap-x-2">
+                                                {
+                                                    isUploading ? (<ImSpinner3 className='animate-spin text-xl' />) : (<TbAssembly />)
+                                                }
+
+                                                {
+                                                    !isUploading && (
+                                                        "Combine video"
+                                                    )
+                                                }
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="w-full">
+                                        <div>
+                                            <Video className="w-full h-64 rounded-2xl">
+                                                <source src={`${combinedClip}`} type='video/mp4' className='' />
+                                            </Video>
+                                        </div>
+                                        <PublishClipModal asset_url={combinedClip} />
+                                    </div>
+                                )
+                            }
                         </div>
                     </div>
 

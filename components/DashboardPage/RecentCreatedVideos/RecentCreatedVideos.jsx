@@ -19,7 +19,7 @@ const RecentCreatedVideos = ({ userId, limit }) => {
         try {
             setIsLoading(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-recent-created-video?user_id=${userId}&&limit=${limit ? limit : 1}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-recent-created-video?user_id=${userId}&&asset_status=DRAFT&&limit=${limit ? limit : 1}`);
 
             if (response?.data?.success && response?.data?.videos?.length > 0) {
                 setVideos(response?.data?.videos)

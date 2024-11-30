@@ -20,7 +20,7 @@ import { LiaPhotoVideoSolid } from "react-icons/lia";
 import { RiAiGenerate } from "react-icons/ri"
 import { LuClapperboard, LuExternalLink } from "react-icons/lu";
 import { AiOutlineDiscord } from "react-icons/ai"
-import { MdOutlineContactSupport } from "react-icons/md"
+import { MdOutlineContactSupport, MdPublishedWithChanges } from "react-icons/md"
 import { Skeleton } from "@/components/ui/skeleton"
 
 
@@ -80,6 +80,20 @@ export function AppSidebar() {
                             <Link href={"/dashboard/library"} className={`w-full rounded-lg hover:bg-[#2d2e7e]/20 ${activeLink === '/dashboard/library' && "bg-[#2d2e7e] bg-opacity-40 border border-[#2d2e7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 transition-all duration-200 ease-in-out outline-none ring-0 border-none`}>
                                 <LuClapperboard className="text-lg" />
                                 Library
+                            </Link>
+                        ) : (
+                            <div className="px-2">
+                                <Skeleton className={`w-[80%] h-[10px] rounded-lg bg-gray-500/50 flex-grow`} />
+                            </div>
+                        )
+                    }
+
+                    {
+                        isLoaded ? (
+                            <Link href={"/dashboard/published"} className={`w-full rounded-lg hover:bg-[#2d2e7e]/20 ${activeLink === '/dashboard/published' && "bg-[#2d2e7e] bg-opacity-40 border border-[#2d2e7e]"} text-neutral-200 text-xs flex items-center gap-x-2 px-4 py-2 transition-all duration-200 ease-in-out outline-none ring-0 border-none`}>
+                                <MdPublishedWithChanges className="text-lg" />
+
+                                Published
                             </Link>
                         ) : (
                             <div className="px-2">

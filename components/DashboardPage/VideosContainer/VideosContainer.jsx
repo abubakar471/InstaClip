@@ -14,8 +14,11 @@ import { ImSpinner3 } from 'react-icons/im';
 import { MdDelete } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import EditClipModal from '../EditClipModal/EditClipModal';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { IoMenu } from 'react-icons/io5';
+import PublishClipModal from '../PublishClipModal/PublishClipModal';
 
-const VideosContainer = ({ userId }) => {
+const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState('');
@@ -40,7 +43,7 @@ const VideosContainer = ({ userId }) => {
         try {
             setIsLoading(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&page=${currentPage ? currentPage : page}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&asset_status=${asset_status}&&page=${currentPage ? currentPage : page}`);
 
             if (response?.data?.success) {
                 setVideos([...videos, ...response?.data?.videos]);
@@ -62,7 +65,7 @@ const VideosContainer = ({ userId }) => {
         try {
             setIsLoading(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&page=1`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&asset_status=${asset_status}&&limit=${limit}&&page=1`);
 
             if (response?.data?.success) {
                 setVideos([...response?.data?.videos]);
@@ -118,7 +121,7 @@ const VideosContainer = ({ userId }) => {
             console.log("filter : ", filter)
             setIsFiltering(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos-by-filter?user_id=${userId}&&limit=${limit}&&page=1&&filter=${filter}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos-by-filter?user_id=${userId}&&asset_status=${asset_status}&&limit=${limit}&&page=1&&filter=${filter}`);
 
             if (response?.data?.success) {
                 setFilteredVideos([...response?.data?.videos]);
@@ -147,7 +150,7 @@ const VideosContainer = ({ userId }) => {
             console.log("filter : ", filter)
             setIsFiltering(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos-by-filter?user_id=${userId}&&limit=${limit}&&page=${filterPage}&&filter=${filter}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos-by-filter?user_id=${userId}&&asset_status=${asset_status}&&limit=${limit}&&page=${filterPage}&&filter=${filter}`);
 
             if (response?.data?.success) {
                 setFilteredVideos([...filteredVideos, ...response?.data?.videos]);
@@ -406,8 +409,46 @@ const VideosContainer = ({ userId }) => {
                         (videos?.length > 0 && filteredVideos?.length === 0) && (
                             videos?.map((v, i) => (
                                 <div key={i} className='flex flex-col gap-y-2'>
-                                    <div className='text-neutral-400 text-sm mx-2'>
-                                        {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
+                                    <div className='flex items-center justify-between gap-x-2'>
+                                        <div className='text-neutral-400 text-sm mx-2'>
+                                            {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
+                                        </div>
+
+                                        <Popover>
+                                            <PopoverTrigger>
+                                                <IoMenu className='text-gray-500 text-md' />
+                                            </PopoverTrigger>
+                                            <PopoverContent className="bg-[#000D18] flex flex-col gap-y-2 border-none">
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <EditClipModal clip_url={v?.location} />
+                                                    )
+                                                }
+
+                                                <button
+                                                    onClick={() => handleDownload(v?.location, v?.filename)}
+                                                    className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-start gap-x-2 transition-all duration-200 text-sm"
+                                                >
+                                                    <IoMdCloudDownload className="" />
+                                                    <span className=''>Download</span>
+
+
+                                                </button>
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <PublishClipModal asset_url={v?.location} className="justify-start" />
+                                                    )
+                                                }
+
+                                                <button disabled={isDeleting} onClick={() => handleDelete(v?.location, v, fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-2 px-3 rounded hover:bg-[#802e2e] flex items-center justify-start gap-x-2 border-none text-sm'>
+                                                    <MdDelete />
+                                                    Delete Clip
+                                                </button>
+
+                                            </PopoverContent>
+                                        </Popover>
                                     </div>
                                     <Video className="h-[300px] rounded-lg">
                                         <source src={`${v?.location}`} type='video/mp4' />
@@ -423,11 +464,11 @@ const VideosContainer = ({ userId }) => {
                                             <IoMdCloudDownload className="" />
                                         </button> */}
 
-                                        <EditClipModal clip_url={v?.location} />
+                                        {/* <EditClipModal clip_url={v?.location} />
 
                                         <button disabled={isDeleting} onClick={() => handleDelete(v?.location, v, fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
                                             <MdDelete />
-                                        </button>
+                                        </button> */}
 
                                         {/* <DeleteClipModal asset_url={videos[i]?.location} isDeleting={isDeleting} setIsDeleting={setIsDeleting} isOpen={isOpen} setIsOpen={setIsOpen} handleDelete={handleDelete} /> */}
                                     </div>
@@ -455,15 +496,53 @@ const VideosContainer = ({ userId }) => {
                         (filteredVideos?.length > 0 && !isFiltering) && (
                             filteredVideos?.map((v, i) => (
                                 <div key={i} className='flex flex-col gap-y-2'>
-                                    <div className='text-neutral-400 text-sm mx-2'>
-                                        {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
+                                  <div className='flex items-center justify-between gap-x-2'>
+                                        <div className='text-neutral-400 text-sm mx-2'>
+                                            {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
+                                        </div>
+
+                                        <Popover>
+                                            <PopoverTrigger>
+                                                <IoMenu className='text-gray-500 text-md' />
+                                            </PopoverTrigger>
+                                            <PopoverContent className="bg-[#000D18] flex flex-col gap-y-2 border-none">
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <EditClipModal clip_url={v?.location} />
+                                                    )
+                                                }
+
+                                                <button
+                                                    onClick={() => handleDownload(v?.location, v?.filename)}
+                                                    className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-start gap-x-2 transition-all duration-200 text-sm"
+                                                >
+                                                    <IoMdCloudDownload className="" />
+                                                    <span className=''>Download</span>
+
+
+                                                </button>
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <PublishClipModal asset_url={v?.location} className="justify-start" />
+                                                    )
+                                                }
+
+                                                <button disabled={isDeleting} onClick={() => handleDelete(v?.location, v, fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-2 px-3 rounded hover:bg-[#802e2e] flex items-center justify-start gap-x-2 border-none text-sm'>
+                                                    <MdDelete />
+                                                    Delete Clip
+                                                </button>
+
+                                            </PopoverContent>
+                                        </Popover>
                                     </div>
                                     <Video className="h-[300px] rounded-lg">
                                         <source src={`${v?.location}`} type='video/mp4' />
                                     </Video>
 
                                     <div className="flex items-center gap-x-2">
-                                        <button
+                                        {/* <button
                                             onClick={() => handleDownload(v?.location, v?.filename)}
                                             className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
                                         >
@@ -474,7 +553,7 @@ const VideosContainer = ({ userId }) => {
 
                                         <button disabled={isDeleting} onClick={() => handleDeleteForFilter(v?.location, v, filteringFunction)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
                                             <MdDelete />
-                                        </button>
+                                        </button> */}
 
                                         {/* <DeleteClipModal asset_url={filteredVideos[i]?.location} videoUrls={filteredVideoUrls} setVideoUrls={setFilteredVideoUrls} totalVideos={totalVideosFiltering} setTotalVideos={setTotalVideosFiltering} /> */}
                                     </div>
