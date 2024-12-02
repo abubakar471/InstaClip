@@ -175,13 +175,13 @@ body {
 }
 
 /* clerk js css */
-.cl-internal-1p733cp{
+.cl-internal-1p733cp {
   /* background-color: #0c2130; */
   color: black;
   border-radius: 0px;
 }
 
-.cl-headerTitle{
+.cl-headerTitle {
   color: white;
 }
 
@@ -197,17 +197,17 @@ body {
   background-color: #051119;
 }
 
-.cl-footer{
+.cl-footer {
   background-color: #051119;
 }
 
-.cl-internal-1hp5nqm{
+.cl-internal-1hp5nqm {
   display: none;
 }
 
 /* ----------------------------- */
 
-.sidebar-transition{
+.sidebar-transition {
   transition: width 2s, height 4s;
 }
 
@@ -223,7 +223,7 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%; */
   }
- 
+
   .dark {
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -238,10 +238,19 @@ body {
 
 /* ------------------------- */
 
-.cl-internal-i2i1cv{
+.cl-internal-i2i1cv {
   background-color: #19183A !important;
 }
 
-.cl-internal-160xye5{
+.cl-internal-160xye5 {
   background-color: #162845 !important;
+}
+
+.rh5v-DefaultPlayer_controls{
+  background-color: #4b2ac0 !important;
+}
+
+.rh5v-Overlay_inner{
+  background-color: #28097262 !important;
+  border-radius: 50% !important;
 }

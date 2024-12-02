@@ -18,12 +18,14 @@ import { FaVideo } from "react-icons/fa";
 import { MdOutlineSplitscreen } from "react-icons/md";
 import { DefaultPlayer as Video } from "react-html5video"
 import 'react-html5video/dist/styles.css'
+import { CldVideoPlayer } from "next-cloudinary"
 import { ImSpinner3 } from "react-icons/im";
 import { TbAssembly, TbHourglassEmpty } from "react-icons/tb";
 import axios from "axios";
 import PublishClipModal from "../PublishClipModal/PublishClipModal";
 import { assets as featured_assets } from "@/data/featured_assets";
 import { assets as public_assets } from "@/data/community_creations";
+import { RxCross1 } from "react-icons/rx";
 
 const EditClipModal = ({ clip_url }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -142,7 +144,7 @@ const EditClipModal = ({ clip_url }) => {
         formData.append("user_id", user?.id);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/upload`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/upload-clip`, {
                 method: "POST",
                 body: formData,
             });
@@ -254,9 +256,9 @@ const EditClipModal = ({ clip_url }) => {
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] md:max-w-6xl lg::max-w-7xl h-[80vh] mx-auto !bg-[#162845] border-none flex flex-col gap-y-0 items-start justify-start">
-                    <div className="flex w-full mt-10 gap-x-6 relative flex-wrap xl:flex-nowrap">
-                        <div className="w-full xl:w-4/12 border-none xl:border-r border-[#4385c2]/20 flex-grow min-h-auto">
+                <DialogContent className="sm:max-w-[425px] md:max-w-3xl lg::max-w-3xl h-[90vh] mx-auto !bg-[#162845] border-none flex flex-col gap-y-0 items-start justify-start">
+                    <div className="flex flex-col justify-center w-full mt-10 gap-x-6 relative flex-wrap xl:flex-nowrap">
+                        {/* <div className="w-full xl:w-4/12 border-none xl:border-r border-[#4385c2]/20 flex-grow min-h-auto">
                             <div className="w-full">
                                 <div className="bg-[#235a8d]/40 backdrop-blur-2xl w-fit xl:w-[70%] mx-auto text-center py-2 rounded-lg relative cursor-pointer">
                                     <div className="text-[#61a6e7] text-center text-sm flex items-center gap-x-2 px-4">
@@ -269,15 +271,24 @@ const EditClipModal = ({ clip_url }) => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
-                        <div className="w-full xl:w-8/12 h-full">
+
+                        <div className="w-full h-full">
+
+                            {
+                                !isCombined && (
+                                    <Video className="w-full h-64 rounded-2xl">
+                                        <source src={`${clip_url}`} type='video/mp4' className='' />
+                                    </Video>
+                                )
+                            }
                             {
                                 !isCombined ? (
                                     <div className="w-full">
                                         <label
                                             htmlFor="dropzone-file"
-                                            className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-2xl cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
+                                            className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-3xl cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
                                         >
                                             {
                                                 (!isUploading) && (
@@ -368,16 +379,16 @@ const EditClipModal = ({ clip_url }) => {
                                             )
                                         }
 
-                                        <div className="mt-2 w-full">
-                                            <button 
-                                            disabled={isUploading}
-                                            onClick={() => {
-                                                if (publicAssetExists) {
-                                                    handleUploadPublicAsset()
-                                                } else {
-                                                    handleUpload()
-                                                }
-                                            }} className="bg-[#4A2AC0] text-white w-full py-2 px-4 rounded-lg flex items-center justify-center gap-x-2">
+                                        <div className="mt-2 w-full flex items-center gap-x-2">
+                                            <button
+                                                disabled={isUploading}
+                                                onClick={() => {
+                                                    if (publicAssetExists) {
+                                                        handleUploadPublicAsset()
+                                                    } else {
+                                                        handleUpload()
+                                                    }
+                                                }} className="bg-[#4A2AC0] text-white w-full py-2 px-4 rounded-lg flex items-center justify-center gap-x-2">
                                                 {
                                                     isUploading ? (<ImSpinner3 className='animate-spin text-xl' />) : (<TbAssembly />)
                                                 }
@@ -388,6 +399,19 @@ const EditClipModal = ({ clip_url }) => {
                                                     )
                                                 }
                                             </button>
+
+                                            {
+                                                selectedFile && (
+                                                    <button
+                                                        onClick={() => handleClear()}
+                                                        className="mt-4 mb-4 px-4 py-3 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 flex items-center gap-x-2 transition-all duration-300 ease-in-out"
+                                                        disabled={isUploading}
+                                                    >
+                                                        <RxCross1 />
+
+                                                    </button>
+                                                )
+                                            }
                                         </div>
                                     </div>
                                 ) : (

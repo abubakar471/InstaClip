@@ -602,7 +602,7 @@ const UploadVideo = ({ userId }) => {
 
                     {
                         (isExporting || isImportingSocialVideo) && (
-                            <div className='flex items-center gap-x-2'>
+                            <div className='flex items-center gap-x-2  mt-2'>
                                 <Skeleton className={`w-full lg:w-1/2 h-[300px] bg-gray-500/40 flex items-center justify-center`}>
                                     <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
                                 </Skeleton>
