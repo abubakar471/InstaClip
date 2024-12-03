@@ -63,7 +63,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
 
 
                     <div className='w-full'>
-                        <Video className="w-full h-[400px] rounded-lg mt-4">
+                        <Video className="w-full h-[400px] rounded-3xl mt-4">
                             <source src={`${url}`} type='video/mp4' className='' />
                         </Video>
                     </div>

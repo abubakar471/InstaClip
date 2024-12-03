@@ -54,8 +54,8 @@ const RecentCreatedVideos = ({ userId, limit }) => {
                                 <div className='mt-0 flex items-center gap-x-4 w-full'>
                                     {
                                         !isLoading && (
-                                            <div className='w-full bg-gray-500/20 p-2 rounded-2xl'>
-                                                <Video className="h-[300px] rounded-lg">
+                                            <div className='w-full bg-gray-500/20 p-2 rounded-3xl'>
+                                                <Video className="h-[300px] rounded-3xl">
                                                     <source src={`${item?.location}`} type='video/mp4' className='' />
                                                 </Video>
                                             </div>

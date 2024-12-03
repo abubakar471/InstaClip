@@ -450,7 +450,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                                             </PopoverContent>
                                         </Popover>
                                     </div>
-                                    <Video className="h-[300px] rounded-lg">
+                                    <Video className="h-[300px] rounded-3xl">
                                         <source src={`${v?.location}`} type='video/mp4' />
                                     </Video>
 
@@ -537,7 +537,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                                             </PopoverContent>
                                         </Popover>
                                     </div>
-                                    <Video className="h-[300px] rounded-lg">
+                                    <Video className="h-[300px] rounded-3xl">
                                         <source src={`${v?.location}`} type='video/mp4' />
                                     </Video>
 

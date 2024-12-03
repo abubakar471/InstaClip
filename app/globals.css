@@ -248,8 +248,27 @@ body {
 
 .rh5v-DefaultPlayer_controls{
   background-color: #4b2ac0 !important;
+  border-radius: 0 0 20px 20px !important;
 }
 
+.rh5v-PlayPause_component {
+  background-color: transparent !important;
+}
+
+.rh5v-Volume_component{
+  background-color: transparent !important;
+}
+
+.rh5v-Fullscreen_component  {
+  background-color: transparent !important;
+}
+
+.rh5v-DefaultPlayer_video{
+  border-radius: 50px !important;
+}
+.rh5v-Overlay_component{
+  border-radius: 50px !important;
+}
 .rh5v-Overlay_inner{
   background-color: #28097262 !important;
   border-radius: 50% !important;
