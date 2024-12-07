@@ -3,9 +3,9 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 import ExportedVideoPreviews from '../ExportedVideoPreviews/ExportedVideoPreviews';
-import { ImSpinner3 } from "react-icons/im";
+import { ImFilePlay, ImSpinner3 } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
-import { MdCloudUpload, MdOutlinePermMedia, MdOutlinePhotoLibrary, MdPermMedia } from 'react-icons/md';
+import { MdCloudUpload, MdOutlinePermMedia, MdOutlinePhotoLibrary, MdPermMedia, MdUploadFile } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
@@ -18,6 +18,13 @@ import { FaYoutube } from 'react-icons/fa';
 import { Skeleton } from '@/components/ui/skeleton';
 import PublicLibraryAssets from './PublicLibraryAssets';
 import FeaturedAssets from './FeaturedAssets';
+import { FaFileArrowUp } from 'react-icons/fa6';
+import { PiYoutubeLogo } from 'react-icons/pi';
+import { IoMdTime } from 'react-icons/io';
+import { RiGalleryLine } from 'react-icons/ri';
+import { Film } from 'lucide-react';
+import { LuVideo } from "react-icons/lu";
+import Link from 'next/link';
 
 // import {GiFairyWand} from "react-icons/gi"
 
@@ -58,6 +65,7 @@ const UploadVideo = ({ userId }) => {
     const handleClear = () => {
         setPreviewUrl(null);
         setSelectedFile(null);
+        setExportedVideos([])
         if (fileInputRef.current) {
             fileInputRef.current.value = ""; // Reset the file input value
         }
@@ -417,22 +425,22 @@ const UploadVideo = ({ userId }) => {
 
     return (
         <div>
-            <div className='grid grid-cols-1 lg:grid-cols-10 2xl:grid-cols-12 gap-10 mt-4 mb-10 relative'>
-                <div className='min-h-screen max-h-fit col-span-0 lg:col-span-4 2xl:col-span-4 bg-[#111d27] px-4 rounded-2xl w-full'>
-                    <Tabs defaultValue="create_clips" className="w-full mt-4 !bg-transparent">
-                        <TabsList className="w-full bg-gray-500/10">
-                            <TabsTrigger value="create_clips" className="w-1/2">
-                                <div className='flex items-center gap-x-2 text-xs'>
-                                    <MdOutlinePermMedia />
-
-                                    Create Clips
+            <div className='w-[90%] xl:w-[70%] 2xl:w-[60%] mx-auto gap-10 mt-4 mb-10 relative'>
+                <h1 className='text-3xl text-[#FDFFFF] font-semibold'>Create New Video</h1>
+                <p className='text-neutral-500 text-sm mt-2'>Import or create content from various platforms</p>
+                <div className='min-h-screen max-h-fit col-span-0 lg:col-span-4 2xl:col-span-4 bg-transparent px-0 rounded-2xl w-full mt-6'>
+                    <Tabs defaultValue="create_clips" className="w-full !bg-transparent">
+                        <TabsList className="w-fit bg-[#08090C] flex items-center justify-start gap-x-2">
+                            <TabsTrigger value="create_clips" className="w-fit">
+                                <div className='flex items-center gap-x-2 text-xs py-1'>
+                                    <MdUploadFile className='text-[1rem]' />
+                                    Upload Video
                                 </div>
                             </TabsTrigger>
-                            <TabsTrigger value="password" className="w-1/2">
-                                <div className='flex items-center gap-x-2 text-xs'>
-                                    <FaYoutube />
-
-                                    Import Video
+                            <TabsTrigger value="password" className="w-fit">
+                                <div className='flex items-center gap-x-2 text-xs py-1'>
+                                    <PiYoutubeLogo className='text-[1rem]' />
+                                    YouTube Import
                                 </div>
                             </TabsTrigger>
                         </TabsList>
@@ -440,33 +448,46 @@ const UploadVideo = ({ userId }) => {
 
                             <label
                                 htmlFor="dropzone-file"
-                                className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-lg cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
+                                className="mt-8 flex flex-col items-center justify-center w-full min-h-64 border-dashed border-4 border-gray-300/5 rounded-lg cursor-pointer bg-[#07080A] hover:bg-[#07080A]/50 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-300 ease-in-out"
                             >
                                 {
                                     (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
                                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <svg
-                                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 20 16"
-                                            >
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                                />
-                                            </svg>
-                                            <p className="mb-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center text-center flex-col 2xl:flex-row">
+                                            <div className='bg-[#1D1B4C] p-4 rounded-xl flex items-center justify-center w-fit'>
+                                                <ImFilePlay className='text-[#6770CC] text-2xl' />
+                                            </div>
+                                            {/* <p className="mb-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center text-center flex-col 2xl:flex-row">
                                                 <span className="font-semibold">Click to upload</span> <span className='ml-0 2xl:ml-2'>or drag and
                                                     drop</span>
                                             </p>
                                             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                                                 Video files only
-                                            </p>
+                                            </p> */}
+                                            <h4 className='text-lg text-[#FDFFFF] mt-4 text-center'>Drop your video here</h4>
+                                            <p className='text-[#4E545A] text-sm mt-1 text-center px-10 lg:px-0'>Upload your video files to create engaging short-form content automatically</p>
+                                            <div className='flex items-center gap-x-4 gap-y-2 mt-4 px-4 justify-center flex-wrap md:flex-nowrap'>
+                                                <div className='flex items-center gap-x-1 text-[#343943] text-sm text-center'>
+                                                    <MdUploadFile className='text-[1rem]' />
+                                                    MP4, MOV
+                                                </div>
+
+                                                <div className='flex items-center gap-x-1 text-[#343943] text-sm text-center'>
+                                                    <IoMdTime className='text-[1rem]' />
+                                                    Any Duration
+                                                </div>
+
+                                                <div className='flex items-center gap-x-1 text-[#343943] text-sm text-center'>
+                                                    <RiGalleryLine className='text-[1rem]' />
+                                                    Up to 100MB
+                                                </div>
+                                            </div>
+
+                                            <div className='mt-4'>
+                                                <div className='bg-transparent border-2 border-neutral-500/20 flex items-center gap-x-2 px-4 py-1 rounded-md text-[#4E545A] text-sm '>
+                                                    <MdUploadFile className='text-[1rem]' />
+                                                    Browse Files
+                                                </div>
+                                            </div>
                                         </div>
                                     )
                                 }
@@ -534,7 +555,7 @@ const UploadVideo = ({ userId }) => {
                                             <button
                                                 ref={uploadBtnRef}
                                                 onClick={handleUpload}
-                                                className="mt-4 mb-4 px-4 py-2 bg-[#4a2ac0] text-white text-sm rounded-lg hover:bg-[#392a6e] flex items-center justify-center gap-x-2 transition-all duration-300 ease-in-out w-full"
+                                                className="mt-4 mb-4 px-4 py-2 bg-[#4F46E5] text-white text-sm rounded-lg hover:bg-[#4F46E5]/80 flex items-center justify-center gap-x-2 transition-all duration-300 ease-in-out w-full"
                                                 disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
                                             >
                                                 <MdCloudUpload />
@@ -590,8 +611,15 @@ const UploadVideo = ({ userId }) => {
 
                     {
                         (exportedVideos?.length > 0 && !isImportingSocialVideo && !isExporting) && (
-                            <div className='mb-10'>
-                                <h3 className='text-lg text-neutral-200 mt-12'>Your Generated Short Clips:</h3>
+                            <div className='mt-6 mb-10'>
+                                <div className='w-full flex items-center justify-between'>
+                                    <div className='flex items-center gap-x-2 text-[#FDFFFF]/80 text-lg font-semibold'>
+                                        <LuVideo className='text-[1.3rem]' />
+                                        Generated Shorts
+                                    </div>
+
+                                    <button onClick={() => handleClear()} className='border-2 border-neutral-500/20 text-[#676d74] text-xs px-2 py-1 rounded-lg'>Generate More</button>
+                                </div>
 
                                 <div>
                                     <ExportedVideoPreviews socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} />
@@ -613,40 +641,24 @@ const UploadVideo = ({ userId }) => {
                         )
                     }
 
-                    {
+                    {/* {
                         (exportedVideos?.length == 0 && !isExporting && !isImportingSocialVideo) && (
                             <RecentCreatedVideos userId={userId} limit={1} />
                         )
-                    }
-                </div>
+                    } */}
 
-                <div className='col-span-0 lg:col-span-6 2xl:col-span-8'>
-                    <div>
-                        <div className='w-full px-0'>
-                            <div className='bg-gradient-to-r from-[#4a2ac0]/20 to-[#603ce2]/60 text-xs flex items-center gap-x-2 w-fit px-4 py-2 rounded-full text-white mb-2'>
-                                <MdOutlinePhotoLibrary />
-                                <span className='text-white'>Featured Assets</span>
+                    <div className='mt-4'>
+                        <div className='w-full flex items-center justify-between'>
+                            <div className='flex items-center gap-x-2 text-[#FDFFFF]/80 text-lg font-semibold'>
+                                <Film />
+                                Community Creations
                             </div>
+
+                            <Link href={"/public"} className='border-2 border-neutral-500/20 text-[#676d74] text-xs px-2 py-1 rounded-lg'>View All</Link>
                         </div>
 
-                        <div className='mt-4'>
-                            {/* <PublicLibraryAssets /> */}
-                            <FeaturedAssets />
-                        </div>
-
-                        <div className='w-full px-0 mt-10'>
-                            <div className='bg-gradient-to-r from-[#4a2ac0]/20 to-[#603ce2]/60 text-xs flex items-center gap-x-2 w-fit px-4 py-2 rounded-full text-white mb-2'>
-                                <MdOutlinePhotoLibrary />
-                                <span className='text-white'>Community Creations</span>
-                            </div>
-                        </div>
-
-                        <div className='mt-4'>
-                            <PublicLibraryAssets />
-                        </div>
+                        <FeaturedAssets />
                     </div>
-
-
                 </div>
             </div>
         </div >

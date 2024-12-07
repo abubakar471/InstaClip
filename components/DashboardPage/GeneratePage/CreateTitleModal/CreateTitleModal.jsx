@@ -67,14 +67,20 @@ const CreateTitleModal = ({ asset_url }) => {
         (isSignedIn && isLoaded) && (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="grow mt-2 bg-[#36339e] !text-white !text-xs py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 border-none">
-                        <FaSave />
+                    <Button variant="outline" className="grow mt-2 border-2 border-white/20 !text-white !text-xs py-2 px-3 rounded hover:bg-[#4F46E5]/80 flex items-center justify-center gap-x-2 border-none relative glassy-btn">
+                        <div className="flex items-center gap-x-2 z-50">
+                            <FaSave />
 
-                        Save to library
+                            Save to library
+                        </div>
+
+                        <div className="bg-gray-100/10 backdrop-blur-sm absolute top-0 left-0 right-0 bottom-0 w-full rounded">
+
+                        </div>
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] !bg-[#162845] border-none">
+                <DialogContent className="sm:max-w-[425px] !bg-[#0F1117] border-none">
                     <DialogHeader>
                         <DialogTitle className="text-neutral-300">Create Title For Your Video</DialogTitle>
                         {/* <DialogDescription>
@@ -94,7 +100,7 @@ const CreateTitleModal = ({ asset_url }) => {
 
                     </div>
                     <DialogFooter>
-                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-blue-600 disabled:bg-blue-400/50 hover:bg-blue-700 !text-white py-2 ${isLoading ? "px-8" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm`}>
+                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-[#4F46E5] disabled:bg-blue-400/50 hover:bg-[#4F46E5]/80 !text-white py-2 ${isLoading ? "px-8" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm transition-all duration-300 ease-in-out`}>
                             {
                                 isLoading ? (<AiOutlineLoading3Quarters className="animate-spin" />) : (<div className="flex items-center gap-x-2">
                                     <FaSave />

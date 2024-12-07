@@ -3,7 +3,7 @@ export const assets = [
         id: "p-df9f9e0f-a3b1-4d0a-92b7-6c655a85bd9f",
         category: "minecraft",
         source: "PUBLIC_ASSETS",
-        title: "TENZ teach a way to play good in valorant",
+        title: "TENZ teach a way to play good",
         url: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/public/1.mp4`,
         cover: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/covers/1.jpg`
     },
@@ -19,7 +19,7 @@ export const assets = [
         id: "p-f28d1faa-5d49-4d73-a865-9b63f8498765",
         category: "minecraft",
         source: "PUBLIC_ASSETS",
-        title: "Sunset Map new changes | Lighting is just perfect now",
+        title: "Sunset Map new changes",
         url: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/public/3.mp4`,
         cover: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/covers/3.jpg`
     },

@@ -36,7 +36,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
         }
     }
     return (
-        <div className={cn("h-[200px]", className)}>
+        <div className={cn("h-[350px]", className)}>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                     <div className={`w-full h-full rounded-2xl cursor-pointer relative`} style={{
@@ -53,7 +53,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
                     </div>
                 </DialogTrigger>
 
-                <DialogContent className="max-w-[90%] sm:max-w-[90%] md:max-w-3xl lg::max-w-7xl h-[80vh] mx-auto rounded-3xl !bg-[#162845] border-none flex flex-col gap-y-0 items-start justify-start overflow-y-auto pb-10">
+                <DialogContent className="max-w-[90%] sm:max-w-[90%] md:max-w-3xl lg::max-w-7xl h-[80vh] mx-auto rounded-3xl !bg-[#0F1117] border-none flex flex-col gap-y-0 items-start justify-start overflow-y-auto pb-10">
                     <DialogHeader>
                         {/* <DialogTitle className="text-neutral-300">Are you sure you want to delete this clip?</DialogTitle> */}
                         {/* <DialogDescription>

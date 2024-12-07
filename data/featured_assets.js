@@ -19,9 +19,17 @@ export const assets = [
         id: "p-544e212f-7542-4332-acaa-5dcf3a68de37",
         category: "minecraft",
         source: "FEATURED_ASSETS",
-        title: "How to build a indestructible house in minecraft | Watch live 2024",
+        title: "How to build a indestructible house in minecraft",
         url: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/public/p-544e212f-7542-4332-acaa-5dcf3a68de37.mp4`,
         cover: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/covers/p-6bb07356-be55-425d-851a-26fa12d37269.jpg`
     },
-    
+    {
+        id: "p-544e212f-7542-4332-acaa-5dcf3a68de37",
+        category: "minecraft",
+        source: "FEATURED_ASSETS",
+        title: "How to build a indestructible house in minecraft",
+        url: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/public/p-544e212f-7542-4332-acaa-5dcf3a68de37.mp4`,
+        cover: `${process.env.NEXT_PUBLIC_FLASK_API_URL}/uploads/covers/p-6bb07356-be55-425d-851a-26fa12d37269.jpg`
+    },
+
 ]
