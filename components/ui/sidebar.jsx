@@ -17,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { MdKeyboardArrowLeft } from "react-icons/md";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -146,7 +147,7 @@ const Sidebar = React.forwardRef((
     return (
       (<div
         className={cn(
-          "flex h-full w-[--sidebar-width] flex-col !bg-[#000D18] text-sidebar-foreground",
+          "flex h-full w-[--sidebar-width] flex-col !bg-[#0F1117] text-sidebar-foreground",
           className
         )}
         ref={ref}
@@ -162,7 +163,7 @@ const Sidebar = React.forwardRef((
         <SheetContent
           data-sidebar="sidebar"
           data-mobile="true"
-          className="w-[--sidebar-width] !bg-[#000D18] p-0 text-sidebar-foreground [&>button]:hidden border border-gray-500/20"
+          className="w-[--sidebar-width] !bg-[#0F1117] p-0 text-sidebar-foreground [&>button]:hidden border border-gray-500/20"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE
@@ -208,7 +209,7 @@ const Sidebar = React.forwardRef((
         {...props}>
         <div
           data-sidebar="sidebar"
-          className="flex h-full w-full flex-col bg-[#000D18] group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow">
+          className="flex h-full w-full flex-col bg-[#0F1117] group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow">
           {children}
         </div>
       </div>
@@ -217,24 +218,25 @@ const Sidebar = React.forwardRef((
 })
 Sidebar.displayName = "Sidebar"
 
-const SidebarTrigger = React.forwardRef(({ className, onClick, ...props }, ref) => {
+const SidebarTrigger = React.forwardRef(({ children,className, onClick, ...props }, ref) => {
   const { toggleSidebar } = useSidebar()
 
   return (
-    (<Button
+    (<button
       ref={ref}
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7 bg-gray-500/20 hover:bg-gray-600/20", className)}
+      className={cn(" hover:bg-transparent bg-transparent flex items-center gap-x-2", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}>
-      <PanelLeft className="text-white bg-transparent" />
+      <MdKeyboardArrowLeft className="text-neutral-400 bg-transparent !text-[1reem] !p-0" />
+      <span className="text-xs">{children}</span>
       <span className="sr-only">Toggle Sidebar</span>
-    </Button>)
+    </button>)
   );
 })
 SidebarTrigger.displayName = "SidebarTrigger"
@@ -499,7 +501,7 @@ const SidebarMenuAction = React.forwardRef(({ className, asChild = false, showOn
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
+        "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
         className
       )}
       {...props} />)

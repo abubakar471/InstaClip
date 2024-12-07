@@ -10,7 +10,7 @@ export const BackgroundLines = ({
 }) => {
   return (
     (<div
-      className={cn("min-h-screen w-full bg-transparent", className)}>
+      className={cn("min-h-screen w-full bg-transparent z-50", className)}>
       <div className="hidden lg:block !-z-50">
         <SVG svgOptions={svgOptions} className="" />
       </div>

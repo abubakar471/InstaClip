@@ -9,7 +9,7 @@ import { SignedIn, SignedOut } from '@clerk/nextjs';
 
 const Navbar = () => {
     return (
-        <div className='mt-10 w-[90%] lg:w-full mx-auto'>
+        <div className='pt-10 w-[90%] lg:w-full mx-auto !z-50'>
             <nav className='relative w-full lg:w-[70%] xl:w-[60%] mx-auto flex items-center justify-between'>
                 <Link href={"/"} className='flex items-start text-[#c1dcf1] gap-x-2'>
                     <Image src={"/assets/images/logo3.png"} alt='InstaClip' width={120} height={120} className='w-[30px] h-[30px]' />
@@ -20,14 +20,14 @@ const Navbar = () => {
                     </div>
                 </Link>
 
-                <div className='absolute left-[50%] -translate-x-1/2 hidden lg:flex items-center justify-between gap-x-6 border-r-0 xl:border-r-2 borlder-l-0 xl:border-l-2 border-white/10 px-8 mx-2 '>
+                <div className='absolute left-[50%] -translate-x-1/2 hidden lg:flex items-center justify-between gap-x-6 border-r-0 xl:border-r-2 borlder-l-0 xl:border-l-2 border-white/10 px-8 mx-2 z-50 '>
                     <Link href={"#"} className='text-[#c1dcf1] text-sm'>Home</Link>
                     <Link href={"#"} className='text-[#c1dcf1] text-sm'>Features</Link>
                     <Link href={"/#pricing"} className='text-[#c1dcf1] text-sm'>Pricing</Link>
                     <Link href={"#faqs"} className='text-[#c1dcf1] text-sm'>FAQs</Link>
                 </div>
 
-                <div className='flex items-center gap-x-4'>
+                <div className='flex items-center gap-x-4 z-50'>
                     <SignedIn>
                         <Link href={"/dashboard"} className="hidden md:inline-flex items-center justify-center font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 px-3 rounded-2xl border border-violet-300/30 text-sm bg-[#1D1A34] text-violet-300 h-8 hover:bg-violet-300/30">Dashboard</Link>
                     </SignedIn>

@@ -9,16 +9,16 @@ import Navbar from '../Navbar/Navbar'
 
 const Hero = () => {
     return (
-        <BackgroundLines className={`w-[90%] mx-auto`}>
+        <BackgroundLines className={`w-[90%] mx-auto !z-[999]`}>
             <div className="min-h-screen w-full mt-20 ">
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center z-50">
                     <div className="w-fit px-4 py-[5px] rounded-full flex items-center gap-x-2 bg-gradient-to-b from-[#445c73]/10 via-[#1E1F40] to-[#445c73]/10 border border-white/10">
                         <RiSparklingFill className="text-[#c1dcf1] text-xs" />
                         <span className="text-[#c1dcf1] text-xs">New Tik Tok Integration</span>
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center justify-center mt-6 gap-y-2">
+                <div className="flex flex-col items-center justify-center mt-6 gap-y-2 z-50">
                     <h2 className={`text-5xl text-[#c1dcf1] text-center`}>
                         Create viral <span className="text-[#85c4f3]" id="landing-hero-span-1">short-form</span>
                     </h2>
@@ -27,11 +27,11 @@ const Hero = () => {
                     </h2>
                 </div>
 
-                <div className="max-w-md mx-auto text-center text-[#c1dcf1] text-lg mt-4">
+                <div className="max-w-md mx-auto text-center text-[#c1dcf1] text-lg mt-4 z-50">
                     InstaClip generates short-form viral content instantly with AI. No more countless hours editing required.
                 </div>
 
-                <div className="mt-10">
+                <div className="mt-10 z-50">
                     <div className="flex items-center gap-x-2 md:gap-x-4 gap-y-3 flex-wrap justify-around sm:justify-center mt-4">
                         <div className="flex items-center gap-x-2 text-[#c1dcf1] text-sm">
                             <TbBolt />
@@ -52,7 +52,7 @@ const Hero = () => {
                     <HeroVideoContainer />
                 </div>
 
-                <div className="absolute inset-0 -z-10 h-full w-full bg-transparent bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:48px_48px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-fuchsia-400 opacity-20 blur-[100px]"></div></div>
+                <div className="absolute inset-0 !z-10 h-full w-full bg-transparent bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:48px_48px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-fuchsia-400 opacity-20 blur-[100px]"></div></div>
             </div>
         </BackgroundLines>
     )

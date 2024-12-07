@@ -10,7 +10,7 @@ import Pricing from "@/components/HomePage/Pricing/Pricing";
 
 export default function Home() {
   return (
-    <main>
+    <main className="bg-[#000d18]">
       <Navbar />
       <Hero />
       <Pricing />
