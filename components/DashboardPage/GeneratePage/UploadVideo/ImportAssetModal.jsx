@@ -85,7 +85,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
                                 {id?.length > 10 ? id?.slice(0, 10) + "..." : id}
 
                             </div>
-                            <CreateTitleModal asset_url={url} />
+                            <CreateTitleModal asset_url={url} public_thumbnail={cover} className={"!bg-[#4F46E5] hover:!bg-[#4F46E5]/30"} />
                         </div>
                     </div>
 

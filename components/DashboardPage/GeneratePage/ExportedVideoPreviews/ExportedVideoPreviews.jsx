@@ -46,10 +46,10 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => 
 
     return (
         <div key={socialExportedVideoRenderKey} className="w-full mx-auto mt-4 grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 gap-x-4 gap-y-4">
-            {videoUrls.map((url, index) => (
+            {videoUrls.map((v, index) => (
                 <div key={index} className="flex flex-col gap-y-2 w-full relative">
                     <Video className="w-full h-[350px] rounded-2xl" controls={false}>
-                        <source src={`${url}`} type='video/mp4' className='' />
+                        <source src={`${v?.location}`} type='video/mp4' className='' />
                     </Video>
 
                     {/* <button
@@ -61,7 +61,7 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => 
                <IoMdCloudDownload className="" />
            </button> */}
                     <div className="flex items-center justify-center gap-x-2 w-full mx-auto px-4 absolute bottom-4">
-                        <CreateTitleModal asset_url={videoPaths[index]} />
+                        <CreateTitleModal asset_url={videoPaths[index]?.location} thumbnails={v?.thumbnails} />
                         {/* <DeleteClipModal asset_url={videoPaths[index]} videoUrls={videoUrls} setVideoUrls={setVideoUrls} /> */}
                     </div>
                 </div>
