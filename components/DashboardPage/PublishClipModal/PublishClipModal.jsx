@@ -17,15 +17,18 @@ import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { useUser } from "@clerk/nextjs"
 import axios from "axios"
-import { useState } from "react"
+import Image from "next/image"
+import { useEffect, useState } from "react"
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { BiError } from "react-icons/bi"
 import { FaSave } from "react-icons/fa"
 import { MdPublish } from "react-icons/md"
 
-const PublishClipModal = ({ asset_url, className }) => {
+const PublishClipModal = ({ asset_url, thumbnails, draftThumnail, className }) => {
     const [title, setTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [thumbnail, setThumbnail] = useState(null);
 
     const { user, isLoaded, isSignedIn } = useUser();
     const { toast } = useToast();
@@ -33,6 +36,24 @@ const PublishClipModal = ({ asset_url, className }) => {
 
     const handleSave = async (e) => {
         if (!title) {
+            toast({
+                variant: "default",
+                description: `Please create a title for your clip`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            return;
+        }
+
+        if (!thumbnail) {
+            toast({
+                variant: "default",
+                description: `Please select a thumbnail`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
             return;
         }
 
@@ -42,7 +63,8 @@ const PublishClipModal = ({ asset_url, className }) => {
             const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/publish-asset`, {
                 title: title,
                 asset_url: asset_url,
-                user_id: user?.id
+                user_id: user?.id,
+                thumbnail: thumbnail
             })
 
             if (res?.data?.success) {
@@ -54,7 +76,7 @@ const PublishClipModal = ({ asset_url, className }) => {
                     description: "Clip published",
                 })
 
-                window.location.href = "/dashboard/library"
+                window.location.href = "/dashboard/published"
             }
         } catch (err) {
             console.log(err);
@@ -67,6 +89,14 @@ const PublishClipModal = ({ asset_url, className }) => {
 
 
     }
+
+    const handleSelect = (url) => {
+        setThumbnail(url);
+    }
+
+    useEffect(() => {
+        setThumbnail(draftThumnail)
+    }, [draftThumnail])
     return (
         (isSignedIn && isLoaded) && (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -78,7 +108,7 @@ const PublishClipModal = ({ asset_url, className }) => {
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] !bg-[#162845] border-none">
+                <DialogContent className="sm:max-w-[425px] lg:max-w-5xl !bg-[#0F1117] border-none">
                     <DialogHeader>
                         <DialogTitle className="text-neutral-300">Create Title For Your Published Clip</DialogTitle>
                         {/* <DialogDescription>
@@ -96,9 +126,21 @@ const PublishClipModal = ({ asset_url, className }) => {
                             />
                         </div>
 
+                        {
+                            !draftThumnail && (
+                                <div className="grid grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-3 h-[230px]">
+                                    {
+                                        thumbnails?.length > 0 && thumbnails?.map((item, index) => (
+                                            <Image src={`${item}`} width={800} height={800} alt={`${item}`} className={`${thumbnail === item ? "border-2 border-[#4F46E5]/90 rounded-3xl cursor-pointer h-[100px] lg:h-[150px] w-full object-cover" : "h-[100px] lg:h-[150px] w-full object-cover rounded-3xl cursor-pointer border-none"}`} onClick={() => handleSelect(item)} />
+                                        ))
+                                    }
+                                </div>
+                            )
+                        }
+
                     </div>
                     <DialogFooter>
-                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-blue-600 disabled:bg-blue-400/50 hover:bg-blue-700 !text-white py-2 ${isLoading ? "px-8" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm`}>
+                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-[#4F46E5] disabled:bg-blue-400/50 hover:bg-[#4F46E5]/80 !text-white py-2 ${isLoading ? "px-8" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm`}>
                             {
                                 isLoading ? (<AiOutlineLoading3Quarters className="animate-spin" />) : (<div className="flex items-center gap-x-2">
                                     <MdPublish />

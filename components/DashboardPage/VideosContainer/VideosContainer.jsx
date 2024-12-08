@@ -438,7 +438,7 @@ const VideosContainer = ({ userId, asset_status }) => {
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
-                                                        <PublishClipModal asset_url={v?.location} className="justify-start" />
+                                                        <PublishClipModal asset_url={v?.location} draftThumnail={v?.thumbnail} className="justify-start" />
                                                     )
                                                 }
 
@@ -496,7 +496,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                         (filteredVideos?.length > 0 && !isFiltering) && (
                             filteredVideos?.map((v, i) => (
                                 <div key={i} className='flex flex-col gap-y-2'>
-                                  <div className='flex items-center justify-between gap-x-2'>
+                                    <div className='flex items-center justify-between gap-x-2'>
                                         <div className='text-neutral-400 text-sm mx-2'>
                                             {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
                                         </div>
@@ -525,7 +525,7 @@ const VideosContainer = ({ userId, asset_status }) => {
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
-                                                        <PublishClipModal asset_url={v?.location} className="justify-start" />
+                                                        <PublishClipModal asset_url={v?.location} className="justify-start" draftThumnail={v?.thumbnail} />
                                                     )
                                                 }
 

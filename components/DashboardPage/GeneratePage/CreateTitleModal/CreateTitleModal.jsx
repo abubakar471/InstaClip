@@ -20,7 +20,8 @@ import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FaSave } from "react-icons/fa"
+import { BiError } from "react-icons/bi"
+import { FaCheck, FaSave } from "react-icons/fa"
 
 const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, className }) => {
     const [title, setTitle] = useState('');
@@ -33,6 +34,24 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, className }
 
     const handleSave = async (e) => {
         if (!title) {
+            toast({
+                variant: "default",
+                description: `Please create a title for your clip`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            return;
+        }
+
+        if (!thumbnail) {
+            toast({
+                variant: "default",
+                description: `Please select a thumbnail`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
             return;
         }
 
@@ -51,15 +70,21 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, className }
                 setIsLoading(false);
                 setIsOpen(false);
                 toast({
-                    variant: "success",
+                    variant: "default",
                     description: "Saved clip to library",
+                    action: <div className='!bg-[#3faa56] p-1 flex items-center justify-center rounded-full'>
+                        <FaCheck className='!text-[#FDFFFF]' />
+                    </div>
                 })
             }
         } catch (err) {
             console.log(err);
             toast({
-                variant: "destructive",
+                variant: "default",
                 description: `${err?.response?.data?.message}`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
             setIsLoading(false);
         }
@@ -74,6 +99,7 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, className }
     useEffect(() => {
         setThumbnail(public_thumbnail)
     }, [public_thumbnail])
+    
     return (
         (isSignedIn && isLoaded) && (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>

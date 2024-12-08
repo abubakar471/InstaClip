@@ -25,6 +25,7 @@ import { RiGalleryLine } from 'react-icons/ri';
 import { Film } from 'lucide-react';
 import { LuVideo } from "react-icons/lu";
 import Link from 'next/link';
+import { BiError } from 'react-icons/bi';
 
 // import {GiFairyWand} from "react-icons/gi"
 
@@ -210,9 +211,12 @@ const UploadVideo = ({ userId }) => {
     const handleUpload = async () => {
         if (!selectedFile) {
             toast({
-                variant: "destructive",
+                variant: "default",
                 title: "Upload Failed",
                 description: "No File Selected",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
             return;
         }
@@ -249,9 +253,12 @@ const UploadVideo = ({ userId }) => {
             // Check if the video is less than 3 minutes (180 seconds)
             if (duration < 180) {
                 toast({
-                    variant: "destructive",
+                    variant: "default",
                     title: "Upload Failed",
                     description: "Video is less than 3 minutes",
+                    action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                        <BiError className='!text-[#FDFFFF]' />
+                    </div>
                 })
                 handleClear();
                 return;
@@ -259,9 +266,12 @@ const UploadVideo = ({ userId }) => {
         } catch (error) {
             console.error("Error checking video duration:", error);
             toast({
-                variant: "destructive",
+                variant: "default",
                 title: "Upload Failed",
                 description: "Failed to check video duration",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
             handleClear();
             return;
@@ -300,11 +310,23 @@ const UploadVideo = ({ userId }) => {
                     data?.details?.local_video_filepath
                 );
             } else {
-                alert("Failed to upload file.");
+                toast({
+                    variant: "default",
+                    description: "Failed to upload file.",
+                    action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                        <BiError className='!text-[#FDFFFF]' />
+                    </div>
+                })
             }
         } catch (error) {
             console.error("Error uploading file:", error);
-            alert("An error occurred during file upload.");
+            toast({
+                variant: "default",
+                description: "An error occurred during file upload.",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
         } finally {
             setIsUploading(false);
         }
@@ -366,9 +388,12 @@ const UploadVideo = ({ userId }) => {
                     setIsImportingSocialVideo(false);
                 } else {
                     toast({
-                        variant: "destructive",
+                        variant: "default",
                         title: "Upload Failed",
                         description: "Importing Video Failed",
+                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                            <BiError className='!text-[#FDFFFF]' />
+                        </div>
                     })
                 }
             }
@@ -401,18 +426,24 @@ const UploadVideo = ({ userId }) => {
                     setIsImportingSocialVideo(false);
                 } else {
                     toast({
-                        variant: "destructive",
+                        variant: "default",
                         title: "Upload Failed",
                         description: "Importing Video Failed",
+                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                            <BiError className='!text-[#FDFFFF]' />
+                        </div>
                     })
                 }
             }
         } catch (err) {
             console.error("Error checking video duration:", err);
             toast({
-                variant: "destructive",
+                variant: "default",
                 title: "Upload Failed",
                 description: "Failed to check video duration",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
             setIsImportingSocialVideo(false);
         }
@@ -630,12 +661,18 @@ const UploadVideo = ({ userId }) => {
 
                     {
                         (isExporting || isImportingSocialVideo) && (
-                            <div className='flex items-center gap-x-2  mt-2'>
-                                <Skeleton className={`w-full lg:w-1/2 h-[300px] bg-gray-500/40 flex items-center justify-center`}>
-                                    <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
+                            <div className='w-full mx-auto grid grid-cols-1 lg:grid-cols-4 2xl:grid-cols-4 gap-x-4 gap-y-4 mt-2'>
+                                <Skeleton className={`w-full h-[300px] bg-gray-500/10 flex items-center justify-center`}>
+                                    <Skeleton className={"bg-gray-400/20 w-[50px] h-[50px] rounded-lg"} />
                                 </Skeleton>
-                                <Skeleton className={`w-full lg:w-1/2 h-[300px] bg-gray-500/40 flex items-center justify-center`}>
-                                    <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
+                                <Skeleton className={`w-full h-[300px] bg-gray-500/10 flex items-center justify-center`}>
+                                    <Skeleton className={"bg-gray-400/20 w-[50px] h-[50px] rounded-lg"} />
+                                </Skeleton>
+                                <Skeleton className={`w-full h-[300px] bg-gray-500/10 flex items-center justify-center`}>
+                                    <Skeleton className={"bg-gray-400/20 w-[50px] h-[50px] rounded-lg"} />
+                                </Skeleton>
+                                <Skeleton className={`w-full h-[300px] bg-gray-500/10 flex items-center justify-center`}>
+                                    <Skeleton className={"bg-gray-400/20 w-[50px] h-[50px] rounded-lg"} />
                                 </Skeleton>
                             </div>
                         )

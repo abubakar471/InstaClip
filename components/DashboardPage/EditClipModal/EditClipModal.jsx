@@ -26,6 +26,7 @@ import PublishClipModal from "../PublishClipModal/PublishClipModal";
 import { assets as featured_assets } from "@/data/featured_assets";
 import { assets as public_assets } from "@/data/community_creations";
 import { RxCross1 } from "react-icons/rx";
+import { BiError } from "react-icons/bi";
 
 const EditClipModal = ({ clip_url }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -37,6 +38,7 @@ const EditClipModal = ({ clip_url }) => {
     const [assets, setAssets] = useState([]);
     const [publicAssetExists, setPublicAssetExists] = useState(false);
     const [videoRenderKey, setVideoRenderKey] = useState(1);
+    const [thumbnail, setThumbnail] = useState(null);
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -61,7 +63,13 @@ const EditClipModal = ({ clip_url }) => {
                 uploadBtnRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
             }, 100);
         } else {
-            alert("Please upload a valid video file.");
+            toast({
+                variant: "default",
+                description: "Please upload a mp4 file",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
         }
     };
 
@@ -181,13 +189,20 @@ const EditClipModal = ({ clip_url }) => {
 
                 if (resData?.success) {
                     setIsCombined(true);
-                    setCombinedClip(resData?.file_path)
+                    setCombinedClip(resData?.data)
                 }
             }
 
         } catch (error) {
             console.error("Error uploading file:", error);
-            alert("An error occurred during file upload.");
+            toast({
+                variant: "default",
+                title: "Upload Failed",
+                description: "An error occurred during file upload.",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
         } finally {
             setIsUploading(false);
         }
@@ -196,9 +211,12 @@ const EditClipModal = ({ clip_url }) => {
     const handleUploadPublicAsset = async () => {
         if (!previewUrl || !publicAssetExists) {
             toast({
-                variant: "destructive",
+                variant: "default",
                 title: "Combine Failed",
                 description: "Invalid Public ID",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
             return;
         }
@@ -241,10 +259,18 @@ const EditClipModal = ({ clip_url }) => {
         }
     }
 
+    const handleSelect = (url) => {
+        setThumbnail(url);
+    }
+
     useEffect(() => {
         setAssets(featured_assets.concat(public_assets));
 
     }, [user?.id])
+
+    useEffect(() => {
+        console.log("combinedClip?.location : ", combinedClip?.location)
+    }, [combinedClip])
 
     return (
         (isSignedIn && isLoaded) && (
@@ -256,7 +282,7 @@ const EditClipModal = ({ clip_url }) => {
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] md:max-w-3xl lg::max-w-3xl h-[90vh] mx-auto !bg-[#162845] border-none flex flex-col gap-y-0 items-start justify-start">
+                <DialogContent className="sm:max-w-[425px] md:max-w-3xl lg::max-w-3xl h-[90vh] mx-auto !bg-[#0F1117] border-none flex flex-col gap-y-0 items-start justify-start">
                     <div className="flex flex-col justify-center w-full mt-10 gap-x-6 relative flex-wrap xl:flex-nowrap">
                         {/* <div className="w-full xl:w-4/12 border-none xl:border-r border-[#4385c2]/20 flex-grow min-h-auto">
                             <div className="w-full">
@@ -388,7 +414,7 @@ const EditClipModal = ({ clip_url }) => {
                                                     } else {
                                                         handleUpload()
                                                     }
-                                                }} className="bg-[#4A2AC0] text-white w-full py-2 px-4 rounded-lg flex items-center justify-center gap-x-2">
+                                                }} className="bg-[#4F46E5] text-white w-full py-2 px-4 rounded-lg flex items-center justify-center gap-x-2">
                                                 {
                                                     isUploading ? (<ImSpinner3 className='animate-spin text-xl' />) : (<TbAssembly />)
                                                 }
@@ -418,10 +444,10 @@ const EditClipModal = ({ clip_url }) => {
                                     <div className="w-full">
                                         <div>
                                             <Video className="w-full h-64 rounded-2xl">
-                                                <source src={`${combinedClip}`} type='video/mp4' className='' />
+                                                <source src={`${combinedClip?.location}`} type='video/mp4' className='' />
                                             </Video>
                                         </div>
-                                        <PublishClipModal asset_url={combinedClip} />
+                                        <PublishClipModal asset_url={combinedClip?.location} thumbnails={combinedClip?.thumbnails} />
                                     </div>
                                 )
                             }

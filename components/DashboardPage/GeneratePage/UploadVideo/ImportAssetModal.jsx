@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { BiImport } from 'react-icons/bi';
 import CreateTitleModal from '../CreateTitleModal/CreateTitleModal';
 import { cn } from '@/lib/utils';
+import { FaCheck } from 'react-icons/fa';
 
 const ImportAssetModal = ({ title, url, cover, category, source, id, className }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +30,10 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
             await navigator.clipboard.writeText(text);
             toast({
                 title: "Copied to clipboard",
-                variant: "success",
+                variant: "default",
+                action: <div className='!bg-[#3faa56] p-1 flex items-center justify-center rounded-full'>
+                    <FaCheck className='!text-[#FDFFFF]' />
+                </div>
             })
         } catch (err) {
             console.error("Failed to copy text:", err);
