@@ -4,8 +4,8 @@ import { TbBolt } from 'react-icons/tb'
 import { FiSend } from "react-icons/fi"
 import { IoColorPaletteOutline } from 'react-icons/io5'
 import { BackgroundLines } from '@/components/ui/BackgroundLines'
-import HeroVideoContainer from './HeroVideoContainer'
 import Navbar from '../Navbar/Navbar'
+import Image from 'next/image'
 
 const Hero = () => {
     return (
@@ -49,7 +49,9 @@ const Hero = () => {
                         </div>
                     </div>
 
-                    <HeroVideoContainer />
+                    <section style={{ position: 'relative', width: '100%', maxHeight: "40vh", overflow: 'hidden' }} className='flex items-center justify-center mt-10 mx-auto max-w-3xl rounded-2xl shadow-2xl shadow-[#1F1B36]'>
+                        <Image src={"/assets/images/poster.PNG"} alt='Demo' width={800} height={800} />
+                    </section>
                 </div>
 
                 <div className="absolute inset-0 !z-10 h-full w-full bg-transparent bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:48px_48px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-fuchsia-400 opacity-20 blur-[100px]"></div></div>
