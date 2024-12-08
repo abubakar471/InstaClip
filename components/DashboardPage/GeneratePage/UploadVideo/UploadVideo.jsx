@@ -654,7 +654,7 @@ const UploadVideo = ({ userId }) => {
                                 Community Creations
                             </div>
 
-                            <Link href={"/public"} className='border-2 border-neutral-500/20 text-[#676d74] text-xs px-2 py-1 rounded-lg'>View All</Link>
+                            <Link href={"/dashboard/public"} className='border-2 border-neutral-500/20 text-[#676d74] text-xs px-2 py-1 rounded-lg'>View All</Link>
                         </div>
 
                         <FeaturedAssets />
