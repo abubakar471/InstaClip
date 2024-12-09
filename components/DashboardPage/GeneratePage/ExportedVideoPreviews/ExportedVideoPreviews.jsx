@@ -41,6 +41,7 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => 
 
 
     useEffect(() => {
+        console.log("videoPaths : ", videoPaths)
         setVideoUrls(videoPaths);
     }, [videoPaths]);
 

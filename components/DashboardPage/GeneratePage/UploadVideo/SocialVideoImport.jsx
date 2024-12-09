@@ -21,8 +21,6 @@ const SocialVideoImport = ({ socialExportedVideoRenderKey, isImportingSocialVide
                     isImportingSocialVideo ? (<><ImSpinner3 className='animate-spin text-xl' /></>) : ("Import Video")
                 }
             </button>
-
-
         </form>
     )
 }
