@@ -12,7 +12,7 @@ import { BiError } from 'react-icons/bi'
 import ExportedVideoPreviews from '../../GeneratePage/ExportedVideoPreviews/ExportedVideoPreviews'
 import { useUser } from '@clerk/nextjs'
 import InstagramVideoImport from '../../GeneratePage/UploadVideo/InstagramVideoImport'
-
+import { GoPlusCircle } from "react-icons/go";
 
 const BuilderContainer = () => {
     const router = useRouter();
@@ -247,7 +247,13 @@ const BuilderContainer = () => {
 
         user && (
             <div className='w-full'>
-   <div className='grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-4 w-full mt-8'>
+                <h1 className='text-3xl text-[#FDFFFF] font-semibold'>Create New Video</h1>
+                <p className='text-neutral-500 text-sm mt-2'>Import or create content from various platforms</p>
+                <div className='flex items-center gap-x-2 text-[#FDFFFF] mt-6 text-xl'>
+                    <GoPlusCircle className='text-[#7171BB] text-2xl' />
+                    Import Content
+                </div>
+                <div className='grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-4 w-full mt-8'>
                     <Link href={"/dashboard/generate"}
                         className="mt-0 flex flex-col items-center justify-center w-full min-h-44 border-dashed border-4 border-gray-300/5 rounded-2xl cursor-pointer bg-[#080A0B] hover:bg-[#07080A] relative transition-all duration-300 ease-in-out"
                     >
@@ -336,7 +342,7 @@ const BuilderContainer = () => {
                     }
                 </div>
 
-             
+
 
 
 
