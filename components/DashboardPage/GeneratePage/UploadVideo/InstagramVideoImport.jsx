@@ -14,7 +14,7 @@ const InstagramVideoImport = ({ socialExportedVideoRenderKey, isImportingSocialV
             />
 
             <p className='text-neutral-400 text-xs mb-2 mt-4'>
-                Import videos from youtube easily by pasting your link here and save to library for later.
+                Import videos from instagram easily by pasting your link here and save to library for later.
             </p>
 
             <button disabled={isImportingSocialVideo} type='submit' className={`mt-4 mb-4 ${isImportingSocialVideo ? "px-6" : "px-4"} py-2 bg-[#4F46E5] disabled:bg-[#4F46E5]/20 text-white text-sm rounded-lg hover:bg-[#4F46E5]/80 flex items-center justify-center gap-x-2 transition-all duration-300 ease-in-out w-full `}>

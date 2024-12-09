@@ -8,7 +8,7 @@ import { FaTiktok } from 'react-icons/fa';
 const CopyClipsPage = () => {
     return (
         <div>
-            <div className='w-[90%] mx-auto my-4'>
+            <div className='w-[90%] 2xl:w-[60%] mx-auto my-4'>
                 <h1 className='text-3xl text-[#FDFFFF] font-semibold'>Create New Video</h1>
                 <p className='text-neutral-500 text-sm mt-2'>Import or create content from various platforms</p>
                 <div className='flex items-center gap-x-2 text-[#FDFFFF] mt-6 text-xl'>

@@ -163,6 +163,7 @@ const UploadVideo = ({ userId }) => {
                 setIsSegmenting(false);
                 setIsSegmentingCandidates(false);
                 setPreviewUrl(null);
+                setSocialVideoLink("");
                 setSelectedFile(null);
                 setUploadedData(null)
                 if (fileInputRef.current) {
@@ -177,6 +178,7 @@ const UploadVideo = ({ userId }) => {
                 setIsSegmenting(false);
                 setIsSegmentingCandidates(false);
                 setPreviewUrl(null);
+                setSocialVideoLink("");
                 setSelectedFile(null);
                 setUploadedData(null)
                 if (fileInputRef.current) {
@@ -348,6 +350,38 @@ const UploadVideo = ({ userId }) => {
         }
     }
 
+    const urlOriginYouTube = (url) => {
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]+/;
+        const instagramRegex = /^(https?:\/\/)?(www\.)?instagram\.com\/(p|reel|tv)\/[A-Za-z0-9_-]+/;
+        const tiktokRegex = /^(https?:\/\/)?(www\.)?tiktok\.com\/@[A-Za-z0-9._-]+\/video\/[0-9]+/;
+
+        if (youtubeRegex.test(url)) {
+            return "youtube";
+        } else {
+            return null; // Not a recognized video link
+        }
+    }
+
+    function simplifyYouTubeURL(url) {
+        try {
+            // Create a URL object to parse the URL
+            const parsedURL = new URL(url);
+
+            // Extract the 'v' parameter
+            const videoId = parsedURL.searchParams.get('v');
+
+            // If 'v' exists, construct the simplified URL
+            if (videoId) {
+                return `https://www.youtube.com/watch?v=${videoId}`;
+            } else {
+                throw new Error("The URL does not contain a 'v' parameter.");
+            }
+        } catch (error) {
+            console.error("Invalid URL:", error.message);
+            return null; // Return null if the URL is invalid or 'v' is missing
+        }
+    }
+
     const handleSocialVideoImport = async (e) => {
         e.preventDefault();
 
@@ -358,11 +392,36 @@ const UploadVideo = ({ userId }) => {
         setIsImportingSocialVideo(true);
 
         try {
-            const origin = urlOrigin(socialVideoLink);
+            const origin = urlOriginYouTube(socialVideoLink);
+
+            if (!origin) {
+                toast({
+                    variant: "default",
+                    description: "Please paste a youtube url",
+                    action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                        <BiError className='!text-[#FDFFFF]' />
+                    </div>
+                })
+                setIsImportingSocialVideo(false);
+                return;
+            }
 
             if (origin === "youtube") {
                 const formData = new FormData();
-                formData.append("url", socialVideoLink);
+                const simpleurl = simplifyYouTubeURL(socialVideoLink);
+
+                if (!simpleurl) {
+                    toast({
+                        variant: "default",
+                        description: "Failed to import video",
+                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                            <BiError className='!text-[#FDFFFF]' />
+                        </div>
+                    })
+                    return;
+                }
+
+                formData.append("url", simplifyYouTubeURL(socialVideoLink));
                 formData.append("user_id", user?.id);
 
                 const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-youtube-video`, {
@@ -383,14 +442,16 @@ const UploadVideo = ({ userId }) => {
                 if (data?.success) {
                     console.log("video uploaded");
                     setSocialVideoLink("");
-                    setExportedVideos([data?.file_path]);
+                    sendVideoSegmentation(
+                        `${data?.local_audio_filepath}`,
+                        data?.local_video_filepath
+                    );
                     setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
                     setIsImportingSocialVideo(false);
                 } else {
                     toast({
                         variant: "default",
-                        title: "Upload Failed",
-                        description: "Importing Video Failed",
+                        description: "Upload Failed",
                         action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
                             <BiError className='!text-[#FDFFFF]' />
                         </div>
@@ -398,49 +459,11 @@ const UploadVideo = ({ userId }) => {
                 }
             }
 
-            if (origin === 'tiktok') {
-                const formData = new FormData();
-                formData.append("url", socialVideoLink);
-                formData.append("user_id", user?.id);
-
-                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-tiktok-video`, {
-                    method: "POST",
-                    headers: {
-                        // When using FormData, do not set Content-Type manually;
-                        // fetch will set it correctly for multipart form data.
-                    },
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to upload file");
-                }
-
-                const data = await response.json();
-                console.log("response : ", data);
-                if (data?.success) {
-                    console.log("video uploaded: ", data);
-                    setSocialVideoLink("");
-                    setExportedVideos([data?.file_path]);
-                    setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
-                    setIsImportingSocialVideo(false);
-                } else {
-                    toast({
-                        variant: "default",
-                        title: "Upload Failed",
-                        description: "Importing Video Failed",
-                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                            <BiError className='!text-[#FDFFFF]' />
-                        </div>
-                    })
-                }
-            }
         } catch (err) {
             console.error("Error checking video duration:", err);
             toast({
                 variant: "default",
-                title: "Upload Failed",
-                description: "Failed to check video duration",
+                description: "Upload Failed",
                 action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
                     <BiError className='!text-[#FDFFFF]' />
                 </div>
@@ -462,13 +485,13 @@ const UploadVideo = ({ userId }) => {
                 <div className='min-h-screen max-h-fit col-span-0 lg:col-span-4 2xl:col-span-4 bg-transparent px-0 rounded-2xl w-full mt-6'>
                     <Tabs defaultValue="create_clips" className="w-full !bg-transparent">
                         <TabsList className="w-fit bg-[#08090C] flex items-center justify-start gap-x-2">
-                            <TabsTrigger value="create_clips" className="w-fit">
+                            <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="create_clips" className="w-fit">
                                 <div className='flex items-center gap-x-2 text-xs py-1'>
                                     <MdUploadFile className='text-[1rem]' />
                                     Upload Video
                                 </div>
                             </TabsTrigger>
-                            <TabsTrigger value="youtube_import" className="w-fit">
+                            <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="youtube_import" className="w-fit">
                                 <div className='flex items-center gap-x-2 text-xs py-1'>
                                     <PiYoutubeLogo className='text-[1rem]' />
                                     YouTube Import
@@ -614,7 +637,16 @@ const UploadVideo = ({ userId }) => {
 
                         <TabsContent value="youtube_import">
                             {/* social link input field */}
-                            <SocialVideoImport isImportingSocialVideo={isImportingSocialVideo} setIsImportingSocialVideo={setIsImportingSocialVideo} socialVideoLink={socialVideoLink} setSocialVideoLink={setSocialVideoLink} handleSocialVideoImport={handleSocialVideoImport} />
+                            <SocialVideoImport
+                                isImportingSocialVideo={isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting}
+                                setIsImportingSocialVideo={setIsImportingSocialVideo}
+                                socialVideoLink={socialVideoLink}
+                                setSocialVideoLink={setSocialVideoLink}
+                                handleSocialVideoImport={handleSocialVideoImport}
+                                message={<div>
+                                    Import videos from youtube easily by pasting your link here. <span className='font-semibold'>Note: Video should be at least 3 minutes long</span>
+                                </div>}
+                            />
                         </TabsContent>
                     </Tabs>
 
@@ -660,7 +692,7 @@ const UploadVideo = ({ userId }) => {
                     }
 
                     {
-                        (isExporting || isImportingSocialVideo) && (
+                        (isExporting) && (
                             <div className='w-full mx-auto grid grid-cols-1 lg:grid-cols-4 2xl:grid-cols-4 gap-x-4 gap-y-4 mt-2'>
                                 <Skeleton className={`w-full h-[300px] bg-gray-500/10 flex items-center justify-center`}>
                                     <Skeleton className={"bg-gray-400/20 w-[50px] h-[50px] rounded-lg"} />
