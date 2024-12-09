@@ -424,7 +424,7 @@ const UploadVideo = ({ userId }) => {
                 formData.append("url", simplifyYouTubeURL(socialVideoLink));
                 formData.append("user_id", user?.id);
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-youtube-video`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/split-youtube-video`, {
                     method: "POST",
                     headers: {
                         // When using FormData, do not set Content-Type manually;

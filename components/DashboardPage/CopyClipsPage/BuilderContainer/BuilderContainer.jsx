@@ -29,8 +29,11 @@ const BuilderContainer = () => {
         const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]+/;
         const instagramRegex = /^(https?:\/\/)?(www\.)?instagram\.com\/(p|reel|tv)\/[A-Za-z0-9_-]+/;
         const tiktokRegex = /^(https?:\/\/)?(www\.)?tiktok\.com\/@[A-Za-z0-9._-]+\/video\/[0-9]+/;
+        const youtubeShortsRegex = /^(https?:\/\/)?(www\.)?youtube\.com\/shorts\/[A-Za-z0-9_-]+$/;
 
         if (youtubeRegex.test(url)) {
+            return "youtube";
+        } else if (youtubeShortsRegex.test(url)) {
             return "youtube";
         } else {
             return null; // Not a recognized video link
@@ -49,18 +52,22 @@ const BuilderContainer = () => {
         }
     }
 
+    const isYouTubeShortsUrl = (url) => {
+        const youtubeShortsRegex = /^(https?:\/\/)?(www\.)?youtube\.com\/shorts\/[A-Za-z0-9_-]+$/;
+        return youtubeShortsRegex.test(url);
+    };
+
     function simplifyYouTubeURL(url) {
         try {
-            // Create a URL object to parse the URL
             const parsedURL = new URL(url);
-
-            // Extract the 'v' parameter
             const videoId = parsedURL.searchParams.get('v');
 
-            // If 'v' exists, construct the simplified URL
             if (videoId) {
                 return `https://www.youtube.com/watch?v=${videoId}`;
-            } else {
+            } else if (isYouTubeShortsUrl(url)) {
+                return `${url}`
+            }
+            else {
                 throw new Error("The URL does not contain a 'v' parameter.");
             }
         } catch (error) {
