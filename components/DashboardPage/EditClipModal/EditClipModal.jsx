@@ -189,7 +189,9 @@ const EditClipModal = ({ clip_url }) => {
 
                 if (resData?.success) {
                     setIsCombined(true);
-                    setCombinedClip(resData?.data)
+                    console.log("combined response : ", resData?.data)
+                    setCombinedClip(resData?.data);
+                    setVideoRenderKey(videoRenderKey + 1);
                 }
             }
 
@@ -248,7 +250,8 @@ const EditClipModal = ({ clip_url }) => {
 
             if (resData?.success) {
                 setIsCombined(true);
-                setCombinedClip(resData?.file_path)
+                setCombinedClip(resData?.data)
+                setVideoRenderKey(videoRenderKey + 1);
             }
 
         } catch (error) {
@@ -441,7 +444,7 @@ const EditClipModal = ({ clip_url }) => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="w-full">
+                                    <div key={videoRenderKey} className="w-full">
                                         <div>
                                             <Video className="w-full h-64 rounded-2xl">
                                                 <source src={`${combinedClip?.location}`} type='video/mp4' className='' />

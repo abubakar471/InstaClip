@@ -468,7 +468,7 @@ const UploadVideo = ({ userId }) => {
                                     Upload Video
                                 </div>
                             </TabsTrigger>
-                            <TabsTrigger value="password" className="w-fit">
+                            <TabsTrigger value="youtube_import" className="w-fit">
                                 <div className='flex items-center gap-x-2 text-xs py-1'>
                                     <PiYoutubeLogo className='text-[1rem]' />
                                     YouTube Import
@@ -612,7 +612,7 @@ const UploadVideo = ({ userId }) => {
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="password">
+                        <TabsContent value="youtube_import">
                             {/* social link input field */}
                             <SocialVideoImport isImportingSocialVideo={isImportingSocialVideo} setIsImportingSocialVideo={setIsImportingSocialVideo} socialVideoLink={socialVideoLink} setSocialVideoLink={setSocialVideoLink} handleSocialVideoImport={handleSocialVideoImport} />
                         </TabsContent>
