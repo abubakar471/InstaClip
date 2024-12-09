@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast'
 import { BiError } from 'react-icons/bi'
 import ExportedVideoPreviews from '../../GeneratePage/ExportedVideoPreviews/ExportedVideoPreviews'
 import { useUser } from '@clerk/nextjs'
+import InstagramVideoImport from '../../GeneratePage/UploadVideo/InstagramVideoImport'
 
 const BuilderContainer = () => {
     const router = useRouter();
@@ -35,14 +36,26 @@ const BuilderContainer = () => {
         }
     }
 
+    const urlOriginInstagram = (url) => {
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]+/;
+        const instagramRegex = /^(https?:\/\/)?(www\.)?instagram\.com\/(p|reel|tv)\/[A-Za-z0-9_-]+/;
+        const tiktokRegex = /^(https?:\/\/)?(www\.)?tiktok\.com\/@[A-Za-z0-9._-]+\/video\/[0-9]+/;
+
+        if (instagramRegex.test(url)) {
+            return "instagram";
+        } else {
+            return null; // Not a recognized video link
+        }
+    }
+
     function simplifyYouTubeURL(url) {
         try {
             // Create a URL object to parse the URL
             const parsedURL = new URL(url);
-            
+
             // Extract the 'v' parameter
             const videoId = parsedURL.searchParams.get('v');
-            
+
             // If 'v' exists, construct the simplified URL
             if (videoId) {
                 return `https://www.youtube.com/watch?v=${videoId}`;
@@ -55,7 +68,7 @@ const BuilderContainer = () => {
         }
     }
 
-    const handleSocialVideoImport = async (e) => {
+    const handleSocialVideoImportYouTube = async (e) => {
         e.preventDefault();
 
         if (socialVideoLink?.length === 0) {
@@ -83,7 +96,7 @@ const BuilderContainer = () => {
                 const formData = new FormData();
                 const simpleurl = simplifyYouTubeURL(socialVideoLink);
 
-                if(!simpleurl){
+                if (!simpleurl) {
                     toast({
                         variant: "default",
                         description: "Failed to import video",
@@ -98,6 +111,93 @@ const BuilderContainer = () => {
                 formData.append("user_id", user?.id);
 
                 const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-youtube-video`, {
+                    method: "POST",
+                    headers: {
+                        // When using FormData, do not set Content-Type manually;
+                        // fetch will set it correctly for multipart form data.
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to upload file");
+                }
+
+                const data = await response.json();
+                console.log("response : ", data);
+                if (data?.success) {
+                    console.log("video uploaded");
+                    setSocialVideoLink("");
+                    setExportedVideos(data?.data);
+                    setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
+                    setIsImportingSocialVideo(false);
+                } else {
+                    toast({
+                        variant: "default",
+                        description: "Upload Failed",
+                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                            <BiError className='!text-[#FDFFFF]' />
+                        </div>
+                    })
+                }
+            }
+
+        } catch (err) {
+            console.error("Error checking video duration:", err);
+            toast({
+                variant: "default",
+                description: "Upload Failed",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            setIsImportingSocialVideo(false);
+        }
+    }
+
+    const handleSocialVideoImportInstagram = async (e) => {
+        e.preventDefault();
+
+        if (socialVideoLink?.length === 0) {
+            return;
+        }
+
+        setIsImportingSocialVideo(true);
+
+        try {
+            const origin = urlOriginInstagram(socialVideoLink);
+
+            if (!origin) {
+                toast({
+                    variant: "default",
+                    description: "Please paste a instagram url",
+                    action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                        <BiError className='!text-[#FDFFFF]' />
+                    </div>
+                })
+                setIsImportingSocialVideo(false);
+                return;
+            }
+
+            if (origin === "instagram") {
+                const formData = new FormData();
+                // const simpleurl = simplifyYouTubeURL(socialVideoLink);
+
+                // if (!simpleurl) {
+                //     toast({
+                //         variant: "default",
+                //         description: "Failed to import video",
+                //         action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                //             <BiError className='!text-[#FDFFFF]' />
+                //         </div>
+                //     })
+                //     return;
+                // }
+
+                formData.append("url", socialVideoLink);
+                formData.append("user_id", user?.id);
+
+                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-instagram-video`, {
                     method: "POST",
                     headers: {
                         // When using FormData, do not set Content-Type manually;
@@ -208,7 +308,22 @@ const BuilderContainer = () => {
                                     setIsImportingSocialVideo={setIsImportingSocialVideo}
                                     socialVideoLink={socialVideoLink}
                                     setSocialVideoLink={setSocialVideoLink}
-                                    handleSocialVideoImport={handleSocialVideoImport}
+                                    handleSocialVideoImport={handleSocialVideoImportYouTube}
+                                />
+                            </div>
+                        )
+                    }
+
+                    {
+                        selectedPlatform === "INSTAGRAM" && (
+                            <div className='w-fullflex items-center justify-center'>
+                                <InstagramVideoImport
+                                    socialExportedVideoRenderKey={socialExportedVideoRenderKey}
+                                    isImportingSocialVideo={isImportingSocialVideo}
+                                    setIsImportingSocialVideo={setIsImportingSocialVideo}
+                                    socialVideoLink={socialVideoLink}
+                                    setSocialVideoLink={setSocialVideoLink}
+                                    handleSocialVideoImport={handleSocialVideoImportInstagram}
                                 />
                             </div>
                         )
