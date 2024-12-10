@@ -591,14 +591,6 @@ const UploadVideo = ({ userId }) => {
 
 
                             <div className=''>
-                                {
-                                    previewUrl && (
-                                        <div className='bg-green-600/40 text-white py-2 rounded-lg px-4 text-xs mt-2 w-fit'>
-                                            * File Selected *
-                                        </div>
-                                    )
-                                }
-
                                 <p className='text-neutral-400 text-xs mt-4 px-2'>
                                     Generate Short Clip from your uploded videos and create your own asset library.
                                 </p>

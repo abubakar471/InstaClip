@@ -120,7 +120,7 @@ export function AppSidebar() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="px-2 py-2">
+                            <div className="px-2 pt-3 pb-3">
                                 <Skeleton className={`w-[60%] h-[10px] rounded-lg bg-gray-500/50 flex-grow`} />
                             </div>
                         )
@@ -142,7 +142,7 @@ export function AppSidebar() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="px-2 pb-2">
+                            <div className="px-2 pt-0 pb-3">
                                 <Skeleton className={`w-[80%] h-[10px] rounded-lg bg-gray-500/50 flex-grow`} />
                             </div>
                         )
