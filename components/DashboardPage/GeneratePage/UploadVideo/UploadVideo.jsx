@@ -600,7 +600,6 @@ const UploadVideo = ({ userId }) => {
                 console.log("response : ", data);
                 if (data?.success) {
                     console.log("video uploaded");
-                    setSocialVideoLink("");
                     sendVideoSegmentation(
                         `${data?.local_audio_filepath}`,
                         data?.local_video_filepath
