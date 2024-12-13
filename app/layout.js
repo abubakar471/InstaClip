@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
     }}>
       <html lang="en">
 
-        <body className={poppins.className}>
+        <body className={inter.className}>
           {/* <AOSInitiator>
     
         </AOSInitiator> */}

@@ -1,7 +1,7 @@
 "use client"
 
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ExportedVideoPreviews from '../ExportedVideoPreviews/ExportedVideoPreviews';
 import { ImFilePlay, ImSpinner3 } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
@@ -9,12 +9,12 @@ import { MdCloudUpload, MdOutlinePermMedia, MdOutlinePhotoLibrary, MdPermMedia, 
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
-import { DefaultPlayer as Video } from 'react-html5video';
+import { DefaultPlayer as VideoPlayer } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
 import { useToast } from '@/hooks/use-toast';
 import SocialVideoImport from './SocialVideoImport';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FaYoutube } from 'react-icons/fa';
+import { FaCheck, FaYoutube } from 'react-icons/fa';
 import { Skeleton } from '@/components/ui/skeleton';
 import PublicLibraryAssets from './PublicLibraryAssets';
 import FeaturedAssets from './FeaturedAssets';
@@ -22,11 +22,12 @@ import { FaFileArrowUp } from 'react-icons/fa6';
 import { PiYoutubeLogo } from 'react-icons/pi';
 import { IoMdTime } from 'react-icons/io';
 import { RiGalleryLine } from 'react-icons/ri';
-import { Film } from 'lucide-react';
 import { LuVideo } from "react-icons/lu";
 import Link from 'next/link';
 import { BiError } from 'react-icons/bi';
-
+import { Youtube, FileVideo, Loader2, Play, Clock, Video, Film, PlusCircle } from 'lucide-react'
+import { useDropzone } from 'react-dropzone'
+import { Button } from '@/components/ui/button';
 // import {GiFairyWand} from "react-icons/gi"
 
 const UploadVideo = ({ userId }) => {
@@ -42,6 +43,7 @@ const UploadVideo = ({ userId }) => {
     const [socialVideoLink, setSocialVideoLink] = useState('');
     const [socialExportedVideoRenderKey, setSocialExportedVideoRenderKey] = useState(1);
     const [selectedTab, setSelectedTab] = useState('')
+    const [uploadProgress, setUploadProgress] = useState(0)
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -49,6 +51,21 @@ const UploadVideo = ({ userId }) => {
     const { toast } = useToast();
 
     const { user } = useUser();
+
+    const onDrop = useCallback((acceptedFiles) => {
+        handleFileUpload(acceptedFiles)
+    }, [])
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop,
+        accept: {
+            'video/*': ['.mp4', '.mov', '.avi', '.mkv']
+        },
+        maxSize: 1024 * 1024 * 100
+    })
+
+
+
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -71,6 +88,8 @@ const UploadVideo = ({ userId }) => {
             fileInputRef.current.value = ""; // Reset the file input value
         }
     };
+
+
 
     const sendVideoSegmentation = async (videoFilePath, local_video_filepath) => {
         setIsSegmenting(true);
@@ -210,25 +229,139 @@ const UploadVideo = ({ userId }) => {
         }
     };
 
-    const handleUpload = async () => {
-        if (!selectedFile) {
-            toast({
-                variant: "default",
-                title: "Upload Failed",
-                description: "No File Selected",
-                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                    <BiError className='!text-[#FDFFFF]' />
-                </div>
-            })
-            return;
-        }
+    // const handleUpload = async () => {
+    //     if (!selectedFile) {
+    //         toast({
+    //             variant: "default",
+    //             title: "Upload Failed",
+    //             description: "No File Selected",
+    //             action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+    //                 <BiError className='!text-[#FDFFFF]' />
+    //             </div>
+    //         })
+    //         return;
+    //     }
 
-        // checking duration of selected video file
+    //     // checking duration of selected video file
 
 
+    // try {
+    //     // Create a blob URL to load the video file
+    //     const videoBlob = URL.createObjectURL(selectedFile);
+    //     const videoElement = document.createElement("video");
+
+    //     // Use a promise to load the video and fetch its duration
+    //     const getVideoDuration = () =>
+    //         new Promise((resolve, reject) => {
+    //             videoElement.preload = "metadata";
+    //             videoElement.src = videoBlob;
+
+    //             videoElement.onloadedmetadata = () => {
+    //                 resolve(videoElement.duration); // Duration in seconds
+    //                 URL.revokeObjectURL(videoBlob); // Free up memory
+    //             };
+
+    //             videoElement.onerror = (error) => {
+    //                 reject("Failed to load video metadata");
+    //                 URL.revokeObjectURL(videoBlob); // Free up memory
+    //             };
+    //         });
+
+    //     const duration = await getVideoDuration();
+
+    //     console.log("Video Duration:", duration, "seconds");
+
+    //     // Check if the video is less than 3 minutes (180 seconds)
+    //     if (duration < 180) {
+    //         toast({
+    //             variant: "default",
+    //             title: "Upload Failed",
+    //             description: "Video is less than 3 minutes",
+    //             action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+    //                 <BiError className='!text-[#FDFFFF]' />
+    //             </div>
+    //         })
+    //         handleClear();
+    //         return;
+    //     }
+    // } catch (error) {
+    //     console.error("Error checking video duration:", error);
+    //     toast({
+    //         variant: "default",
+    //         title: "Upload Failed",
+    //         description: "Failed to check video duration",
+    //         action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+    //             <BiError className='!text-[#FDFFFF]' />
+    //         </div>
+    //     })
+    //     handleClear();
+    //     return;
+    // }
+
+
+    //     // video duration check completed
+
+    //     setIsUploading(true);
+
+    // const formData = new FormData();
+    // formData.append("file", selectedFile);
+    // formData.append("user_id", user?.id);
+
+    // try {
+    //     const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/upload`, {
+    //         method: "POST",
+    //         headers: {
+    //             // When using FormData, do not set Content-Type manually;
+    //             // fetch will set it correctly for multipart form data.
+    //         },
+    //         body: formData,
+    //     });
+
+    //     if (!response.ok) {
+    //         throw new Error("Failed to upload file");
+    //     }
+
+    //     const data = await response.json();
+    //     console.log("response : ", data);
+    //     if (data) {
+    //         console.log("sending this for video segmenting : ", data?.details?.firebase_paths?.audio_location);
+
+    //         sendVideoSegmentation(
+    //             `${data?.details?.local_audio_filepath}`,
+    //             data?.details?.local_video_filepath
+    //         );
+    //     } else {
+    //         toast({
+    //             variant: "default",
+    //             description: "Failed to upload file.",
+    //             action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+    //                 <BiError className='!text-[#FDFFFF]' />
+    //             </div>
+    //         })
+    //     }
+    // } catch (error) {
+    //     console.error("Error uploading file:", error);
+    //     toast({
+    //         variant: "default",
+    //         description: "An error occurred during file upload.",
+    //         action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+    //             <BiError className='!text-[#FDFFFF]' />
+    //         </div>
+    //     })
+    // } finally {
+    //     setIsUploading(false);
+    // }
+    // }
+
+
+    const handleFileUpload = async (files) => {
+        if (!files.length) return;
+        setIsUploading(true)
+        setUploadProgress(0);
+        
         try {
             // Create a blob URL to load the video file
-            const videoBlob = URL.createObjectURL(selectedFile);
+            const videoBlob = URL.createObjectURL(files[0]);
             const videoElement = document.createElement("video");
 
             // Use a promise to load the video and fetch its duration
@@ -238,6 +371,7 @@ const UploadVideo = ({ userId }) => {
                     videoElement.src = videoBlob;
 
                     videoElement.onloadedmetadata = () => {
+                        console.log("video duration : ", videoElement.duration)
                         resolve(videoElement.duration); // Duration in seconds
                         URL.revokeObjectURL(videoBlob); // Free up memory
                     };
@@ -279,13 +413,8 @@ const UploadVideo = ({ userId }) => {
             return;
         }
 
-
-        // video duration check completed
-
-        setIsUploading(true);
-
         const formData = new FormData();
-        formData.append("file", selectedFile);
+        formData.append("file", files[0]);
         formData.append("user_id", user?.id);
 
         try {
@@ -332,7 +461,37 @@ const UploadVideo = ({ userId }) => {
         } finally {
             setIsUploading(false);
         }
+
+        const interval = setInterval(() => {
+
+            setUploadProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(interval)
+                    return 100
+                }
+                return prev + 10
+            })
+        }, 2500)
+
+        // setTimeout(() => {
+        //     setIsUploading(false)
+        //     setUploadProgress(0)
+        //     toast({
+        //         variant: "default",
+        //         description: "Video uploaded successfully",
+        //         action: <div className='!bg-[#3faa56] p-1 flex items-center justify-center rounded-full'>
+        //             <FaCheck className='!text-[#FDFFFF]' />
+        //         </div>
+        //     })
+        //     setGeneratedShorts([
+        //         { duration: "0:45", thumbnail: "https://picsum.photos/seed/1/300/600" },
+        //         { duration: "1:20", thumbnail: "https://picsum.photos/seed/2/300/600" },
+        //         { duration: "0:30", thumbnail: "https://picsum.photos/seed/3/300/600" },
+        //         { duration: "0:55", thumbnail: "https://picsum.photos/seed/4/300/600" },
+        //     ])
+        // }, 5500)
     }
+
 
     const urlOrigin = (url) => {
         const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]+/;
@@ -479,28 +638,30 @@ const UploadVideo = ({ userId }) => {
 
     return (
         <div>
-            <div className='w-[90%] xl:w-[70%] 2xl:w-[60%] mx-auto gap-10 mt-4 mb-10 relative'>
-                <h1 className='text-3xl text-[#FDFFFF] font-semibold'>Create New Video</h1>
-                <p className='text-neutral-500 text-sm mt-2'>Import or create content from various platforms</p>
-                <div className='min-h-screen max-h-fit col-span-0 lg:col-span-4 2xl:col-span-4 bg-transparent px-0 rounded-2xl w-full mt-6'>
+            <div className='w-[100%] 2xl:w-[70%] mx-auto gap-10 mt-4 mb-10 relative'>
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent flex items-center">
+                    Create New Video
+                </h1>
+                <p className="text-gray-400">Import or create content from various platforms</p>
+                <div className='min-h-screen max-h-fit col-span-0 lg:col-span-4 2xl:col-span-4 bg-transparent px-0 rounded-2xl w-full mt-9'>
                     <Tabs defaultValue="create_clips" className="w-full !bg-transparent">
                         <TabsList className="w-fit bg-[#08090C] flex items-center justify-start gap-x-2">
                             <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="create_clips" className="w-fit">
-                                <div className='flex items-center gap-x-2 text-xs py-1'>
-                                    <MdUploadFile className='text-[1rem]' />
+                                <div className='flex items-center gap-x-2 text-sm py-1 px-1'>
+                                    <MdUploadFile className='text-[1.1rem]' />
                                     Upload Video
                                 </div>
                             </TabsTrigger>
                             <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="youtube_import" className="w-fit">
-                                <div className='flex items-center gap-x-2 text-xs py-1'>
-                                    <PiYoutubeLogo className='text-[1rem]' />
+                                <div className='flex items-center gap-x-2 text-sm py-1 px-1'>
+                                    <PiYoutubeLogo className='text-[1.1rem]' />
                                     YouTube Import
                                 </div>
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="create_clips">
 
-                            <label
+                            {/* <label
                                 htmlFor="dropzone-file"
                                 className="mt-8 flex flex-col items-center justify-center w-full min-h-64 border-dashed border-4 border-gray-300/5 rounded-lg cursor-pointer bg-[#07080A] hover:bg-[#07080A]/50 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-300 ease-in-out"
                             >
@@ -510,13 +671,6 @@ const UploadVideo = ({ userId }) => {
                                             <div className='bg-[#1D1B4C] p-4 rounded-xl flex items-center justify-center w-fit'>
                                                 <ImFilePlay className='text-[#6770CC] text-2xl' />
                                             </div>
-                                            {/* <p className="mb-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center text-center flex-col 2xl:flex-row">
-                                                <span className="font-semibold">Click to upload</span> <span className='ml-0 2xl:ml-2'>or drag and
-                                                    drop</span>
-                                            </p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                                                Video files only
-                                            </p> */}
                                             <h4 className='text-lg text-[#FDFFFF] mt-4 text-center'>Drop your video here</h4>
                                             <p className='text-[#4E545A] text-sm mt-1 text-center px-10 lg:px-0'>Upload your video files to create engaging short-form content automatically</p>
                                             <div className='flex items-center gap-x-4 gap-y-2 mt-4 px-4 justify-center flex-wrap md:flex-nowrap'>
@@ -587,10 +741,63 @@ const UploadVideo = ({ userId }) => {
                                     disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
                                     required
                                 />
-                            </label>
+                            </label> */}
 
-
-                            <div className=''>
+                            <div
+                                {...getRootProps()}
+                                className={`relative group cursor-pointer transform transition-all duration-200 mt-9 ${isDragActive ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-white/5'
+                                    }`}
+                            >
+                                <input disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting} {...getInputProps()} />
+                                <div className="p-8 bg-black/20 backdrop-blur-sm rounded-xl hover:bg-black/30 transition-all border-[3px] border-dashed border-white/10 min-h-[240px] flex items-center justify-center">
+                                    <div className="flex flex-col items-center gap-6 max-w-xl mx-auto text-center">
+                                        <div className="w-16 h-16 bg-indigo-600/20 rounded-xl flex items-center justify-center group-hover:bg-indigo-600/30 transition-all">
+                                            {(isUploading || isSegmenting || isSegmentingCandidates || isExporting) ? (
+                                                <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+                                            ) : (
+                                                <FileVideo className="w-8 h-8 text-indigo-400" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-medium text-white mb-2">
+                                                {isUploading && 'Uploading...'}
+                                                {isSegmenting && 'Spliting Video...'}
+                                                {isSegmentingCandidates && 'Making Shorts...'}
+                                                {isExporting && 'Exporting Clips...'}
+                                                {
+                                                    (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && ('Drop your video here')
+                                                }
+                                            </h3>
+                                            <p className="text-sm text-gray-400 mb-4">
+                                                {(isUploading || isSegmenting || isSegmentingCandidates || isExporting)
+                                                    ? `${uploadProgress}% complete`
+                                                    : 'Upload your video files to create engaging short-form content automatically'
+                                                }
+                                            </p>
+                                            <div className="flex flex-col gap-4">
+                                                <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
+                                                    <span className="flex items-center"><FileVideo className="w-4 h-4 mr-1" /> MP4, MOV</span>
+                                                    <span className="flex items-center"><Clock className="w-4 h-4 mr-1" /> Any Duration</span>
+                                                    <span className="flex items-center"><Film className="w-4 h-4 mr-1" /> Up to 100MB</span>
+                                                </div>
+                                                {!isUploading && (
+                                                    <div className="flex gap-3 justify-center">
+                                                        <Button
+                                                            size="default"
+                                                            variant="outline"
+                                                            className="border-white/10 text-gray-400 hover:text-white bg-transparent hover:bg-white/10"
+                                                        >
+                                                            <FileVideo className="w-4 h-4 mr-2" />
+                                                            Browse Files
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* <div className=''>
                                 <p className='text-neutral-400 text-xs mt-4 px-2'>
                                     Generate Short Clip from your uploded videos and create your own asset library.
                                 </p>
@@ -624,7 +831,7 @@ const UploadVideo = ({ userId }) => {
                                     )
                                 }
 
-                            </div>
+                            </div> */}
                         </TabsContent>
 
                         <TabsContent value="youtube_import">

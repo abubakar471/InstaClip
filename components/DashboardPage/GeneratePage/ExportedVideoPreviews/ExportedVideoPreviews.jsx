@@ -46,7 +46,7 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => 
     }, [videoPaths]);
 
     return (
-        <div key={socialExportedVideoRenderKey} className="w-full mx-auto mt-4 grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 gap-x-4 gap-y-4">
+        <div key={socialExportedVideoRenderKey} className="w-full mx-auto mt-4 grid grid-cols-1 lg:grid-cols-4 2xl:grid-cols-4 gap-x-4 gap-y-4">
             {videoUrls.map((v, index) => (
                 <div key={index} className="flex flex-col gap-y-2 w-full relative">
                     <Video className="w-full h-[350px] rounded-2xl" controls={false}>

@@ -24,8 +24,9 @@ import { FaCheck } from 'react-icons/fa';
 const ImportAssetModal = ({ title, url, cover, category, source, id, className }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { toast } = useToast();
-    async function copyToClipboard(text) {
 
+    const copyToClipboard = async (text) => {
+        console.log("clipboard : ", text);
         try {
             await navigator.clipboard.writeText(text);
             toast({
@@ -39,6 +40,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
             console.error("Failed to copy text:", err);
         }
     }
+
     return (
         <div className={cn("h-[350px]", className)}>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
