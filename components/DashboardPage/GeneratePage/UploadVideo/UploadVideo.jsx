@@ -841,9 +841,6 @@ const UploadVideo = ({ userId }) => {
                                 socialVideoLink={socialVideoLink}
                                 setSocialVideoLink={setSocialVideoLink}
                                 handleSocialVideoImport={handleSocialVideoImport}
-                                message={<div>
-                                    Import videos from youtube easily by pasting your link here. <span className='font-semibold'>Note: Video should be at least 3 minutes long</span>
-                                </div>}
                             />
                         </TabsContent>
                     </Tabs>

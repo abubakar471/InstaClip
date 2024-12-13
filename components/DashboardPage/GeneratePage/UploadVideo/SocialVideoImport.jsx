@@ -72,7 +72,7 @@ const SocialVideoImport = ({ socialExportedVideoRenderKey, isImportingSocialVide
                                 </Button>
                             </form>
 
-                            <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
+                            <div className="flex items-center justify-center gap-6 text-sm text-gray-500 flex-wrap lg:flex-nowrap">
                                 <span className="flex items-center">
                                     <Play className="w-4 h-4 mr-1" /> Any YouTube Video
                                 </span>
@@ -80,7 +80,7 @@ const SocialVideoImport = ({ socialExportedVideoRenderKey, isImportingSocialVide
                                     <Clock className="w-4 h-4 mr-1" /> Auto-trimming
                                 </span>
                                 <span className="flex items-center">
-                                    <Film className="w-4 h-4 mr-1" /> Multiple Shorts
+                                    <Film className="w-4 h-4 mr-1" /> {message ? message : "Multiple Shorts"}
                                 </span>
                             </div>
                         </div>

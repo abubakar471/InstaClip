@@ -6,12 +6,12 @@ import React from 'react'
 const CopyClipsPage = () => {
     return (
         <div>
-            <div className='w-[90%] 2xl:w-[60%] mx-auto my-4'>
+            <div className='w-[100%] 2xl:w-[70%] mx-auto gap-10 mt-4 mb-10 relative'>
                 <div className='mt-4'>
                     <BuilderContainer />
                 </div>
 
-                <SocialVideoLayouts />
+                {/* <SocialVideoLayouts /> */}
             </div>
         </div>
     )

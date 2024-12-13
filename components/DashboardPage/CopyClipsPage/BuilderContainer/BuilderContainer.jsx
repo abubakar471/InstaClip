@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiOutlineYoutube } from 'react-icons/ai'
 import { FaInstagram } from 'react-icons/fa6'
 import { ImFilePlay } from 'react-icons/im'
@@ -351,12 +351,18 @@ const BuilderContainer = () => {
         }
     }
 
+    useEffect(() => {
+        setSocialVideoLink("")
+    },[selectedPlatform])
+
     return (
 
         user && (
             <div className='w-full'>
-                <h1 className='text-3xl text-[#FDFFFF] font-semibold'>Create New Video</h1>
-                <p className='text-neutral-500 text-sm mt-2'>Import or create content from various platforms</p>
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent flex items-center">
+                    Create New Video
+                </h1>
+                <p className="text-gray-400">Import or create content from various platforms</p>
                 <div className='flex items-center gap-x-2 text-[#FDFFFF] mt-6 text-xl'>
                     <GoPlusCircle className='text-[#7171BB] text-2xl' />
                     Import Content
@@ -456,6 +462,7 @@ const BuilderContainer = () => {
                                     socialVideoLink={socialVideoLink}
                                     setSocialVideoLink={setSocialVideoLink}
                                     handleSocialVideoImport={handleSocialVideoImportYouTube}
+                                    message={"Single File"}
                                 />
                             </div>
                         )
