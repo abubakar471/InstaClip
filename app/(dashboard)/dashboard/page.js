@@ -31,7 +31,7 @@ const DashboardPage = () => {
           <div className='flex gap-x-10 gap-y-4 flex-wrap xl:flex-nowrap'>
             <div className='w-full xl:w-8/12'>
               <div style={{
-                background: `${isLoaded ? `url("/assets/images/dashboard-cover-1.jpg") no-repeat rgba(0,0,0,0.4)` : "#101D28"}`,
+                background: `${isLoaded ? `url("/assets/images/dashboard-cover-1.jpg") no-repeat rgba(0,0,0,0.4)` : "#0F1117"}`,
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundBlendMode: "darken"

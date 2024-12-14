@@ -59,7 +59,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
                     </div>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] md:max-w-[500px] min-h-[80vh] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
+                <DialogContent className="sm:max-w-[425px] md:max-w-[500px] min-h-[85vh] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
                     <DialogHeader>
                         {/* <DialogTitle className="text-neutral-300">Are you sure you want to delete this clip?</DialogTitle> */}
                         {/* <DialogDescription>

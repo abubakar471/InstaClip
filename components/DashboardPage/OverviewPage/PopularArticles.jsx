@@ -77,7 +77,7 @@ const PopularArticles = () => {
                     {
                         Array.from(new Array(3))?.map((item, index) => (
                             index === 0 ? (
-                                <div key={item?._id} className='min-h-[100px] bg-[#101D28] rounded-3xl flex flex-wrap items-center px-4 py-4 gap-x-2 gap-y-2'>
+                                <div key={item?._id} className='min-h-[100px] bg-[#0F1117] rounded-3xl flex flex-wrap items-center px-4 py-4 gap-x-2 gap-y-2'>
 
                                     <div className='text-white w-full flex flex-col gap-y-2'>
                                         <Skeleton className={`bg-[#232F3A] w-[40px] h-[40px] rounded-lg`} />
@@ -86,7 +86,7 @@ const PopularArticles = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <Skeleton key={item?._id} className={`rounded-3xl bg-[#101D28] h-[200px]`}  >
+                                <Skeleton key={item?._id} className={`rounded-3xl bg-[#0F1117] h-[200px]`}  >
                           
                                 </Skeleton>
                             )

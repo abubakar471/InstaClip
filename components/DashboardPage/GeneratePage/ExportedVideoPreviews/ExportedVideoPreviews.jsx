@@ -67,7 +67,7 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => 
                         </div>
                     </div>
                     <div style={{
-                        background: `url("${v?.thumbnails[3]}") rgba(0,0,0,0.4)`,
+                        background: `url("${index === 0 ? v?.thumbnails[3] : (index === 1 ? v?.thumbnails[0] : (index === 2 ? v?.thumbnails[2] : v?.thumbnails[1]))}") rgba(0,0,0,0.4)`,
                         backgroundPosition: "center",
                         backgroundSize: "cover",
                         backgroundRepeat: "no-repeat",
