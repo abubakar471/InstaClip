@@ -358,7 +358,7 @@ const UploadVideo = ({ userId }) => {
         if (!files.length) return;
         setIsUploading(true)
         setUploadProgress(0);
-        
+
         try {
             // Create a blob URL to load the video file
             const videoBlob = URL.createObjectURL(files[0]);
@@ -397,6 +397,11 @@ const UploadVideo = ({ userId }) => {
                     </div>
                 })
                 handleClear();
+                setIsUploading(false);
+                setIsImportingSocialVideo(false);
+                setIsExporting(false);
+                setIsSegmenting(false);
+                setIsSegmentingCandidates(false);
                 return;
             }
         } catch (error) {
@@ -868,7 +873,7 @@ const UploadVideo = ({ userId }) => {
 
 
                     {
-                        (exportedVideos?.length > 0 && !isImportingSocialVideo && !isExporting) && (
+                        (exportedVideos?.length > 0 && !isImportingSocialVideo && !isExporting && !isSegmenting && !isSegmentingCandidates && !isUploading) && (
                             <div className='mt-6 mb-10'>
                                 <div className='w-full flex items-center justify-between'>
                                     <div className='flex items-center gap-x-2 text-[#FDFFFF]/80 text-lg font-semibold'>

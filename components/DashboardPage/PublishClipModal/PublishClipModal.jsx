@@ -75,8 +75,7 @@ const PublishClipModal = ({ asset_url, thumbnails, draftThumnail, className }) =
                     variant: "success",
                     description: "Clip published",
                 })
-
-                window.location.href = "/dashboard/published"
+                setIsOpen(false);
             }
         } catch (err) {
             console.log(err);
@@ -108,7 +107,7 @@ const PublishClipModal = ({ asset_url, thumbnails, draftThumnail, className }) =
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] lg:max-w-5xl !bg-[#0F1117] border-none">
+                <DialogContent  className="sm:max-w-[425px] md:max-w-[500px] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
                     <DialogHeader>
                         <DialogTitle className="text-neutral-300">Create Title For Your Published Clip</DialogTitle>
                         {/* <DialogDescription>

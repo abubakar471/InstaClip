@@ -42,7 +42,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
     }
 
     return (
-        <div className={cn("h-[350px]", className)}>
+        <div className={cn("h-[400px]", className)}>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                     <div className={`w-full h-full rounded-2xl cursor-pointer relative`} style={{
@@ -53,13 +53,13 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
                     }}>
                         {/* <Image src={`${cover}`} width={800} height={800} alt={`${title}`} className='rounded-2xl' /> */}
 
-                        <div className='absolute bottom-0 left-0 w-full z-50 bg-gray-500/20 backdrop-blur-lg rounded-b-2xl py-4'>
+                        <div className='absolute bottom-0 left-0 w-full z-50 bg-transparent rounded-b-2xl py-4'>
                             <p className='text-white text-xs px-4'>{title}</p>
                         </div>
                     </div>
                 </DialogTrigger>
 
-                <DialogContent className="max-w-[90%] sm:max-w-[90%] md:max-w-3xl lg::max-w-7xl h-[80vh] mx-auto rounded-3xl !bg-[#0F1117] border-none flex flex-col gap-y-0 items-start justify-start overflow-y-auto pb-10">
+                <DialogContent className="sm:max-w-[425px] md:max-w-[500px] min-h-[80vh] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
                     <DialogHeader>
                         {/* <DialogTitle className="text-neutral-300">Are you sure you want to delete this clip?</DialogTitle> */}
                         {/* <DialogDescription>
@@ -91,7 +91,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
                                 {id?.length > 10 ? id?.slice(0, 10) + "..." : id}
 
                             </div>
-                            <CreateTitleModal asset_url={url} public_thumbnail={cover} className={"!bg-[#4F46E5] hover:!bg-[#4F46E5]/30"} />
+
                         </div>
                     </div>
 
@@ -124,6 +124,7 @@ const ImportAssetModal = ({ title, url, cover, category, source, id, className }
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi odit magni eius ad vel excepturi qui ipsa. Laudantium cupiditate, accusantium adipisci architecto pariatur voluptas repellendus libero expedita esse tenetur fugit.
                             </p>
                         </div> */}
+                        <CreateTitleModal asset_url={url} public_thumbnail={cover} className={"!bg-[#4F46E5] hover:!bg-[#4F46E5]/30"} isPublicClip={true} />
                     </div>
                     <DialogFooter>
 

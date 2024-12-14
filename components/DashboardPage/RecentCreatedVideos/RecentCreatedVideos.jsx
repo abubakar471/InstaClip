@@ -14,12 +14,13 @@ const RecentCreatedVideos = ({ userId, limit }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [videos, setVideos] = useState(null);
     const [emptyLibrary, setEmptyLibrary] = useState(false);
+    const [currentlimit, setCurrentlimit] = useState(limit || 1);
 
     const fetchVideo = async () => {
         try {
             setIsLoading(true);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-recent-created-video?user_id=${userId}&&asset_status=DRAFT&&limit=${limit ? limit : 1}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-recent-created-video?user_id=${userId}&&asset_status=DRAFT&&limit=${currentlimit ? currentlimit : 1}`);
 
             if (response?.data?.success && response?.data?.videos?.length > 0) {
                 setVideos(response?.data?.videos)
@@ -28,6 +29,7 @@ const RecentCreatedVideos = ({ userId, limit }) => {
             } else {
                 setIsLoading(false)
                 setEmptyLibrary(true);
+                setCurrentlimit(1)
             }
         } catch (err) {
             console.log(err);
@@ -40,9 +42,13 @@ const RecentCreatedVideos = ({ userId, limit }) => {
             fetchVideo();
         }
     }, [userId])
+
+    useEffect(() => {
+        setCurrentlimit(limit)
+    },[limit])
     return (
         <>
-            <div className={`grid grid-cols-1 lg:grid-cols-${limit} gap-4`}>
+            <div className={`grid grid-cols-1 lg:grid-cols-${currentlimit} gap-4`}>
                 {
                     videos?.length > 0 && videos?.map((item, i) => (
                         <div className='mt-6' key={i}>
@@ -72,7 +78,7 @@ const RecentCreatedVideos = ({ userId, limit }) => {
 
                 {
                     (emptyLibrary && !isLoading) && (
-                        <div className='p-2'>
+                        <div className='py-2 mt-4'>
                             <div className='border-2 border-neutral-500/20 w-full h-[250px] rounded-2xl flex flex-col gap-y-2 items-center justify-center  text-neutral-300/50'>
                                 <BsCameraVideoFill className='text-5xl' />
                                 <p className='text-sm'>No Recent Videos</p>
@@ -85,7 +91,7 @@ const RecentCreatedVideos = ({ userId, limit }) => {
             </div>
 
            { isLoading && (
-            <div className={`grid grid-cols-1 lg:grid-cols-${limit} gap-y-4 w-full mt-6 gap-4`}>
+            <div className={`grid grid-cols-1 lg:grid-cols-${currentlimit} gap-y-4 w-full mt-6 gap-4`}>
                 {
                     Array.from(new Array(limit))?.map((item, i) => (
                         <Skeleton key={i} className={`w-full h-[300px] bg-gray-500/20 flex items-center justify-center`}>

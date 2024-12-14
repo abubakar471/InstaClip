@@ -53,14 +53,14 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          <div className='mt-4'>
+          <div className='mt-12'>
             <div className=''>
               <h4 className={`bg-[#4a2ac0]/50 text-white text-xs px-4 py-1 rounded-full w-fit ${font.className}`}>Most used by the community</h4>
             </div>
             <FeaturedAssets />
           </div>
 
-          <div className='mt-4'>
+          <div className='mt-12'>
             <div className=''>
               <h4 className={`bg-[#4a2ac0]/50 text-white text-xs px-4 py-1 rounded-full w-fit ${font.className}`}>Your recent activity</h4>
             </div>

@@ -14,6 +14,8 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import Image from "next/image";
+import VideoPlayerModal from "../VideoPlayerModal/VideoPlayerModal";
 
 const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => {
     const [videoUrls, setVideoUrls] = useState([]);
@@ -48,29 +50,33 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths }) => 
     return (
         <div key={socialExportedVideoRenderKey} className="w-full mx-auto mt-4 grid grid-cols-1 lg:grid-cols-4 2xl:grid-cols-4 gap-x-4 gap-y-4">
             {videoUrls.map((v, index) => (
-                <div key={index} className="flex flex-col gap-y-2 w-full relative">
-                    <Video className="w-full h-[350px] rounded-2xl" controls={false}>
+                <div key={index} className="flex flex-col gap-y-2 w-full relative h-[400px] rounded-2xl group">
+                    {/* <Image src={`${v?.thumbnails[2]}`} alt={`${v?.location}`} width={600} height={600} className="w-full h-full object-cover absolute top-0 left-0 right-0 bottom-0 rounded-2xl"  /> */}
+                    {/* <Video className="w-full h-[350px] rounded-2xl" controls={false}>
                         <source src={`${v?.location}`} type='video/mp4' className='' />
-                    </Video>
+                    </Video> */}
 
-                    {/* <button
-               onClick={() => handleDownload(url, url)}
-               className="mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2"
-           >
-               Download
+                    <div className="z-50 absolute  top-1/2 left-1/2 right-1/3 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-150 ease-in-out">
+                        <VideoPlayerModal v={v} />
+                    </div>
 
-               <IoMdCloudDownload className="" />
-           </button> */}
-                    <div className="flex items-center justify-center gap-x-2 w-full mx-auto px-4 absolute bottom-4">
-                        <CreateTitleModal asset_url={videoPaths[index]?.location} thumbnails={v?.thumbnails} />
-                        {/* <DeleteClipModal asset_url={videoPaths[index]} videoUrls={videoUrls} setVideoUrls={setVideoUrls} /> */}
+                    <div className="absolute bottom-0 left-0 right-0  h-full">
+
+                        <div className="flex items-center justify-center gap-x-2 w-full mx-auto px-4 absolute bottom-0">
+                            <CreateTitleModal asset_url={videoPaths[index]?.location} v={v} thumbnails={v?.thumbnails} />
+                        </div>
+                    </div>
+                    <div style={{
+                        background: `url("${v?.thumbnails[3]}") rgba(0,0,0,0.4)`,
+                        backgroundPosition: "center",
+                        backgroundSize: "cover",
+                        backgroundRepeat: "no-repeat",
+                        backgroundBlendMode: 'darken'
+                    }} className="bg-neutral-500/10 absolute top-0 left-0 bottom-0 w-full h-full rounded-2xl" >
                     </div>
                 </div>
             ))}
         </div>
-        // <div key={socialExportedVideoRenderKey} className="mt-4 flex items-center gap-x-4 gap-y-6 flex-wrap lg:flex-nowrap">
-
-        // </div>
     );
 };
 

@@ -7,6 +7,9 @@ import { Orbitron, Poppins } from 'next/font/google'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { FaSquarePollVertical } from 'react-icons/fa6'
+import { IoIosLink } from 'react-icons/io'
+import { MdOutlinePayment, MdOutlinePermMedia } from 'react-icons/md'
+import { GiFluffyFlame } from "react-icons/gi";
 
 const font = Poppins({
     subsets: ["latin"],
@@ -41,9 +44,11 @@ const YourStatistics = () => {
     }, [user])
 
     return (
-        <div className={`mt-4 bg-transparent relative flex px-4 py-4 min-h-[150px] xl:min-h-[340px] ${font.className}`}>
-            <div className='flex flex-col items-start gap-y-3 w-full'>
-                <div className='w-full flex items-center justify-center '>
+        <div className={`mt-4 bg-[#0F1117] relative flex px-4 py-4 min-h-[150px] xl:min-h-[340px] ${font.className} border-dashed border-neutral-500/40 border-2 rounded-3xl`}>
+            <div className='flex flex-col items-start gap-y-3 w-full relative'>
+                <GiFluffyFlame className='text-5xl text-neutral-200 absolute top-3 right-2 -rotate-90 opacity-20' />
+
+                <div className='w-full flex items-center justify-start pl-4'>
                     <div className='flex items-center justify-center flex-col bg-gray-500/20 rounded-full w-[100px] 2xl:w-[130px] h-[100px] 2xl:h-[130px]'>
                         {
                             (isLoaded && !isLoading) && (
@@ -57,34 +62,40 @@ const YourStatistics = () => {
 
                 {
                     isLoading ? (
-                        <div className='flex items-center justify-center flex-wrap gap-4 w-full'>
-                            <div className='flex items-center justify-center flex-col gap-y-2'>
+                        <div className='flex items-center justify-start flex-wrap gap-4 w-full px-4 mt-4'>
+                            <div className='flex items-center justify-center gap-y-2 gap-x-2'>
                                 <Skeleton className={`w-[20px] h-[20px] rounded-full bg-gray-500/50`} />
                                 <Skeleton className={`w-[150px] h-[20px] rounded-lg bg-gray-500/50`} />
                             </div>
-                            <div className='flex items-center justify-center flex-col gap-y-2'>
+                            <div className='flex items-center justify-center gap-y-2 gap-x-2'>
                                 <Skeleton className={`w-[20px] h-[20px] rounded-full bg-gray-500/50`} />
                                 <Skeleton className={`w-[150px] h-[20px] rounded-lg bg-gray-500/50`} />
                             </div>
-                            <div className='flex items-center justify-center flex-col gap-y-2'>
+                            <div className='flex items-center justify-center gap-y-2 gap-x-2'>
                                 <Skeleton className={`w-[20px] h-[20px] rounded-full bg-gray-500/50`} />
                                 <Skeleton className={`w-[150px] h-[20px] rounded-lg bg-gray-500/50`} />
                             </div>
 
                         </div>
                     ) : (
-                        <div className='flex items-center justify-center flex-wrap gap-4 w-full'>
-                            <div className='flex items-center justify-center flex-col'>
-                                <p className='text-[#603ce2] text-xl xl:text-3xl text-center'>{stats?.totalVideos}</p>
-                                <p className='text-sm text-neutral-300 text-center'>Assets Created</p>
+                        <div className='flex items-start justify-center flex-wrap gap-4 w-full flex-col px-4 mt-4'>
+                            <div className='flex items-center justify-center gap-x-2'>
+                                <MdOutlinePermMedia className='text-[#603ce2]' />
+                                <p className='text-sm text-neutral-300 text-center'>Assets Created:</p>
+                                <p className='text-neutral-300 font-semibold text-sm xl:text-sm text-center'>{stats?.totalVideos}</p>
+
                             </div>
-                            <div className='flex items-center justify-center flex-col'>
-                                <p className='text-[#603ce2] text-xl xl:text-3xl text-center'>1</p>
-                                <p className='text-sm text-neutral-300 text-center'>Connected Accounts</p>
+                            <div className='flex items-center justify-center gap-x-2'>
+                                <IoIosLink className='text-[#603ce2]' />
+                                <p className='text-sm text-neutral-300 text-center'>Connected Accounts:</p>
+                                <p className='text-neutral-300 font-semibold text-sm xl:text-sm text-center'>1</p>
+
                             </div>
-                            <div className='flex items-center justify-center flex-col'>
-                                <p className='text-[#603ce2] text-xl xl:text-3xl text-center'>Free</p>
-                                <p className='text-sm text-neutral-300 text-center'>Your Plan</p>
+                            <div className='flex items-center justify-center gap-x-2'>
+                                <MdOutlinePayment className='text-[#603ce2]' />
+                                <p className='text-sm text-neutral-300 text-center'>Your Plan:</p>
+                                <p className='text-neutral-300 font-semibold text-sm xl:text-sm text-center'>Free</p>
+
                             </div>
 
                         </div >
@@ -92,9 +103,9 @@ const YourStatistics = () => {
                 }
             </div >
 
-            <div className='absolute top-0 left-0 right-0 bottom-0 rounded-xl blur-0 bg-gray-400/10'>
+            {/* <div className='absolute top-0 left-0 right-0 bottom-0 rounded-xl blur-0 bg-[#0F1117]'>
 
-            </div>
+            </div> */}
         </div >
     )
 }
