@@ -17,6 +17,7 @@ import EditClipModal from '../EditClipModal/EditClipModal';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { IoMenu } from 'react-icons/io5';
 import PublishClipModal from '../PublishClipModal/PublishClipModal';
+import VideoCard from './VideoCard';
 
 const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -119,8 +120,9 @@ const VideosContainer = ({ userId, asset_status }) => {
         }
         try {
             console.log("filter : ", filter)
+     
+            setVideos([]);
             setIsFiltering(true);
-
             const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos-by-filter?user_id=${userId}&&asset_status=${asset_status}&&limit=${limit}&&page=1&&filter=${filter}`);
 
             if (response?.data?.success) {
@@ -450,28 +452,11 @@ const VideosContainer = ({ userId, asset_status }) => {
                                             </PopoverContent>
                                         </Popover>
                                     </div>
-                                    <Video className="h-[300px] rounded-3xl">
+                                    {/* <Video className="h-[300px] rounded-3xl">
                                         <source src={`${v?.location}`} type='video/mp4' />
-                                    </Video>
+                                    </Video> */}
 
-                                    <div className='flex items-center gap-x-2'>
-                                        {/* <button
-                                            onClick={() => handleDownload(v?.location, v?.filename)}
-                                            className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
-                                        >
-                                            <span className='hidden md:inline-block'>Download</span>
-
-                                            <IoMdCloudDownload className="" />
-                                        </button> */}
-
-                                        {/* <EditClipModal clip_url={v?.location} />
-
-                                        <button disabled={isDeleting} onClick={() => handleDelete(v?.location, v, fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
-                                            <MdDelete />
-                                        </button> */}
-
-                                        {/* <DeleteClipModal asset_url={videos[i]?.location} isDeleting={isDeleting} setIsDeleting={setIsDeleting} isOpen={isOpen} setIsOpen={setIsOpen} handleDelete={handleDelete} /> */}
-                                    </div>
+                                    <VideoCard v={v} />
                                 </div>
                             ))
                         )
@@ -481,7 +466,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                         (isLoading || isFiltering) && (
                             Array.from(new Array(12))?.map((item, index) => (
                                 <div key={index} className='flex flex-col gap-y-4'>
-                                    <Skeleton className={`h-[300px] bg-gray-500/40 flex items-center justify-center`}>
+                                    <Skeleton className={`h-[400px] bg-gray-500/40 flex items-center justify-center rounded-2xl`}>
                                         <Skeleton className={"bg-gray-400/40 w-[50px] h-[50px] rounded-lg"} />
                                     </Skeleton>
 
@@ -537,26 +522,11 @@ const VideosContainer = ({ userId, asset_status }) => {
                                             </PopoverContent>
                                         </Popover>
                                     </div>
-                                    <Video className="h-[300px] rounded-3xl">
+                                    {/* <Video className="h-[300px] rounded-3xl">
                                         <source src={`${v?.location}`} type='video/mp4' />
-                                    </Video>
+                                    </Video> */}
 
-                                    <div className="flex items-center gap-x-2">
-                                        {/* <button
-                                            onClick={() => handleDownload(v?.location, v?.filename)}
-                                            className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 transition-all duration-200"
-                                        >
-                                            <span className='hidden md:inline-block'> Download</span>
-
-                                            <IoMdCloudDownload className="" />
-                                        </button>
-
-                                        <button disabled={isDeleting} onClick={() => handleDeleteForFilter(v?.location, v, filteringFunction)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-3 px-3 rounded hover:bg-[#802e2e] flex items-center justify-center gap-x-2 border-none'>
-                                            <MdDelete />
-                                        </button> */}
-
-                                        {/* <DeleteClipModal asset_url={filteredVideos[i]?.location} videoUrls={filteredVideoUrls} setVideoUrls={setFilteredVideoUrls} totalVideos={totalVideosFiltering} setTotalVideos={setTotalVideosFiltering} /> */}
-                                    </div>
+                                    <VideoCard v={v} />
                                 </div>
                             ))
                         )
@@ -596,7 +566,6 @@ const VideosContainer = ({ userId, asset_status }) => {
                 {
                     isLoading && (
                         <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mt-6 mb-6'>
-
                         </div>
                     )
                 }

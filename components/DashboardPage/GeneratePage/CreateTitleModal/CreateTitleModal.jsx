@@ -179,10 +179,10 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
                         >
                             Cancel
                         </button>
-                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-[#4F46E5] disabled:bg-blue-400/50 hover:bg-[#4F46E5]/80 !text-white py-2 ${isLoading ? "px-8" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm transition-all duration-300 ease-in-out`}>
+                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-[#4F46E5] disabled:bg-[#4F46E5] hover:bg-[#4F46E5]/80 !text-white py-2 ${isLoading ? "px-8 py-2" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm transition-all duration-300 ease-in-out`}>
                             {
-                                isLoading ? (<AiOutlineLoading3Quarters className="animate-spin" />) : (<div className="flex items-center gap-x-2">
-                                    <FaSave />
+                                isLoading ? (<AiOutlineLoading3Quarters className="animate-spin text-lg" />) : (<div className="flex items-center gap-x-2">
+                                    <FaSave  />
                                     Save to library
                                 </div>)
                             }

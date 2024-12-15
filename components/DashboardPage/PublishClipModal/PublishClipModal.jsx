@@ -107,7 +107,7 @@ const PublishClipModal = ({ asset_url, thumbnails, draftThumnail, className }) =
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent  className="sm:max-w-[425px] md:max-w-[500px] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
+                <DialogContent className="sm:max-w-[425px] md:max-w-[500px] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
                     <DialogHeader>
                         <DialogTitle className="text-neutral-300">Create Title For Your Published Clip</DialogTitle>
                         {/* <DialogDescription>
@@ -139,9 +139,9 @@ const PublishClipModal = ({ asset_url, thumbnails, draftThumnail, className }) =
 
                     </div>
                     <DialogFooter>
-                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-[#4F46E5] disabled:bg-blue-400/50 hover:bg-[#4F46E5]/80 !text-white py-2 ${isLoading ? "px-8" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm`}>
+                        <button disabled={isLoading} onClick={() => handleSave()} className={`bg-[#4F46E5] disabled:bg-[#4F46E5] hover:bg-[#4F46E5]/80 !text-white py-2 ${isLoading ? "px-8 py-2" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm`}>
                             {
-                                isLoading ? (<AiOutlineLoading3Quarters className="animate-spin" />) : (<div className="flex items-center gap-x-2">
+                                isLoading ? (<AiOutlineLoading3Quarters className="animate-spin text-lg" />) : (<div className="flex items-center gap-x-2">
                                     <MdPublish />
                                     Publish Clip
                                 </div>)

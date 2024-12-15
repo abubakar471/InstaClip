@@ -46,7 +46,7 @@ const YourStatistics = () => {
     return (
         <div className={`mt-4 bg-[#0F1117] relative flex px-4 py-4 min-h-[150px] xl:min-h-[340px] ${font.className} border-dashed border-neutral-500/40 border-2 rounded-3xl`}>
             <div className='flex flex-col items-start gap-y-3 w-full relative'>
-                <GiFluffyFlame className='text-5xl text-neutral-200 absolute top-3 right-2 -rotate-90 opacity-20' />
+                {/* <GiFluffyFlame className='text-5xl text-neutral-200 absolute top-3 right-2 -rotate-90 opacity-20' /> */}
 
                 <div className='w-full flex items-center justify-start pl-4'>
                     <div className='flex items-center justify-center flex-col bg-gray-500/20 rounded-full w-[100px] 2xl:w-[130px] h-[100px] 2xl:h-[130px]'>
