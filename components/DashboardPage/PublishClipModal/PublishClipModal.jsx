@@ -109,28 +109,26 @@ const PublishClipModal = ({ asset_url, thumbnails, draftThumnail, className }) =
 
                 <DialogContent className="sm:max-w-[425px] md:max-w-[500px] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
                     <DialogHeader>
-                        <DialogTitle className="text-neutral-300">Create Title For Your Published Clip</DialogTitle>
+                        <DialogTitle className="text-neutral-300 text-start">Create Title For Your Published Clip</DialogTitle>
                         {/* <DialogDescription>
                     Make changes to your profile here. Click save when you're done.
                 </DialogDescription> */}
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <input
-
-                                placeholder="Create your title"
-                                className="col-span-4 indent-3 bg-transparent border-b py-2 rounded-none border-neutral-400 focus:ring-0 outline-none text-neutral-300"
-                                value={title}
+                        <div className="grid items-center gap-4">
+                            <Input
+                                placeholder="Enter a title for your short"
+                                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 w-full"
                                 onChange={e => setTitle(e.target.value)}
                             />
                         </div>
 
                         {
                             !draftThumnail && (
-                                <div className="grid grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-3 h-[230px]">
+                                <div className="grid grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-3 h-[230px] mt-4">
                                     {
                                         thumbnails?.length > 0 && thumbnails?.map((item, index) => (
-                                            <Image src={`${item}`} width={800} height={800} alt={`${item}`} className={`${thumbnail === item ? "border-2 border-[#4F46E5]/90 rounded-3xl cursor-pointer h-[100px] lg:h-[150px] w-full object-cover" : "h-[100px] lg:h-[150px] w-full object-cover rounded-3xl cursor-pointer border-none"}`} onClick={() => handleSelect(item)} />
+                                            <Image src={`${item}`} width={800} height={800} alt={`${item}`} className={`${thumbnail === item ? "border-2 border-[#4F46E5]/90 rounded cursor-pointer h-[100px] lg:h-[150px] w-full object-cover" : "h-[100px] lg:h-[150px] w-full object-cover rounded cursor-pointer border-none"}`} onClick={() => handleSelect(item)} />
                                         ))
                                     }
                                 </div>
