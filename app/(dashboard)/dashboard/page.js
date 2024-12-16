@@ -29,7 +29,7 @@ const DashboardPage = () => {
       <div className='flex w-full flex-wrap xl:flex-nowrap gap-x-4 gap-y-6'>
         <div className='w-full xl:w-9/12 min-h-screen mb-4'>
           <div className='flex gap-x-10 gap-y-4 flex-wrap xl:flex-nowrap'>
-            <div className='w-full xl:w-8/12'>
+            <div className='w-full'>
               <div style={{
                 background: `${isLoaded ? `url("/assets/images/dashboard-cover-1.jpg") no-repeat rgba(0,0,0,0.4)` : "#0F1117"}`,
                 backgroundPosition: "center",
@@ -37,18 +37,6 @@ const DashboardPage = () => {
                 backgroundBlendMode: "darken"
               }} className='rounded-2xl px-6 py-4 h-[400px] flex items-end bg-gray-500/50'>
                 <OverviewHeading />
-              </div>
-            </div>
-
-            <div className='w-full xl:w-4/12'>
-              <h3 className={`${font.className} text-neutral-200 flex items-center gap-x-2`}>
-                <FaSquarePollVertical />
-
-                Your Statistics
-              </h3>
-
-              <div>
-                <YourStatistics />
               </div>
             </div>
           </div>

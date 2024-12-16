@@ -107,7 +107,7 @@ const PublishClipModal = ({ asset_url, thumbnails, draftThumnail, className }) =
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] md:max-w-[500px] bg-black/95 border border-white/10 backdrop-blur-sm text-white">
+                <DialogContent className="sm:max-w-[425px] md:max-w-[500px] bg-black/95 border border-white/10 backdrop-blur-sm text-white group">
                     <DialogHeader>
                         <DialogTitle className="text-neutral-300 text-start">Create Title For Your Published Clip</DialogTitle>
                         {/* <DialogDescription>
