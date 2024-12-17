@@ -180,10 +180,10 @@ export function AppSidebar() {
                         <div className="mt-3 flex flex-col !gap-y-6">
                             {
                                 isLoaded ? (
-                                    <div onClick={() => setOpenProfile(!openProfile)} className="flex items-center gap-x-2 text-xs text-neutral-400">
+                                    <Link href={"/dashboard/settings"} className="flex items-center gap-x-2 text-xs text-neutral-400">
                                         <CiSettings className="text-[1rem]" />
                                         Settings
-                                    </div>
+                                    </Link>
                                 ) : (
                                     <Skeleton className={`w-[150px] h-[7px] rounded-lg bg-gray-500/50 flex-grow`} />
                                 )

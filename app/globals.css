@@ -272,6 +272,62 @@ body {
   background-color: #162845 !important;
 }
 
+.cl-rootBox{
+  width: 100% !important;
+  margin: 0 auto;
+  background-color: #0F1117 !important;
+}
+
+.cl-userProfile-root{
+  background-color: #0F1117 !important;
+}
+
+.cl-cardBox{
+  background-color: #0F1117 !important;
+  width: 100% !important;
+}
+
+.cl-internal-1efiaa8 {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column;
+  -webkit-box-align: stretch;
+  align-items: stretch;
+  flex: 0 0 14.25rem;
+  width: 14.25rem;
+  position: relative;
+  max-width: 14.25rem;
+  background: linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.03)), linear-gradient(#1f1f2327, #190a3b33);
+  padding: 1.5rem 1.25rem 1rem 0.75rem;
+  margin-right: -0.5rem;
+  color: rgb(255, 255, 255);
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+}
+
+.cl-internal-17g44ry {
+  box-sizing: border-box;
+  display: none !important;
+  flex-flow: column;
+  -webkit-box-align: stretch;
+  align-items: stretch;
+  flex: 0 0 14.25rem;
+  width: 14.25rem;
+  position: relative;
+  max-width: 14.25rem;
+  background: linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.03)), linear-gradient(rgb(0 0 0), rgb(64, 61, 118));
+  padding: 1.5rem 1.25rem 1rem 0.75rem;
+  margin-right: -0.5rem;
+  color: rgb(255, 255, 255);
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+}
+
+.cl-pageScrollBox{
+  background-color: #0F1117 !important;
+}
+
+/* video player css */
 .rh5v-DefaultPlayer_controls {
   /* display: none !important; */
   background-color: #4F46E5 !important;
