@@ -327,6 +327,9 @@ body {
   background-color: #0F1117 !important;
 }
 
+.cl-navbarMobileMenuRow{
+  display: none !important;
+}
 /* video player css */
 .rh5v-DefaultPlayer_controls {
   /* display: none !important; */
