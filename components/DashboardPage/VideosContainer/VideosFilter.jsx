@@ -50,15 +50,15 @@ const VideosFilter = ({ userId, filterPage, setFilterPage, totalVideos, setTotal
 
 
     return (
-        <div className='mb-8 flex justify-end'>
+        <div className='mt-4 mb-8 flex justify-end'>
             <div className='flex items-center gap-x-3'>
                 {/* <p className='text-neutral-300 flex items-center gap-x-2'>
                     <IoFilter />
                     Filter:
                 </p> */}
 
-                <Select onValueChange={(value) => handleFilterChange(value)}>
-                    <SelectTrigger className="w-[180px] text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 rounded-none">
+                <Select onValueChange={(value) => handleFilterChange(value)} className="">
+                    <SelectTrigger className="w-[180px] text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 rounded-none !bg-transparent !drop-shadow-none">
                         <div className='flex items-center gap-x-2'>
                             <IoFilter />
                             <SelectValue className='' placeholder="Filter" />

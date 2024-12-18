@@ -124,15 +124,16 @@ const EditClipModal = ({ clip_url }) => {
 
             console.log("Video Duration:", duration, "seconds");
 
-            if (duration < 180) {
-                toast({
-                    variant: "destructive",
-                    title: "Upload Failed",
-                    description: "Video is less than 3 minutes",
-                })
-                handleClear();
-                return;
-            }
+            // if (duration < 180) {
+            //     toast({
+            //         variant: "destructive",
+            //         title: "Upload Failed",
+            //         description: "Video is less than 3 minutes",
+            //     })
+            //     handleClear();
+            //     setIsUploading(false);
+            //     return;
+            // }
         } catch (error) {
             console.error("Error checking video duration:", error);
             toast({
@@ -285,7 +286,7 @@ const EditClipModal = ({ clip_url }) => {
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] md:max-w-3xl lg::max-w-3xl h-[90vh] mx-auto !bg-[#0F1117] border-none flex flex-col gap-y-0 items-start justify-start">
+                <DialogContent className="sm:max-w-[425px] md:max-w-3xl lg::max-w-3xl h-[90vh] mx-auto !bg-[#000000] border-none flex flex-col gap-y-0 items-start justify-start">
                     <div className="flex flex-col justify-center w-full mt-10 gap-x-6 relative flex-wrap xl:flex-nowrap">
                         {/* <div className="w-full xl:w-4/12 border-none xl:border-r border-[#4385c2]/20 flex-grow min-h-auto">
                             <div className="w-full">
