@@ -840,13 +840,16 @@ const UploadVideo = ({ userId }) => {
 
                         <TabsContent value="youtube_import">
                             {/* social link input field */}
-                            <SocialVideoImport
-                                isImportingSocialVideo={isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting}
-                                setIsImportingSocialVideo={setIsImportingSocialVideo}
-                                socialVideoLink={socialVideoLink}
-                                setSocialVideoLink={setSocialVideoLink}
-                                handleSocialVideoImport={handleSocialVideoImport}
-                            />
+                            <div className='w-full mt-9'>
+                                <SocialVideoImport
+                                    isImportingSocialVideo={isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting}
+                                    setIsImportingSocialVideo={setIsImportingSocialVideo}
+                                    socialVideoLink={socialVideoLink}
+                                    setSocialVideoLink={setSocialVideoLink}
+                                    handleSocialVideoImport={handleSocialVideoImport}
+                                    icon={<Youtube className="w-8 h-8 text-red-400" />}
+                                />
+                            </div>
                         </TabsContent>
                     </Tabs>
 

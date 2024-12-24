@@ -15,6 +15,7 @@ import InstagramVideoImport from '../../GeneratePage/UploadVideo/InstagramVideoI
 import { GoPlusCircle } from "react-icons/go";
 import { FaTiktok } from 'react-icons/fa'
 import TikTokVideoImport from '../../GeneratePage/UploadVideo/TikTokVideoImport'
+import YouTubeVideoCategory from '../YouTubeVideoCategory/YouTubeVideoCategory'
 
 const BuilderContainer = () => {
     const router = useRouter();
@@ -23,6 +24,7 @@ const BuilderContainer = () => {
     const [isImportingSocialVideo, setIsImportingSocialVideo] = useState(false);
     const [socialVideoLink, setSocialVideoLink] = useState('');
     const [exportedVideos, setExportedVideos] = useState([]);
+    const [youtubeVideoCategory, setYoutubeVideoCategory] = useState("");
 
     const { toast } = useToast();
     const { user } = useUser();
@@ -353,7 +355,7 @@ const BuilderContainer = () => {
 
     useEffect(() => {
         setSocialVideoLink("")
-    },[selectedPlatform])
+    }, [selectedPlatform])
 
     return (
 
@@ -412,7 +414,8 @@ const BuilderContainer = () => {
                         className="mt-0 flex flex-col items-center justify-center w-full min-h-44 border-dashed border-4 border-gray-300/5 rounded-2xl cursor-pointer bg-transparent hover:bg-[#07080A] relative transition-all duration-300 ease-in-out"
                         onClick={() => {
                             if (!isImportingSocialVideo) {
-                                setSelectedPlatform("YOUTUBE")
+                                setSelectedPlatform("YOUTUBE");
+                                setYoutubeVideoCategory("");
                             }
                         }}
                     >
@@ -452,9 +455,9 @@ const BuilderContainer = () => {
                 </div>
 
                 <div className='w-full mx-auto'>
-                    {
+                    {/* {
                         selectedPlatform === "YOUTUBE" && (
-                            <div className='w-fullflex items-center justify-center'>
+                            <div className='w-full flex items-center justify-center'>
                                 <SocialVideoImport
                                     socialExportedVideoRenderKey={socialExportedVideoRenderKey}
                                     isImportingSocialVideo={isImportingSocialVideo}
@@ -462,6 +465,24 @@ const BuilderContainer = () => {
                                     socialVideoLink={socialVideoLink}
                                     setSocialVideoLink={setSocialVideoLink}
                                     handleSocialVideoImport={handleSocialVideoImportYouTube}
+                                    message={"Single File"}
+                                />
+                            </div>
+                        )
+                    } */}
+
+                    {
+                        selectedPlatform === "YOUTUBE" && (
+                            <div className='w-fullflex items-center justify-center'>
+                                <YouTubeVideoCategory
+                                    youtubeVideoCategory={youtubeVideoCategory}
+                                    setYoutubeVideoCategory={setYoutubeVideoCategory}
+                                    socialExportedVideoRenderKey={socialExportedVideoRenderKey}
+                                    isImportingSocialVideo={isImportingSocialVideo}
+                                    setIsImportingSocialVideo={setIsImportingSocialVideo}
+                                    socialVideoLink={socialVideoLink}
+                                    setSocialVideoLink={setSocialVideoLink}
+                                    handleSocialVideoImportYouTube={handleSocialVideoImportYouTube}
                                     message={"Single File"}
                                 />
                             </div>
