@@ -19,19 +19,20 @@ import { useUser } from "@clerk/nextjs"
 import axios from "axios"
 import { Clock, PlusCircle } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { BiError } from "react-icons/bi"
 import { FaCheck, FaSave } from "react-icons/fa"
 
-const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, className, isPublicClip, editClip }) => {
+const SaveEditClip = ({ asset_url, thumbnails, public_thumbnail, v, className, isPublicClip, editClip, fetchFreshNewVideos, videos, setVideos, filteredVideos, setFilteredVideos, selectedFilter, videoRenderKey, setVideoRenderKey, isOpenEditClipModal, setIsOpenEditClipModal, popoverOpen, setPopoverOpen }) => {
     const [title, setTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [thumbnail, setThumbnail] = useState(null);
     const { user, isLoaded, isSignedIn } = useUser();
     const { toast } = useToast();
-
+    const router = useRouter();
 
     const handleSave = async (e) => {
         if (!title) {
@@ -70,6 +71,16 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
                 setTitle("");
                 setIsLoading(false);
                 setIsOpen(false);
+                // fetchFreshNewVideos(res?.data?.data);
+                if (!selectedFilter) {
+                    setVideos([res?.data?.data, ...videos])
+                    setIsOpenEditClipModal(false);
+                    setPopoverOpen(false);
+                } else {
+                    setFilteredVideos([res?.data?.data, ...filteredVideos])
+                    setIsOpenEditClipModal(false);
+                    setPopoverOpen(false);
+                }
                 toast({
                     variant: "default",
                     description: "Saved clip to library",
@@ -77,12 +88,14 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
                         <FaCheck className='!text-[#FDFFFF]' />
                     </div>
                 })
+
+
             }
         } catch (err) {
             console.log(err);
             toast({
                 variant: "default",
-                description: `${err?.response?.data?.message}`,
+                description: `Failed to save clip`,
                 action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
                     <BiError className='!text-[#FDFFFF]' />
                 </div>
@@ -111,15 +124,15 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
         (isSignedIn && isLoaded) && (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <div className="absolute bottom-4 left-4 right-4 space-y-2">
-                        {
+                    <div className="space-y-2 mt-4">
+                        {/* {
                             !isPublicClip && (
                                 <div className="flex items-center text-sm text-white/90 z-10">
                                     <Clock size={14} className="mr-1 z-10" />
                                     <span className="z-10"> {formatTime(v?.duration)}</span>
                                 </div>
                             )
-                        }
+                        } */}
                         <div className="flex gap-2">
                             <Button
                                 size="sm"
@@ -182,7 +195,7 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
                         <button disabled={isLoading} onClick={() => handleSave()} className={`bg-[#4F46E5] disabled:bg-[#4F46E5] hover:bg-[#4F46E5]/80 !text-white py-2 ${isLoading ? "px-8 py-2" : "px-3"} rounded flex items-center justify-center gap-x-2 border-none text-sm transition-all duration-300 ease-in-out`}>
                             {
                                 isLoading ? (<AiOutlineLoading3Quarters className="animate-spin text-lg" />) : (<div className="flex items-center gap-x-2">
-                                    <FaSave  />
+                                    <FaSave />
                                     Save to library
                                 </div>)
                             }
@@ -194,4 +207,4 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
     )
 }
 
-export default CreateTitleModal
+export default SaveEditClip

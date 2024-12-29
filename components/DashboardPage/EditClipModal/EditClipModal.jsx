@@ -27,8 +27,12 @@ import { assets as featured_assets } from "@/data/featured_assets";
 import { assets as public_assets } from "@/data/community_creations";
 import { RxCross1 } from "react-icons/rx";
 import { BiError } from "react-icons/bi";
+import CreateTitleModal from "../GeneratePage/CreateTitleModal/CreateTitleModal";
+import { FaRegPaste } from "react-icons/fa6";
+import ExportedVideoPreviews from "../GeneratePage/ExportedVideoPreviews/ExportedVideoPreviews";
+import SaveEditClip from "./SaveEditClip";
 
-const EditClipModal = ({ clip_url }) => {
+const EditClipModal = ({ clip_url, fetchFreshNewVideos, videos, setVideos, filteredVideos, setFilteredVideos, selectedFilter, videoRenderKeyContainer, setVideoRenderKeyContainer, popoverOpen, setPopoverOpen }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -49,8 +53,9 @@ const EditClipModal = ({ clip_url }) => {
     const handleClear = () => {
         setPreviewUrl(null);
         setSelectedFile(null);
+
         if (fileInputRef.current) {
-            fileInputRef.current.value = ""; // Reset the file input value
+            fileInputRef.current.value = "";
         }
     };
 
@@ -91,9 +96,12 @@ const EditClipModal = ({ clip_url }) => {
     const handleUpload = async () => {
         if (!selectedFile) {
             toast({
-                variant: "destructive",
+                variant: "default",
                 title: "Upload Failed",
-                description: "No File Selected",
+                description: "Please select a file to combine",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
             return;
         }
@@ -137,9 +145,12 @@ const EditClipModal = ({ clip_url }) => {
         } catch (error) {
             console.error("Error checking video duration:", error);
             toast({
-                variant: "destructive",
+                variant: "default",
                 title: "Upload Failed",
                 description: "Failed to check video duration",
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
             setIsUploading(false);
             handleClear();
@@ -257,7 +268,13 @@ const EditClipModal = ({ clip_url }) => {
 
         } catch (error) {
             console.error("Error uploading file:", error);
-            alert("An error occurred during file upload.");
+            toast({
+                variant: "default",
+                description: `An error occurred during file upload`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
         } finally {
             setIsUploading(false);
         }
@@ -269,12 +286,12 @@ const EditClipModal = ({ clip_url }) => {
 
     useEffect(() => {
         setAssets(featured_assets.concat(public_assets));
-
     }, [user?.id])
 
     useEffect(() => {
         console.log("combinedClip?.location : ", combinedClip?.location)
     }, [combinedClip])
+
 
     return (
         (isSignedIn && isLoaded) && (
@@ -303,9 +320,7 @@ const EditClipModal = ({ clip_url }) => {
                             </div>
                         </div> */}
 
-
                         <div className="w-full h-full">
-
                             {
                                 !isCombined && (
                                     <Video className="w-full h-64 rounded-2xl">
@@ -313,12 +328,35 @@ const EditClipModal = ({ clip_url }) => {
                                     </Video>
                                 )
                             }
+
                             {
                                 !isCombined ? (
-                                    <div className="w-full">
+                                    <div className="w-full mt-6">
+                                        {
+                                            (!selectedFile) && (
+                                                <div className="flex items-center gap-x-1 bg-gray-50/10 hover:bg-gray-100/10 h-fit px-4 rounded-lg">
+                                                    <FaRegPaste className="text-gray-200" />
+
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Paste public id here" className="w-full py-2 px-4 rounded-lg bg-transparent mt-0 focus:ring-0 outline-none border-none text-gray-200"
+                                                        onChange={e => handleInputChange(e)}
+                                                    />
+                                                </div>
+                                            )
+                                        }
+
+                                        {
+                                            (!publicAssetExists && !selectedFile) && (
+                                                <div className="flex items-center justify-center mt-2 text-gray-500">
+                                                    Or
+                                                </div>
+                                            )
+                                        }
+
                                         <label
                                             htmlFor="dropzone-file"
-                                            className="mt-8 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-3xl cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
+                                            className="mt-2 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300/5 rounded-3xl cursor-pointer bg-gray-50/5 hover:bg-gray-100/10 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-150 ease-in-out"
                                         >
                                             {
                                                 (!isUploading) && (
@@ -361,7 +399,7 @@ const EditClipModal = ({ clip_url }) => {
                                                             </span>
                                                         </div>
 
-                                                        <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-purple-600 rounded-lg px-4 py-1'>
+                                                        <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-[#4F46E4] rounded-lg px-4 py-1'>
                                                             <span>ETA:</span>
                                                             <span>2-3 Minutes</span>
                                                         </div>
@@ -391,24 +429,6 @@ const EditClipModal = ({ clip_url }) => {
 
                                         </label>
 
-                                        {
-                                            (!publicAssetExists && !selectedFile) && (
-                                                <div className="flex items-center justify-center mt-2 text-gray-500">
-                                                    Or
-                                                </div>
-                                            )
-                                        }
-
-                                        {
-                                            (!selectedFile) && (
-                                                <input
-                                                    type="text"
-                                                    placeholder="Paste public id" className="w-full py-2 px-4 rounded-lg bg-gray-50/5 hover:bg-gray-100/10 mt-2 focus:ring-0 outline-none border-none text-gray-200"
-                                                    onChange={e => handleInputChange(e)}
-                                                />
-                                            )
-                                        }
-
                                         <div className="mt-2 w-full flex items-center gap-x-2">
                                             <button
                                                 disabled={isUploading}
@@ -418,7 +438,7 @@ const EditClipModal = ({ clip_url }) => {
                                                     } else {
                                                         handleUpload()
                                                     }
-                                                }} className="bg-[#4F46E5] text-white w-full py-2 px-4 rounded-lg flex items-center justify-center gap-x-2">
+                                                }} className="flex items-center justify-center bg-white/10 border-white/20 text-white hover:text-white hover:bg-white/20 hover:border-white/30 transition-all z-10 w-full py-2 px-4 rounded-lg gap-x-2">
                                                 {
                                                     isUploading ? (<ImSpinner3 className='animate-spin text-xl' />) : (<TbAssembly />)
                                                 }
@@ -434,7 +454,7 @@ const EditClipModal = ({ clip_url }) => {
                                                 selectedFile && (
                                                     <button
                                                         onClick={() => handleClear()}
-                                                        className="mt-4 mb-4 px-4 py-3 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 flex items-center gap-x-2 transition-all duration-300 ease-in-out"
+                                                        className="mt-4 mb-4 px-4 py-3 bg-red-600/50 text-white !text-xs rounded-lg hover:bg-red-700 flex items-center gap-x-2 transition-all duration-300 ease-in-out"
                                                         disabled={isUploading}
                                                     >
                                                         <RxCross1 />
@@ -445,13 +465,31 @@ const EditClipModal = ({ clip_url }) => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div key={videoRenderKey} className="w-full">
+                                    <div key={videoRenderKey} className="w-full relative h-full">
                                         <div>
                                             <Video className="w-full h-64 rounded-2xl">
                                                 <source src={`${combinedClip?.location}`} type='video/mp4' className='' />
                                             </Video>
                                         </div>
-                                        <PublishClipModal asset_url={combinedClip?.location} thumbnails={combinedClip?.thumbnails} />
+                                        {/* <PublishClipModal asset_url={combinedClip?.location} thumbnails={combinedClip?.thumbnails} /> */}
+                                        <SaveEditClip
+                                            asset_url={combinedClip?.location}
+                                            v={combinedClip}
+                                            thumbnails={combinedClip?.thumbnails}
+                                            fetchFreshNewVideos={fetchFreshNewVideos}
+                                            selectedFilter={selectedFilter}
+                                            videos={videos}
+                                            setVideos={setVideos}
+                                            filteredVideos={filteredVideos}
+                                            setFilteredVideos={setFilteredVideos}
+                                            videoRenderKey={videoRenderKeyContainer}
+                                            setVideoRenderKey={setVideoRenderKeyContainer}
+                                            isOpenEditClipModal={isOpen}
+                                            setIsOpenEditClipModal={setIsOpen}
+                                            popoverOpen={popoverOpen}
+                                            setPopoverOpen={setPopoverOpen}
+                                        />
+                                        {/* <ExportedVideoPreviews socialExportedVideoRenderKey={1} videoPaths={[combinedClip]} gridClassName={"!grid-cols-1 lg:!grid-cols-1"} editClip={true} /> */}
                                     </div>
                                 )
                             }

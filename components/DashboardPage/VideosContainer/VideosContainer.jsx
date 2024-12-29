@@ -18,6 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { IoMenu } from 'react-icons/io5';
 import PublishClipModal from '../PublishClipModal/PublishClipModal';
 import VideoCard from './VideoCard';
+import { BiError } from 'react-icons/bi';
 
 const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +33,7 @@ const VideosContainer = ({ userId, asset_status }) => {
     const [page, setPage] = useState(1);
     const [filterPage, setFilterPage] = useState(1);
     const [isOpen, setIsOpen] = useState(false);
+    const [popoverOpen, setPopoverOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [videoRenderKey, setVideoRenderKey] = useState(0);
     const limit = 18;
@@ -56,9 +58,51 @@ const VideosContainer = ({ userId, asset_status }) => {
             console.log(err);
             setIsLoading(false);
             toast({
-                variant: "destructive",
-                description: "Something went wrong!",
+                variant: "default",
+                description: `Something went wrong`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
+        }
+    }
+
+    const fetchFreshNewVideos = async (item) => {
+        try {
+            // setIsLoading(true);
+
+            // const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos?user_id=${userId}&&limit=${limit}&&asset_status=${asset_status}&&page=${currentPage ? currentPage : page}`);
+
+            // if (response?.data?.success) {
+            //     setVideos([...response?.data?.videos]);
+            //     setTotalVideos(response?.data?.totalVideos);
+            //     setSelectedFilter('');
+            //     setPage(page + 1);
+            //     setIsLoading(false);
+            // }
+
+            if (!selectedFilter) {
+                setVideos([item, ...videos])
+                setVideoRenderKey(videoRenderKey + 1);
+                setIsLoading(false);
+                return;
+            } else {
+                setFilteredVideos([item, ...filteredVideos]);
+                setVideoRenderKey(videoRenderKey + 1);
+                setIsLoading(false);
+                return;
+            }
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+            toast({
+                variant: "default",
+                description: `Something went wrong`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            return;
         }
     }
 
@@ -83,8 +127,11 @@ const VideosContainer = ({ userId, asset_status }) => {
             console.log(err);
             setIsLoading(false);
             toast({
-                variant: "destructive",
-                description: "Something went wrong!",
+                variant: "default",
+                description: `Something went wrong`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
             })
         }
     }
@@ -120,7 +167,7 @@ const VideosContainer = ({ userId, asset_status }) => {
         }
         try {
             console.log("filter : ", filter)
-     
+
             setVideos([]);
             setIsFiltering(true);
             const response = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/get-videos-by-filter?user_id=${userId}&&asset_status=${asset_status}&&limit=${limit}&&page=1&&filter=${filter}`);
@@ -369,8 +416,6 @@ const VideosContainer = ({ userId, asset_status }) => {
 
     };
 
-
-
     useEffect(() => {
         if (filterPage === 1) {
             filteringFunction(selectedFilter);
@@ -424,7 +469,19 @@ const VideosContainer = ({ userId, asset_status }) => {
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
-                                                        <EditClipModal clip_url={v?.location} />
+                                                        <EditClipModal
+                                                            clip_url={v?.location}
+                                                            fetchFreshNewVideos={fetchFreshNewVideos}
+                                                            selectedFilter={selectedFilter}
+                                                            videos={videos}
+                                                            setVideos={setVideos}
+                                                            filteredVideos={filteredVideos}
+                                                            setFilteredVideos={setFilteredVideos}
+                                                            videoRenderKey={videoRenderKey}
+                                                            setVideoRenderKey={setVideoRenderKey}
+                                                            popoverOpen={popoverOpen}
+                                                            setPopoverOpen={setPopoverOpen}
+                                                        />
                                                     )
                                                 }
 
@@ -494,7 +551,19 @@ const VideosContainer = ({ userId, asset_status }) => {
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
-                                                        <EditClipModal clip_url={v?.location} />
+                                                        <EditClipModal
+                                                            clip_url={v?.location}
+                                                            fetchFreshNewVideos={fetchFreshNewVideos}
+                                                            selectedFilter={selectedFilter}
+                                                            videos={videos}
+                                                            setVideos={setVideos}
+                                                            filteredVideos={filteredVideos}
+                                                            setFilteredVideos={setFilteredVideos}
+                                                            videoRenderKeyContainer={videoRenderKey}
+                                                            setVideoRenderKeyContainer={setVideoRenderKey}
+                                                            popoverOpen={popoverOpen}
+                                                            setPopoverOpen={setPopoverOpen}
+                                                        />
                                                     )
                                                 }
 
