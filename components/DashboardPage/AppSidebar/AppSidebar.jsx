@@ -153,10 +153,10 @@ export function AppSidebar() {
                             <div className="mt-2">
                                 <small className={`text-neutral-500 px-2 uppercase text-xs ${poppins.className}`}>Clips</small>
                                 <div className="mt-2">
-                                    <Link href={"/dashboard/published"} className={`w-full rounded-lg hover:bg-[#1B1D23] ${activeLink === '/dashboard/published' && "bg-[#2a2d36] bg-opacity-40 border border-[#2d2e7e] !text-neutral-200"} text-gray-400 text-xs flex items-center gap-x-2 px-5 py-2 transition-all duration-200 ease-in-out outline-none ring-0 border-none`}>
+                                    <Link href={"/dashboard/ready-to-post"} className={`w-full rounded-lg hover:bg-[#1B1D23] ${activeLink === '/dashboard/ready-to-post' && "bg-[#2a2d36] bg-opacity-40 border border-[#2d2e7e] !text-neutral-200"} text-gray-400 text-xs flex items-center gap-x-2 px-5 py-2 transition-all duration-200 ease-in-out outline-none ring-0 border-none`}>
                                         <IoMdShare className="text-[1rem]" />
 
-                                        Published Clips
+                                        Ready to Post
                                     </Link>
                                 </div>
                             </div>

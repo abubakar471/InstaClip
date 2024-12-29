@@ -19,6 +19,7 @@ import { IoMenu } from 'react-icons/io5';
 import PublishClipModal from '../PublishClipModal/PublishClipModal';
 import VideoCard from './VideoCard';
 import { BiError } from 'react-icons/bi';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -36,6 +37,12 @@ const VideosContainer = ({ userId, asset_status }) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [videoRenderKey, setVideoRenderKey] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
+    const [isSearched, setIsSearched] = useState(false);
+    const [searchedResults, setSearchedResults] = useState([]);
+    const [currentVideos, setCurrentVideos] = useState([]);
+
     const limit = 18;
 
     const { toast } = useToast();
@@ -416,8 +423,56 @@ const VideosContainer = ({ userId, asset_status }) => {
 
     };
 
+    const handleSearch = async (e) => {
+        e.preventDefault();
+
+        setIsSearching(true);
+        // console.log("search query : ", searchQuery)
+
+        try {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/search?query=${searchQuery}&&asset_status=${asset_status}&&user_id=${user?.id}`);
+            const data = res?.data;
+
+            if (data?.success) {
+                // if (selectedFilter) {
+                //     // setCurrentVideos(filteredVideos);
+                //     setFilteredVideos(res?.data?.videos);
+                // } else {
+                //     // setCurrentVideos(videos)
+                //     setVideos(res?.data?.videos);
+                // }
+                setSearchedResults(data?.videos)
+                setIsSearching(false);
+                setIsSearched(true);
+            }
+
+
+        } catch (err) {
+            console.log(err);
+            setIsSearching(false);
+        }
+    }
+
+    const setCurrentVideosNull = async () => {
+        if (selectedFilter) {
+            // setFilteredVideos(currentVideos);
+            // setCurrentVideos([]);
+            setSearchedResults([]);
+            setIsSearched(false);
+            // fetchVideos(1);
+        } else {
+            // setVideos(currentVideos);
+            // setCurrentVideos([]);
+            setSearchedResults([]);
+            setIsSearched(false);
+            // fetchVideos(1);
+        }
+    }
+
+
     useEffect(() => {
         if (filterPage === 1) {
+            setCurrentVideos([]);
             filteringFunction(selectedFilter);
         }
     }, [filterPage, selectedFilter]);
@@ -449,11 +504,96 @@ const VideosContainer = ({ userId, asset_status }) => {
                     filteredVideoUrls={filteredVideoUrls}
                     setFilteredVideoUrls={setFilteredVideoUrls}
                     filteringFunction={filteringFunction}
+                    handleSearch={handleSearch}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    setCurrentVideosNull={setCurrentVideosNull}
+                    isSearching={isSearching}
                 />
+
+                <div className='mb-6'>
+                    {
+                        (isSearched && !isSearching) && (<h3 className='pb-4 text-white text-2xl'>Your Searched Results</h3>)
+                    }
+
+                    {
+                        (isSearched && searchedResults?.length === 0 && !isSearching) && (
+                            <p className='text-neutral-200'>No clips found</p>
+                        )
+                    }
+                    <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4'>
+                        {
+                            (searchedResults?.length > 0 && !isSearching) && (
+                                searchedResults?.map((v, i) => (
+                                    <div key={i} className='flex flex-col gap-y-2'>
+                                        <div className='flex items-center justify-between gap-x-2'>
+                                            <div className='text-neutral-400 text-sm mx-2'>
+                                                {v?.title?.length < 20 ? v?.title : (`${v?.title.slice(0, 20)}...`)}
+                                            </div>
+
+                                            <Popover>
+                                                <PopoverTrigger>
+                                                    <IoMenu className='text-gray-500 text-md' />
+                                                </PopoverTrigger>
+                                                <PopoverContent className="bg-[#000D18] flex flex-col gap-y-2 border-none">
+
+                                                    {
+                                                        v?.asset_status !== "PUBLISHED" && (
+                                                            <EditClipModal
+                                                                clip_url={v?.location}
+                                                                fetchFreshNewVideos={fetchFreshNewVideos}
+                                                                selectedFilter={selectedFilter}
+                                                                videos={videos}
+                                                                setVideos={setVideos}
+                                                                filteredVideos={filteredVideos}
+                                                                setFilteredVideos={setFilteredVideos}
+                                                                videoRenderKey={videoRenderKey}
+                                                                setVideoRenderKey={setVideoRenderKey}
+                                                                popoverOpen={popoverOpen}
+                                                                setPopoverOpen={setPopoverOpen}
+                                                            />
+                                                        )
+                                                    }
+
+                                                    <button
+                                                        onClick={() => handleDownload(v?.location, v?.filename)}
+                                                        className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-start gap-x-2 transition-all duration-200 text-sm"
+                                                    >
+                                                        <IoMdCloudDownload className="" />
+                                                        <span className=''>Download</span>
+
+
+                                                    </button>
+
+                                                    {
+                                                        v?.asset_status !== "PUBLISHED" && (
+                                                            <PublishClipModal asset_url={v?.location} draftThumnail={v?.thumbnail} className="justify-start" />
+                                                        )
+                                                    }
+
+                                                    <button disabled={isDeleting} onClick={() => handleDelete(v?.location, v, fetchFreshVideos)} className='mt-2 bg-[#9e3333] !text-white py-2 md:py-2 px-3 rounded hover:bg-[#802e2e] flex items-center justify-start gap-x-2 border-none text-sm'>
+                                                        <MdDelete />
+                                                        Delete Clip
+                                                    </button>
+
+                                                </PopoverContent>
+                                            </Popover>
+                                        </div>
+                                        {/* <Video className="h-[300px] rounded-3xl">
+                                        <source src={`${v?.location}`} type='video/mp4' />
+                                    </Video> */}
+
+                                        <VideoCard v={v} />
+                                    </div>
+                                ))
+                            )
+                        }
+                    </div>
+                </div>
 
                 <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4'>
                     {
-                        (videos?.length > 0 && filteredVideos?.length === 0) && (
+                        (videos?.length > 0 && filteredVideos?.length === 0 && !isSearching && !isSearched) && (
                             videos?.map((v, i) => (
                                 <div key={i} className='flex flex-col gap-y-2'>
                                     <div className='flex items-center justify-between gap-x-2'>
@@ -535,7 +675,7 @@ const VideosContainer = ({ userId, asset_status }) => {
 
                 <div key={videoRenderKey} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-4 mb-10'>
                     {
-                        (filteredVideos?.length > 0 && !isFiltering) && (
+                        (filteredVideos?.length > 0 && !isFiltering && !isSearching && !isSearched) && (
                             filteredVideos?.map((v, i) => (
                                 <div key={i} className='flex flex-col gap-y-2'>
                                     <div className='flex items-center justify-between gap-x-2'>
@@ -616,7 +756,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                 </div>
 
                 {
-                    (!isLoading && videos?.length < totalVideos) && (
+                    (!isLoading && videos?.length < totalVideos && currentVideos?.length === 0 && !isSearched) && (
                         <div className='pt-6 pb-2 flex items-center justify-center'>
                             <button onClick={() => fetchVideos()} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
                         </div>
@@ -625,7 +765,7 @@ const VideosContainer = ({ userId, asset_status }) => {
 
 
                 {
-                    (!isFiltering && filteredVideos?.length < totalVideosFiltering) && (
+                    (!isFiltering && filteredVideos?.length < totalVideosFiltering && currentVideos?.length === 0 && !isSearched) && (
                         <div className='pt-6 pb-2 flex items-center justify-center'>
                             <button onClick={() => filteringLoadMoreFunction(selectedFilter)} className='bg-[#36339E]/90 bg-blend-luminosity text-white text-sm px-4 py-2 rounded-lg'>Show More</button>
                         </div>
