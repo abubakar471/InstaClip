@@ -65,8 +65,6 @@ const UploadVideo = ({ userId }) => {
     })
 
 
-
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file && file.type.startsWith("video/")) {
@@ -88,8 +86,6 @@ const UploadVideo = ({ userId }) => {
             fileInputRef.current.value = ""; // Reset the file input value
         }
     };
-
-
 
     const sendVideoSegmentation = async (videoFilePath, local_video_filepath) => {
         setIsSegmenting(true);

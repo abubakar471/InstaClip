@@ -29,16 +29,16 @@ const VideosFilter = ({ userId, filterPage, setFilterPage, totalVideos, setTotal
 
     return (
         <div className='mt-6 mb-12'>
-            <div className='flex items-center gap-x-4'>
+            <div className='flex items-center gap-x-2 lg:gap-x-4'>
                 <form onSubmit={handleSearch} className='flex items-center gap-x-0 border-none border-[#4F46E5]/80 px-0 grow rounded-lg'>
-                    <div className='!bg-[#4F46E5]/20 pl-4 pr-4 py-3 rounded-l-lg'>
+                    <div className='!bg-[#333]/20 pl-4 pr-4 py-3 rounded-l-lg'>
                         <IoSearchSharp className='text-[#FFFF]' />
                     </div>
 
                     <input
                         type='text'
                         placeholder='Search'
-                        className='!bg-[#4F46E5]/10 text-neutral-200 placeholder:text-[#fff]/70 focus:!ring-0 !outline-none text-sm grow py-2.5 pl-1 rounded-r-lg indent-2'
+                        className='!bg-[#333]/10 text-neutral-200 placeholder:text-[#fff]/70 focus:!ring-0 !outline-none text-sm grow py-2.5 pl-1 rounded-r-lg indent-2'
                         value={searchQuery}
                         disabled={isSearching}
                         onChange={(e) => {
