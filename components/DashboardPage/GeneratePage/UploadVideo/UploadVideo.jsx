@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ExportedVideoPreviews from '../ExportedVideoPreviews/ExportedVideoPreviews';
 import { ImFilePlay, ImSpinner3 } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
-import { MdCloudUpload, MdOutlinePermMedia, MdOutlinePhotoLibrary, MdPermMedia, MdUploadFile } from 'react-icons/md';
+import { MdCloudUpload, MdOutlineCompareArrows, MdOutlinePermMedia, MdOutlinePhotoLibrary, MdPermMedia, MdUploadFile } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import RecentCreatedVideos from '../../RecentCreatedVideos/RecentCreatedVideos';
@@ -14,7 +14,7 @@ import 'react-html5video/dist/styles.css'
 import { useToast } from '@/hooks/use-toast';
 import SocialVideoImport from './SocialVideoImport';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FaCheck, FaYoutube } from 'react-icons/fa';
+import { FaArrowsAltH, FaCheck, FaYoutube } from 'react-icons/fa';
 import { Skeleton } from '@/components/ui/skeleton';
 import PublicLibraryAssets from './PublicLibraryAssets';
 import FeaturedAssets from './FeaturedAssets';
@@ -28,6 +28,16 @@ import { BiError } from 'react-icons/bi';
 import { Youtube, FileVideo, Loader2, Play, Clock, Video, Film, PlusCircle } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { GoArrowRight } from 'react-icons/go';
 // import {GiFairyWand} from "react-icons/gi"
 
 const UploadVideo = ({ userId }) => {
@@ -44,6 +54,7 @@ const UploadVideo = ({ userId }) => {
     const [socialExportedVideoRenderKey, setSocialExportedVideoRenderKey] = useState(1);
     const [selectedTab, setSelectedTab] = useState('')
     const [uploadProgress, setUploadProgress] = useState(0)
+    const [clipCount, setClipCount] = useState(1);
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -120,6 +131,7 @@ const UploadVideo = ({ userId }) => {
 
         const formData = new FormData();
         formData.append("segments", JSON.stringify(segments));
+        formData.append("count", JSON.parse(window.localStorage.getItem("clipCount")));
 
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/segment_candidates`, formData, {
@@ -631,9 +643,17 @@ const UploadVideo = ({ userId }) => {
         }
     }
 
+    const handleClipCountFilter = (filter) => {
+        setClipCount(filter);
+    };
+
     useEffect(() => {
         setSelectedTab("AI")
     }, [])
+
+    useEffect(() => {
+        console.log("clip Count : ", clipCount)
+    }, [clipCount])
 
 
     return (
@@ -660,89 +680,6 @@ const UploadVideo = ({ userId }) => {
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="create_clips">
-
-                            {/* <label
-                                htmlFor="dropzone-file"
-                                className="mt-8 flex flex-col items-center justify-center w-full min-h-64 border-dashed border-4 border-gray-300/5 rounded-lg cursor-pointer bg-[#07080A] hover:bg-[#07080A]/50 dark:border-gray-600 dark:hover:border-gray-500 relative transition-all duration-300 ease-in-out"
-                            >
-                                {
-                                    (!isUploading && !isSegmenting && !isSegmentingCandidates && !isExporting) && (
-                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <div className='bg-[#1D1B4C] p-4 rounded-xl flex items-center justify-center w-fit'>
-                                                <ImFilePlay className='text-[#6770CC] text-2xl' />
-                                            </div>
-                                            <h4 className='text-lg text-[#FDFFFF] mt-4 text-center'>Drop your video here</h4>
-                                            <p className='text-[#4E545A] text-sm mt-1 text-center px-10 lg:px-0'>Upload your video files to create engaging short-form content automatically</p>
-                                            <div className='flex items-center gap-x-4 gap-y-2 mt-4 px-4 justify-center flex-wrap md:flex-nowrap'>
-                                                <div className='flex items-center gap-x-1 text-[#343943] text-sm text-center'>
-                                                    <MdUploadFile className='text-[1rem]' />
-                                                    MP4, MOV
-                                                </div>
-
-                                                <div className='flex items-center gap-x-1 text-[#343943] text-sm text-center'>
-                                                    <IoMdTime className='text-[1rem]' />
-                                                    Any Duration
-                                                </div>
-
-                                                <div className='flex items-center gap-x-1 text-[#343943] text-sm text-center'>
-                                                    <RiGalleryLine className='text-[1rem]' />
-                                                    Up to 100MB
-                                                </div>
-                                            </div>
-
-                                            <div className='mt-4'>
-                                                <div className='bg-transparent border-2 border-neutral-500/20 flex items-center gap-x-2 px-4 py-1 rounded-md text-[#4E545A] text-sm '>
-                                                    <MdUploadFile className='text-[1rem]' />
-                                                    Browse Files
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                }
-
-                                {
-                                    (isUploading || isSegmenting || isSegmentingCandidates || isExporting) && (
-                                        <div className='w-full flex flex-col items-center justify-center mt-4'>
-                                            <div className='flex flex-col items-center gap-x-2 text-neutral-500 text-sm'>
-                                                <ImSpinner3 className='animate-spin text-3xl' />
-                                                <span className='font-semibold mt-2'>
-                                                    {
-                                                        isUploading && ("Uploding")
-                                                    }
-
-                                                    {
-                                                        isSegmenting && ("Segmenting Video")
-                                                    }
-
-                                                    {
-                                                        isSegmentingCandidates && ("Segmenting Candidates")
-                                                    }
-
-                                                    {
-                                                        isExporting && ("Exporting Clips")
-                                                    }
-                                                </span>
-                                            </div>
-
-                                            <div className='flex gap-x-2 gap-y-1 items-center justify-center text-xs mt-2 text-white bg-purple-600 rounded-lg px-4 py-1'>
-                                                <span>ETA:</span>
-                                                <span>2-3 Minutes</span>
-                                            </div>
-                                        </div>
-                                    )
-                                }
-                                <input
-                                    id="dropzone-file"
-                                    type="file"
-                                    className="hidden"
-                                    accept="video/*"
-                                    ref={fileInputRef}
-                                    onChange={handleFileChange}
-                                    disabled={isUploading || isSegmenting || isSegmentingCandidates || isExporting}
-                                    required
-                                />
-                            </label> */}
-
                             <div
                                 {...getRootProps()}
                                 className={`relative group cursor-pointer transform transition-all duration-200 mt-9 ${isDragActive ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-white/5'
@@ -774,6 +711,49 @@ const UploadVideo = ({ userId }) => {
                                                     : 'Upload your video files to create engaging short-form content automatically'
                                                 }
                                             </p>
+
+                                            <div className='w-full flex items-center justify-center mb-6'>
+                                                <Select disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} required={true} onValueChange={(value) => {
+                                                    window.localStorage.setItem("clipCount", JSON.stringify(value))
+                                                }}>
+                                                    <SelectTrigger className="w-[90%] sm:w-[400px] !border-none border-gray-500/20 !bg-[#333]/20 !text-white">
+                                                        <SelectValue placeholder="Max Clip Count" className='!text-white/40 !text-xs' />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="!bg-[#101012] !border-none">
+                                                        <SelectGroup>
+                                                            <SelectLabel className="!text-neutral-100">Max Clip Count</SelectLabel>
+                                                            <SelectItem value="2" className="!w-full !flex !items-center !gap-x-2 !justify-between !text-neutral-100 focus:!text-black hover:!text-black">
+                                                                <div className='flex items-center justify-between gap-x-4'>
+                                                                    <span>Max Clip 2</span>
+                                                                    <GoArrowRight className='text-lg' />
+                                                                    <span className='!text-xs font-semibold'>{"(Est. 3 min)"}</span>
+                                                                </div>
+                                                            </SelectItem>
+                                                            <SelectItem value="3" className="!w-full !flex !items-center !gap-x-2 !justify-between !text-neutral-100 focus:!text-black hover:!text-black">
+                                                                <div className='flex items-center justify-between gap-x-4'>
+                                                                    <span>Max Clip 3</span>
+                                                                    <GoArrowRight className='text-lg' />
+                                                                    <span className='!text-xs font-semibold'>{"(Est. 4 min)"}</span>
+                                                                </div>
+                                                            </SelectItem>
+                                                            <SelectItem value="5" className="!w-full !flex !items-center !gap-x-2 !justify-between !text-neutral-100 focus:!text-black hover:!text-black">
+                                                                <div className='flex items-center justify-between gap-x-4'>
+                                                                    <span>Max Clip 5</span>
+                                                                    <GoArrowRight className='text-lg' />
+                                                                    <span className='!text-xs font-semibold'>{"(Est. 5 min)"}</span>
+                                                                </div>
+                                                            </SelectItem>
+                                                            <SelectItem value="10" className="!w-full !flex !items-center !gap-x-2 !justify-between !text-neutral-100 focus:!text-black hover:!text-black">
+                                                                <div className='flex items-center justify-between gap-x-4'>
+                                                                    <span>Max Clip 10</span>
+                                                                    <GoArrowRight className='text-lg' />
+                                                                    <span className='!text-xs font-semibold'>{"(Est. 7 min)"}</span>
+                                                                </div>
+                                                            </SelectItem>
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                             <div className="flex flex-col gap-4">
                                                 <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
                                                     <span className="flex items-center"><FileVideo className="w-4 h-4 mr-1" /> MP4, MOV</span>

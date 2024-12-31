@@ -48,7 +48,7 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths, gridC
     }, [videoPaths]);
 
     return (
-        <div key={socialExportedVideoRenderKey} className={`${gridClassName && gridClassName} "w-full mx-auto mt-4 grid grid-cols-1 lg:grid-cols-4 2xl:grid-cols-4 gap-x-4 gap-y-4"`}>
+        <div key={socialExportedVideoRenderKey} className={`${gridClassName && gridClassName} "w-full mx-auto mt-4 grid grid-cols-1 lg:grid-cols-4 2xl:grid-cols-4 gap-x-4 gap-y-6 row-gap-2"`}>
             {videoUrls.map((v, index) => (
                 <div key={index} className="flex flex-col gap-y-2 w-full relative h-[400px] rounded-2xl group">
                     {/* <Image src={`${v?.thumbnails[2]}`} alt={`${v?.location}`} width={600} height={600} className="w-full h-full object-cover absolute top-0 left-0 right-0 bottom-0 rounded-2xl"  /> */}
@@ -67,7 +67,7 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths, gridC
                         </div>
                     </div>
                     <div style={{
-                        background: `url("${index === 0 ? v?.thumbnails[3] : (index === 1 ? v?.thumbnails[0] : (index === 2 ? v?.thumbnails[2] : v?.thumbnails[1]))}") rgba(0,0,0,0.4)`,
+                        background: `url("${index === 0 ? v?.thumbnails[0] : (index === 1 ? v?.thumbnails[1] : (index === 2 ? v?.thumbnails[2] : (index === 3 ? v?.thumbnails[3] : v?.thumbnails[4])))}") rgba(0,0,0,0.4)`,
                         backgroundPosition: "center",
                         backgroundSize: "cover",
                         backgroundRepeat: "no-repeat",
