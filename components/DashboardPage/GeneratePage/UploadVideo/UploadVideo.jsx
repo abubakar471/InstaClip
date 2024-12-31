@@ -664,15 +664,15 @@ const UploadVideo = ({ userId }) => {
                 </h1>
                 <p className="text-gray-400">Import or create content from various platforms</p>
                 <div className='min-h-screen max-h-fit col-span-0 lg:col-span-4 2xl:col-span-4 bg-transparent px-0 rounded-2xl w-full mt-9'>
-                    <Tabs defaultValue="create_clips" onClick={() => window.localStorage.setItem("clipCount", JSON.stringify("2"))} className="w-full !bg-transparent">
+                    <Tabs defaultValue="create_clips" className="w-full !bg-transparent">
                         <TabsList className="w-fit bg-[#08090C] flex items-center justify-start gap-x-2">
-                            <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="create_clips" className="w-fit">
+                            <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="create_clips" className="w-fit" onClick={() => window.localStorage.setItem("clipCount", JSON.stringify("2"))}>
                                 <div className='flex items-center gap-x-2 text-sm py-1 px-1'>
                                     <MdUploadFile className='text-[1.1rem]' />
                                     Upload Video
                                 </div>
                             </TabsTrigger>
-                            <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="youtube_import" className="w-fit">
+                            <TabsTrigger disabled={isUploading || isImportingSocialVideo || isSegmenting || isSegmentingCandidates || isExporting} value="youtube_import" className="w-fit" onClick={() => window.localStorage.setItem("clipCount", JSON.stringify("2"))}>
                                 <div className='flex items-center gap-x-2 text-sm py-1 px-1'>
                                     <PiYoutubeLogo className='text-[1.1rem]' />
                                     YouTube Import
