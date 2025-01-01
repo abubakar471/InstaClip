@@ -20,6 +20,7 @@ import PublishClipModal from '../PublishClipModal/PublishClipModal';
 import VideoCard from './VideoCard';
 import { BiError } from 'react-icons/bi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import WriteCaptionModal from '../WriteCaptionModal/WriteCaptionModal';
 
 const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -625,6 +626,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                                                     )
                                                 }
 
+
                                                 <button
                                                     onClick={() => handleDownload(v?.location, v?.filename)}
                                                     className="grow mt-2 bg-[#36339e] text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-start gap-x-2 transition-all duration-200 text-sm"
@@ -634,6 +636,13 @@ const VideosContainer = ({ userId, asset_status }) => {
 
 
                                                 </button>
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <WriteCaptionModal clip={v} clips={videos} setClips={setVideos} />
+                                                    )
+                                                }
+
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
@@ -716,6 +725,14 @@ const VideosContainer = ({ userId, asset_status }) => {
 
 
                                                 </button>
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <WriteCaptionModal clip={v} clips={filteredVideos} setClips={setFilteredVideos} />
+                                                    )
+                                                }
+
+
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
