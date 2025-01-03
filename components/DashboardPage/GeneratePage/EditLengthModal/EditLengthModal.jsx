@@ -112,12 +112,11 @@ const EditLengthModal = ({ clip, clips, setClips, className }) => {
                             return {
                                 ...item,
                                 location: res_data?.clip?.location || clip?.location,
-                                duration: res_data?.clip?.duration || data?.data?.duration,
+                                video_duration: res_data?.clip?.duration || data?.data?.duration,
                             };
                         }
                         return item;
                     })
-
                     setClips(filterArr)
                     toast({
                         variant: "default",
@@ -146,7 +145,7 @@ const EditLengthModal = ({ clip, clips, setClips, className }) => {
     }
 
     useEffect(() => {
-        console.log("setting caption : ", clip?.video_duration)
+        console.log("setting duration : ", clip?.video_duration)
         setEndDuration(clip?.video_duration)
     }, [])
 

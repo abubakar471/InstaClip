@@ -644,7 +644,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                                                     )
                                                 }
 
-{
+                                                {
                                                     v?.asset_status !== "PUBLISHED" && (
                                                         <EditLengthModal clip={v} clips={videos} setClips={setVideos} />
                                                     )
@@ -739,7 +739,11 @@ const VideosContainer = ({ userId, asset_status }) => {
                                                     )
                                                 }
 
-
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <EditLengthModal clip={v} clips={filteredVideos} setClips={setFilteredVideos} />
+                                                    )
+                                                }
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
