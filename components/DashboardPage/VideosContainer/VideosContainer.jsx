@@ -21,6 +21,7 @@ import VideoCard from './VideoCard';
 import { BiError } from 'react-icons/bi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import WriteCaptionModal from '../WriteCaptionModal/WriteCaptionModal';
+import EditLengthModal from '../GeneratePage/EditLengthModal/EditLengthModal';
 
 const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -640,6 +641,12 @@ const VideosContainer = ({ userId, asset_status }) => {
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
                                                         <WriteCaptionModal clip={v} clips={videos} setClips={setVideos} />
+                                                    )
+                                                }
+
+{
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <EditLengthModal clip={v} clips={videos} setClips={setVideos} />
                                                     )
                                                 }
 

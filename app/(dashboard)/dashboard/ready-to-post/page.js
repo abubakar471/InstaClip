@@ -18,7 +18,7 @@ const PublishedPage = async () => {
 
             </div>
             <div>
-                <VideosContainer userId={userId} asset_status={"PUBLISHED"} />
+                <VideosContainer userId={userId} asset_status={"DRAFT"} />
             </div>
         </div>
     )
