@@ -12,7 +12,7 @@ import DeleteClipModal from '../GeneratePage/DeleteClipModal/DeleteClipModal';
 import { useUser } from '@clerk/nextjs';
 import { ImSpinner3 } from 'react-icons/im';
 import { MdDelete } from 'react-icons/md';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import EditClipModal from '../EditClipModal/EditClipModal';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { IoMenu } from 'react-icons/io5';
@@ -22,6 +22,7 @@ import { BiError } from 'react-icons/bi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import WriteCaptionModal from '../WriteCaptionModal/WriteCaptionModal';
 import EditLengthModal from '../GeneratePage/EditLengthModal/EditLengthModal';
+import PostOnSocialContainerModal from '../GeneratePage/PostOnSocialContainerModal/PostOnSocialContainerModal';
 
 const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +45,9 @@ const VideosContainer = ({ userId, asset_status }) => {
     const [isSearched, setIsSearched] = useState(false);
     const [searchedResults, setSearchedResults] = useState([]);
     const [currentVideos, setCurrentVideos] = useState([]);
+    const searchParams = useSearchParams();
+    const insta_access_token = searchParams.get('insta_access_token');
+    const insta_user_id = searchParams.get('insta_user_id');
 
     const limit = 18;
 
@@ -486,7 +490,12 @@ const VideosContainer = ({ userId, asset_status }) => {
 
     }, [userId])
 
-
+    useEffect(() => {
+        if (typeof (window) !== undefined) {
+            window.localStorage.setItem("insta_user_id", JSON.stringify(insta_user_id));
+            window.localStorage.setItem("insta_access_token", JSON.stringify(insta_access_token))
+        }
+    }, [insta_user_id, insta_access_token])
 
     return (
         (isLoaded && isSignedIn) && (
@@ -670,6 +679,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                                     </Video> */}
 
                                     <VideoCard v={v} />
+                                    {/* <PostOnSocialContainerModal clip={v} /> */}
                                 </div>
                             ))
                         )
