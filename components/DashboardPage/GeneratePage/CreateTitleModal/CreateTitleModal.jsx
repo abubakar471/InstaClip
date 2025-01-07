@@ -24,7 +24,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { BiError } from "react-icons/bi"
 import { FaCheck, FaSave } from "react-icons/fa"
 
-const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, className, isPublicClip, editClip }) => {
+const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, className, isPublicClip, editClip, quota_type, generatedCounts, groupId }) => {
     const [title, setTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +63,10 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
                 title: title,
                 asset_url: asset_url,
                 thumbnail: thumbnail,
-                user_id: user?.id
+                user_id: user?.id,
+                quota_type : quota_type,
+                generatedCounts : generatedCounts, 
+                groupId
             })
 
             if (res?.data?.success) {

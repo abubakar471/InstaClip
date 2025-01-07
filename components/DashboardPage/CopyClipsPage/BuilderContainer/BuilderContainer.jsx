@@ -16,6 +16,8 @@ import { GoPlusCircle } from "react-icons/go";
 import { FaTiktok } from 'react-icons/fa'
 import TikTokVideoImport from '../../GeneratePage/UploadVideo/TikTokVideoImport'
 import YouTubeVideoCategory from '../YouTubeVideoCategory/YouTubeVideoCategory'
+import { checkSubscription } from '@/lib/actions/checkSubscription'
+import { checkUserQuota } from '@/lib/actions/checkUserQuota'
 
 const BuilderContainer = () => {
     const router = useRouter();
@@ -117,52 +119,57 @@ const BuilderContainer = () => {
             }
 
             if (origin === "youtube") {
-                const formData = new FormData();
-                const simpleurl = simplifyYouTubeURL(socialVideoLink);
+                const isPro = await checkSubscription(user?.id);
+                const checkQuotaStatus = await checkUserQuota(isPro, user?.id, 'copy_posts_count');
 
-                if (!simpleurl) {
-                    toast({
-                        variant: "default",
-                        description: "Failed to import video",
-                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                            <BiError className='!text-[#FDFFFF]' />
-                        </div>
-                    })
-                    return;
-                }
+                if (checkQuotaStatus) {
+                    const formData = new FormData();
+                    const simpleurl = simplifyYouTubeURL(socialVideoLink);
 
-                formData.append("url", simplifyYouTubeURL(socialVideoLink));
-                formData.append("user_id", user?.id);
+                    if (!simpleurl) {
+                        toast({
+                            variant: "default",
+                            description: "Failed to import video",
+                            action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                                <BiError className='!text-[#FDFFFF]' />
+                            </div>
+                        })
+                        return;
+                    }
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-youtube-video`, {
-                    method: "POST",
-                    headers: {
-                        // When using FormData, do not set Content-Type manually;
-                        // fetch will set it correctly for multipart form data.
-                    },
-                    body: formData,
-                });
+                    formData.append("url", simplifyYouTubeURL(socialVideoLink));
+                    formData.append("user_id", user?.id);
 
-                if (!response.ok) {
-                    throw new Error("Failed to upload file");
-                }
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-youtube-video`, {
+                        method: "POST",
+                        headers: {
+                            // When using FormData, do not set Content-Type manually;
+                            // fetch will set it correctly for multipart form data.
+                        },
+                        body: formData,
+                    });
 
-                const data = await response.json();
-                console.log("response : ", data);
-                if (data?.success) {
-                    console.log("video uploaded");
-                    setSocialVideoLink("");
-                    setExportedVideos(data?.data);
-                    setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
-                    setIsImportingSocialVideo(false);
-                } else {
-                    toast({
-                        variant: "default",
-                        description: "Upload Failed",
-                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                            <BiError className='!text-[#FDFFFF]' />
-                        </div>
-                    })
+                    if (!response.ok) {
+                        throw new Error("Failed to upload file");
+                    }
+
+                    const data = await response.json();
+                    console.log("response : ", data);
+                    if (data?.success) {
+                        console.log("video uploaded");
+                        setSocialVideoLink("");
+                        setExportedVideos(data?.data);
+                        setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
+                        setIsImportingSocialVideo(false);
+                    } else {
+                        toast({
+                            variant: "default",
+                            description: "Upload Failed",
+                            action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                                <BiError className='!text-[#FDFFFF]' />
+                            </div>
+                        })
+                    }
                 }
             }
 
@@ -204,52 +211,45 @@ const BuilderContainer = () => {
             }
 
             if (origin === "instagram") {
-                const formData = new FormData();
-                // const simpleurl = simplifyYouTubeURL(socialVideoLink);
+                const isPro = await checkSubscription(user?.id);
+                const checkQuotaStatus = await checkUserQuota(isPro, user?.id, 'copy_posts_count')
 
-                // if (!simpleurl) {
-                //     toast({
-                //         variant: "default",
-                //         description: "Failed to import video",
-                //         action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                //             <BiError className='!text-[#FDFFFF]' />
-                //         </div>
-                //     })
-                //     return;
-                // }
+                if (checkQuotaStatus) {
+                    const formData = new FormData();
 
-                formData.append("url", socialVideoLink);
-                formData.append("user_id", user?.id);
+                    formData.append("url", socialVideoLink);
+                    formData.append("user_id", user?.id);
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-instagram-video`, {
-                    method: "POST",
-                    headers: {
-                        // When using FormData, do not set Content-Type manually;
-                        // fetch will set it correctly for multipart form data.
-                    },
-                    body: formData,
-                });
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-instagram-video`, {
+                        method: "POST",
+                        headers: {
+                            // When using FormData, do not set Content-Type manually;
+                            // fetch will set it correctly for multipart form data.
+                        },
+                        body: formData,
+                    });
 
-                if (!response.ok) {
-                    throw new Error("Failed to upload file");
-                }
+                    if (!response.ok) {
+                        throw new Error("Failed to upload file");
+                    }
 
-                const data = await response.json();
-                console.log("response : ", data);
-                if (data?.success) {
-                    console.log("video uploaded");
-                    setSocialVideoLink("");
-                    setExportedVideos(data?.data);
-                    setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
-                    setIsImportingSocialVideo(false);
-                } else {
-                    toast({
-                        variant: "default",
-                        description: "Upload Failed",
-                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                            <BiError className='!text-[#FDFFFF]' />
-                        </div>
-                    })
+                    const data = await response.json();
+                    console.log("response : ", data);
+                    if (data?.success) {
+                        console.log("video uploaded");
+                        setSocialVideoLink("");
+                        setExportedVideos(data?.data);
+                        setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
+                        setIsImportingSocialVideo(false);
+                    } else {
+                        toast({
+                            variant: "default",
+                            description: "Upload Failed",
+                            action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                                <BiError className='!text-[#FDFFFF]' />
+                            </div>
+                        })
+                    }
                 }
             }
 
@@ -291,53 +291,43 @@ const BuilderContainer = () => {
             }
 
             if (origin === "tiktok") {
-                const formData = new FormData();
-                // const simpleurl = simplifyYouTubeURL(socialVideoLink);
+                const isPro = await checkSubscription(user?.id);
+                const checkQuotaStatus = await checkUserQuota(isPro, user?.id, 'copy_posts_count')
 
-                // if (!simpleurl) {
-                //     toast({
-                //         variant: "default",
-                //         description: "Failed to import video",
-                //         action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                //             <BiError className='!text-[#FDFFFF]' />
-                //         </div>
-                //     })
-                //     return;
-                // }
+                if (checkQuotaStatus) {
+                    const formData = new FormData();
 
-                formData.append("url", socialVideoLink);
-                formData.append("user_id", user?.id);
+                    formData.append("url", socialVideoLink);
+                    formData.append("user_id", user?.id);
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-tiktok-video`, {
-                    method: "POST",
-                    headers: {
-                        // When using FormData, do not set Content-Type manually;
-                        // fetch will set it correctly for multipart form data.
-                    },
-                    body: formData,
-                });
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/import-tiktok-video`, {
+                        method: "POST",
+                        body: formData,
+                    });
 
-                if (!response.ok) {
-                    throw new Error("Failed to upload file");
+                    if (!response.ok) {
+                        throw new Error("Failed to upload file");
+                    }
+
+                    const data = await response.json();
+                    console.log("response : ", data);
+                    if (data?.success) {
+                        console.log("video uploaded");
+                        setSocialVideoLink("");
+                        setExportedVideos(data?.data);
+                        setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
+                        setIsImportingSocialVideo(false);
+                    } else {
+                        toast({
+                            variant: "default",
+                            description: "Upload Failed",
+                            action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                                <BiError className='!text-[#FDFFFF]' />
+                            </div>
+                        })
+                    }
                 }
 
-                const data = await response.json();
-                console.log("response : ", data);
-                if (data?.success) {
-                    console.log("video uploaded");
-                    setSocialVideoLink("");
-                    setExportedVideos(data?.data);
-                    setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
-                    setIsImportingSocialVideo(false);
-                } else {
-                    toast({
-                        variant: "default",
-                        description: "Upload Failed",
-                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                            <BiError className='!text-[#FDFFFF]' />
-                        </div>
-                    })
-                }
             }
 
         } catch (err) {
@@ -521,7 +511,7 @@ const BuilderContainer = () => {
 
                     {
                         (!isImportingSocialVideo && exportedVideos?.length > 0) && (
-                            <ExportedVideoPreviews key={socialExportedVideoRenderKey} socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} />
+                            <ExportedVideoPreviews key={socialExportedVideoRenderKey} socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} quota_type={"copy_posts_count"} generatedCounts={1} />
                         )
                     }
                 </div>

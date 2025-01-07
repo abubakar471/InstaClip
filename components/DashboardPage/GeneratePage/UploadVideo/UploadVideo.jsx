@@ -38,6 +38,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { GoArrowRight } from 'react-icons/go';
+import { checkSubscription } from '@/lib/actions/checkSubscription';
+import { checkUserQuota } from '@/lib/actions/checkUserQuota';
 // import {GiFairyWand} from "react-icons/gi"
 
 const UploadVideo = ({ userId }) => {
@@ -55,6 +57,7 @@ const UploadVideo = ({ userId }) => {
     const [selectedTab, setSelectedTab] = useState('')
     const [uploadProgress, setUploadProgress] = useState(0)
     const [clipCount, setClipCount] = useState(1);
+    const [groupId, setGroupId] = useState("");
 
     const uploadBtnRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -74,6 +77,12 @@ const UploadVideo = ({ userId }) => {
         },
         maxSize: 1024 * 1024 * 100
     })
+
+    function generateUniqueId() {
+        const timestamp = Date.now().toString(36); // Base36 representation of the current timestamp
+        const randomPart = Math.random().toString(36).substring(2, 10); // Random alphanumeric string
+        return `${timestamp}-${randomPart}`;
+    }
 
 
     const handleFileChange = (event) => {
@@ -184,7 +193,9 @@ const UploadVideo = ({ userId }) => {
                 //     user_id: userId,
                 //     paths: response?.data?.details?.paths
                 // })
-
+                const uniqueId = generateUniqueId();
+                console.log("uuid : ", uniqueId)
+                setGroupId(uniqueId)
                 setExportedVideos(response?.data?.details?.paths);
                 setIsExporting(false);
                 setIsSegmenting(false);
@@ -426,53 +437,54 @@ const UploadVideo = ({ userId }) => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append("file", files[0]);
-        formData.append("user_id", user?.id);
+        const isPro = await checkSubscription(user?.id);
+        const checkQuotaStatus = await checkUserQuota(isPro, user?.id, 'generate_clips_count', JSON.parse(window.localStorage.getItem("clipCount")) ? Number(JSON.parse(window.localStorage.getItem("clipCount"))) : 2)
 
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/upload`, {
-                method: "POST",
-                headers: {
-                    // When using FormData, do not set Content-Type manually;
-                    // fetch will set it correctly for multipart form data.
-                },
-                body: formData,
-            });
+        if (checkQuotaStatus) {
+            const formData = new FormData();
+            formData.append("file", files[0]);
+            formData.append("user_id", user?.id);
 
-            if (!response.ok) {
-                throw new Error("Failed to upload file");
-            }
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_FLASK_API_URL}/video/upload`, {
+                    method: "POST",
+                    body: formData,
+                });
 
-            const data = await response.json();
-            console.log("response : ", data);
-            if (data) {
-                console.log("sending this for video segmenting : ", data?.details?.firebase_paths?.audio_location);
+                if (!response.ok) {
+                    throw new Error("Failed to upload file");
+                }
 
-                sendVideoSegmentation(
-                    `${data?.details?.local_audio_filepath}`,
-                    data?.details?.local_video_filepath
-                );
-            } else {
+                const data = await response.json();
+                console.log("response : ", data);
+                if (data) {
+                    console.log("sending this for video segmenting : ", data?.details?.firebase_paths?.audio_location);
+
+                    sendVideoSegmentation(
+                        `${data?.details?.local_audio_filepath}`,
+                        data?.details?.local_video_filepath
+                    );
+                } else {
+                    toast({
+                        variant: "default",
+                        description: "Failed to upload file.",
+                        action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                            <BiError className='!text-[#FDFFFF]' />
+                        </div>
+                    })
+                }
+            } catch (error) {
+                console.error("Error uploading file:", error);
                 toast({
                     variant: "default",
-                    description: "Failed to upload file.",
+                    description: "An error occurred during file upload.",
                     action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
                         <BiError className='!text-[#FDFFFF]' />
                     </div>
                 })
+            } finally {
+                setIsUploading(false);
             }
-        } catch (error) {
-            console.error("Error uploading file:", error);
-            toast({
-                variant: "default",
-                description: "An error occurred during file upload.",
-                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
-                    <BiError className='!text-[#FDFFFF]' />
-                </div>
-            })
-        } finally {
-            setIsUploading(false);
         }
 
         const interval = setInterval(() => {
@@ -484,7 +496,7 @@ const UploadVideo = ({ userId }) => {
                 }
                 return prev + 10
             })
-        }, 2500)
+        }, 3500)
 
         // setTimeout(() => {
         //     setIsUploading(false)
@@ -649,6 +661,7 @@ const UploadVideo = ({ userId }) => {
 
     useEffect(() => {
         setSelectedTab("AI")
+        window.localStorage.setItem("clipCount", JSON.stringify("2"));
     }, [])
 
     useEffect(() => {
@@ -864,7 +877,7 @@ const UploadVideo = ({ userId }) => {
                                 </div>
 
                                 <div>
-                                    <ExportedVideoPreviews socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} />
+                                    <ExportedVideoPreviews socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} quota_type={"generate_clips_count"} generatedCounts={Number(JSON.parse(window.localStorage.getItem("clipCount")))} groupId={groupId} />
                                 </div>
                             </div>
                         )

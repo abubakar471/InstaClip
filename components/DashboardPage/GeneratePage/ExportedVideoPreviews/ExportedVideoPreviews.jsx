@@ -17,7 +17,7 @@ import {
 import Image from "next/image";
 import VideoPlayerModal from "../VideoPlayerModal/VideoPlayerModal";
 
-const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths, gridClassName, editClip }) => {
+const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths, gridClassName, editClip, quota_type, generatedCounts, groupId }) => {
     const [videoUrls, setVideoUrls] = useState([]);
 
     const handleDownload = async (url, filename) => {
@@ -63,7 +63,7 @@ const ExportedVideoPreviews = ({ socialExportedVideoRenderKey, videoPaths, gridC
                     <div className="absolute bottom-0 left-0 right-0  h-full">
 
                         <div className="flex items-center justify-center gap-x-2 w-full mx-auto px-4 absolute bottom-0">
-                            <CreateTitleModal asset_url={videoPaths[index]?.location} v={v} thumbnails={v?.thumbnails} editClip={editClip} />
+                            <CreateTitleModal asset_url={videoPaths[index]?.location} v={v} thumbnails={v?.thumbnails} editClip={editClip} quota_type={quota_type} generatedCounts={generatedCounts} groupId={groupId} />
                         </div>
                     </div>
                     <div style={{
