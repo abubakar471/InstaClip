@@ -27,9 +27,17 @@ const BuilderContainer = () => {
     const [socialVideoLink, setSocialVideoLink] = useState('');
     const [exportedVideos, setExportedVideos] = useState([]);
     const [youtubeVideoCategory, setYoutubeVideoCategory] = useState("");
+    const [groupId, setGroupId] = useState("");
 
     const { toast } = useToast();
     const { user } = useUser();
+
+    function generateUniqueId() {
+        const timestamp = Date.now().toString(36); // Base36 representation of the current timestamp
+        const randomPart = Math.random().toString(36).substring(2, 10); // Random alphanumeric string
+        return `${timestamp}-${randomPart}`;
+    }
+
 
     const urlOriginYouTube = (url) => {
         const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]+/;
@@ -159,6 +167,8 @@ const BuilderContainer = () => {
                         console.log("video uploaded");
                         setSocialVideoLink("");
                         setExportedVideos(data?.data);
+                        const uniqueId = generateUniqueId();
+                        setGroupId(uniqueId);
                         setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
                         setIsImportingSocialVideo(false);
                     } else {
@@ -169,6 +179,7 @@ const BuilderContainer = () => {
                                 <BiError className='!text-[#FDFFFF]' />
                             </div>
                         })
+                        setIsImportingSocialVideo(false);
                     }
                 }
             }
@@ -239,6 +250,8 @@ const BuilderContainer = () => {
                         console.log("video uploaded");
                         setSocialVideoLink("");
                         setExportedVideos(data?.data);
+                        const uniqueId = generateUniqueId();
+                        setGroupId(uniqueId);
                         setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
                         setIsImportingSocialVideo(false);
                     } else {
@@ -315,6 +328,8 @@ const BuilderContainer = () => {
                         console.log("video uploaded");
                         setSocialVideoLink("");
                         setExportedVideos(data?.data);
+                        const uniqueId = generateUniqueId();
+                        setGroupId(uniqueId);
                         setSocialExportedVideoRenderKey(socialExportedVideoRenderKey + 1)
                         setIsImportingSocialVideo(false);
                     } else {
@@ -511,7 +526,7 @@ const BuilderContainer = () => {
 
                     {
                         (!isImportingSocialVideo && exportedVideos?.length > 0) && (
-                            <ExportedVideoPreviews key={socialExportedVideoRenderKey} socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} quota_type={"copy_posts_count"} generatedCounts={1} />
+                            <ExportedVideoPreviews key={socialExportedVideoRenderKey} socialExportedVideoRenderKey={socialExportedVideoRenderKey} videoPaths={exportedVideos} quota_type={"copy_posts_count"} generatedCounts={1} groupId={groupId} />
                         )
                     }
                 </div>

@@ -25,7 +25,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { BiError } from "react-icons/bi"
 import { FaCheck, FaSave } from "react-icons/fa"
 
-const SaveEditClip = ({ asset_url, thumbnails, public_thumbnail, v, className, isPublicClip, editClip, fetchFreshNewVideos, videos, setVideos, filteredVideos, setFilteredVideos, selectedFilter, videoRenderKey, setVideoRenderKey, isOpenEditClipModal, setIsOpenEditClipModal, popoverOpen, setPopoverOpen }) => {
+const SaveEditClip = ({ asset_url, thumbnails, public_thumbnail, v, className, isPublicClip, editClip, fetchFreshNewVideos, videos, setVideos, filteredVideos, setFilteredVideos, selectedFilter, videoRenderKey, setVideoRenderKey, isOpenEditClipModal, setIsOpenEditClipModal, popoverOpen, setPopoverOpen, quota_type, generatedCounts }) => {
     const [title, setTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +33,13 @@ const SaveEditClip = ({ asset_url, thumbnails, public_thumbnail, v, className, i
     const { user, isLoaded, isSignedIn } = useUser();
     const { toast } = useToast();
     const router = useRouter();
+
+    function generateUniqueId() {
+        const timestamp = Date.now().toString(36); // Base36 representation of the current timestamp
+        const randomPart = Math.random().toString(36).substring(2, 10); // Random alphanumeric string
+        return `${timestamp}-${randomPart}`;
+    }
+
 
     const handleSave = async (e) => {
         if (!title) {
@@ -60,11 +67,16 @@ const SaveEditClip = ({ asset_url, thumbnails, public_thumbnail, v, className, i
         setIsLoading(true);
 
         try {
+            const groupId = generateUniqueId();
+
             const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/save-asset`, {
                 title: title,
                 asset_url: asset_url,
                 thumbnail: thumbnail,
-                user_id: user?.id
+                user_id: user?.id,
+                quota_type,
+                generatedCounts,
+                groupId : groupId
             })
 
             if (res?.data?.success) {
@@ -84,8 +96,8 @@ const SaveEditClip = ({ asset_url, thumbnails, public_thumbnail, v, className, i
                 toast({
                     variant: "default",
                     description: "Saved clip to library",
-                    action: <div className='!bg-[#3faa56] p-1 flex items-center justify-center rounded-full'>
-                        <FaCheck className='!text-[#FDFFFF]' />
+                    action: <div className='!bg-[#000] p-1 flex items-center justify-center rounded-full'>
+                        <FaCheck className='!text-[#3faa56]' />
                     </div>
                 })
 

@@ -32,7 +32,6 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
     const { user, isLoaded, isSignedIn } = useUser();
     const { toast } = useToast();
 
-
     const handleSave = async (e) => {
         if (!title) {
             toast({

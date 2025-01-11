@@ -23,6 +23,7 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import WriteCaptionModal from '../WriteCaptionModal/WriteCaptionModal';
 import EditLengthModal from '../GeneratePage/EditLengthModal/EditLengthModal';
 import PostOnSocialContainerModal from '../GeneratePage/PostOnSocialContainerModal/PostOnSocialContainerModal';
+import CreateVoiceOverModal from '../GeneratePage/CreateVoiceOverModal/CreateVoiceOverModal';
 
 const VideosContainer = ({ userId, asset_status }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -655,6 +656,27 @@ const VideosContainer = ({ userId, asset_status }) => {
 
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
+                                                        <CreateVoiceOverModal
+                                                            clip={v}
+                                                            clips={videos}
+                                                            setClips={setVideos}
+                                                            clip_url={v?.location}
+                                                            fetchFreshNewVideos={fetchFreshNewVideos}
+                                                            selectedFilter={selectedFilter}
+                                                            videos={videos}
+                                                            setVideos={setVideos}
+                                                            filteredVideos={filteredVideos}
+                                                            setFilteredVideos={setFilteredVideos}
+                                                            videoRenderKeyContainer={videoRenderKey}
+                                                            setVideoRenderKeyContainer={setVideoRenderKey}
+                                                            popoverOpen={popoverOpen}
+                                                            setPopoverOpen={setPopoverOpen}
+                                                        />
+                                                    )
+                                                }
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
                                                         <EditLengthModal clip={v} clips={videos} setClips={setVideos} />
                                                     )
                                                 }
@@ -746,6 +768,28 @@ const VideosContainer = ({ userId, asset_status }) => {
                                                 {
                                                     v?.asset_status !== "PUBLISHED" && (
                                                         <WriteCaptionModal clip={v} clips={filteredVideos} setClips={setFilteredVideos} />
+                                                    )
+                                                }
+
+
+                                                {
+                                                    v?.asset_status !== "PUBLISHED" && (
+                                                        <CreateVoiceOverModal
+                                                            clip={v}
+                                                            clips={videos}
+                                                            setClips={setVideos}
+                                                            clip_url={v?.location}
+                                                            fetchFreshNewVideos={fetchFreshNewVideos}
+                                                            selectedFilter={selectedFilter}
+                                                            videos={videos}
+                                                            setVideos={setVideos}
+                                                            filteredVideos={filteredVideos}
+                                                            setFilteredVideos={setFilteredVideos}
+                                                            videoRenderKeyContainer={videoRenderKey}
+                                                            setVideoRenderKeyContainer={setVideoRenderKey}
+                                                            popoverOpen={popoverOpen}
+                                                            setPopoverOpen={setPopoverOpen}
+                                                        />
                                                     )
                                                 }
 
