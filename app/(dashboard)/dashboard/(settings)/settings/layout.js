@@ -73,7 +73,7 @@ const SettingsPageLayout = ({ children }) => {
                     Manage your settings and preferences.
                 </p>
 
-                <div className='w-full flex items-center gap-x-4 border-b border-neutral-100/20 mt-10 mb-4'>
+                <div className='w-full flex items-center gap-x-4 gap-y-4 border-b border-neutral-100/20 mt-10 mb-4 flex-wrap md:flex-nowrap'>
                     <Link href={"/dashboard/settings"} className={`w-fit px-4 text-neutral-400 pb-2 ${pathname === "/dashboard/settings" && "border-b-2 border-neutral-300 !text-neutral-200"}`}>Profile</Link>
                     <Link href={"/dashboard/settings/subscription"} className={`w-fit px-4 text-neutral-400 pb-2 ${pathname === "/dashboard/settings/subscription" && "border-b-2 border-neutral-300 !text-neutral-200"}`}>Subscription</Link>
                     {
