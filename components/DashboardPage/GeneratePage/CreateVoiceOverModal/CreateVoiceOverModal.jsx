@@ -32,12 +32,15 @@ import { IoFilter, IoMaleFemale } from 'react-icons/io5';
 import SaveEditClip from '../../EditClipModal/SaveEditClip';
 import { checkSubscription } from '@/lib/actions/checkSubscription';
 import { checkUserQuota } from '@/lib/actions/checkUserQuota';
+import { ImFontSize } from 'react-icons/im';
 
 const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVideos, videos, setVideos, filteredVideos, setFilteredVideos, selectedFilter, videoRenderKeyContainer, setVideoRenderKeyContainer, popoverOpen, setPopoverOpen, className }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [voiceScript, setVoiceScript] = useState("");
+    const [font, setFont] = useState("");
     const [audioVolumeRatio, setAudioVolumeRatio] = useState(0);
     const [videoVolumeRatio, setVideoVolumeRatio] = useState(0);
+    const [captionPosition, setCaptionPosition] = useState("");
     const [voiceType, setVoiceType] = useState("");
     const [isCreated, setIsCreated] = useState(false);
     const [newVideo, setNewVideo] = useState(null);
@@ -117,8 +120,8 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
                 formData.append("user_id", user?.id);
                 formData.append("text", voiceScript);
                 formData.append("voice_id", voiceType);
-                formData.append("caption_position", "bottom");
-                formData.append("font", "Arial");
+                formData.append("position_option", captionPosition);
+                formData.append("font", font);
                 formData.append("font_size", 24);
                 formData.append("font_color", "white");
                 formData.append("audio_volume_ratio", audioVolumeRatio);
@@ -323,18 +326,69 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
                                 <SelectContent>
                                     <SelectItem value={"pNInz6obpgDQGcFmaJgB"}>
                                         <div className='flex items-center gap-x-2'>
-                                            Adam
+                                            Male
                                         </div>
                                     </SelectItem>
                                     <SelectItem value={"XB0fDUnXU5powFXDhCwa"}>
                                         <div className='flex items-center gap-x-2'>
-                                            Charlotte
+                                            Female
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select onValueChange={(value) => setCaptionPosition(value)} className="">
+                                <SelectTrigger className="w-1/2 text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 !bg-[#333]/50 !drop-shadow-none py-4 px-4 rounded-md">
+                                    <div className='flex items-center gap-x-2 py-2'>
+                                        <FaRegClosedCaptioning />
+                                        <SelectValue className='' placeholder="Caption Position" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={"top"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            Top
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value={"center"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            Center
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value={"bottom"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            Bottom
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
-
+                        <div className='w-full flex items-center gap-x-2 mt-2'>
+                            <Select onValueChange={(value) => setFont(value)} className="">
+                                <SelectTrigger className="w-1/2 text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 !bg-[#333]/50 !drop-shadow-none py-4 px-4 rounded-md">
+                                    <div className='flex items-center gap-x-2 py-2'>
+                                        <ImFontSize />
+                                        <SelectValue className='' placeholder="Font" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={"AvantGarde-Book"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            AvantGarde
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value={"Helvetica"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            Helvetica
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value={"Times-Roman"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            Times-Roman
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                         <Button
                             type="submit"
                             size="sm"

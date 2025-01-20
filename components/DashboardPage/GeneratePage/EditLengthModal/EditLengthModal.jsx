@@ -117,6 +117,9 @@ const EditLengthModal = ({ clip, clips, setClips, className }) => {
                         }
                         return item;
                     })
+                    setStartDuration(0)
+                    console.log("after trimming clip : ", res_data)
+                    setEndDuration(res_data?.clip?.video_duration)
                     setClips(filterArr)
                     toast({
                         variant: "default",
@@ -186,6 +189,7 @@ const EditLengthModal = ({ clip, clips, setClips, className }) => {
                                     className="bg-[#fff]/10 text-white rounded-md px-4 py-2.5 text-xs focus:ring-0 outline-none border-none"
                                     value={startDuration}
                                     min={0}
+                                    step={0.01}
                                     onChange={e => {
                                         if (e.target.value < clip?.video_duration && e.target.value >= 0) {
                                             setStartDuration(e.target.value)
@@ -202,6 +206,7 @@ const EditLengthModal = ({ clip, clips, setClips, className }) => {
                                     className="bg-[#fff]/10 text-white rounded-md px-4 py-2.5 text-xs focus:ring-0 outline-none border-none"
                                     value={endDuration}
                                     min={0}
+                                    step={0.01}
                                     onChange={e => {
                                         if (e.target.value <= clip?.video_duration && e.target.value >= 0) {
                                             setEndDuration(e.target.value)

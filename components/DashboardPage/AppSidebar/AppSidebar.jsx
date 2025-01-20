@@ -212,10 +212,10 @@ export function AppSidebar() {
                                 Free Plan
                             </div>
 
-                            <div className="w-1/2 flex items-center justify-center gap-x-2 px-2 py-2 text-neutral-200 text-xs bg-gradient-to-br from-[#5141D8] via-[#6E3EEA] to-[#763BEC] rounded-md">
+                            <Link href={"/dashboard/settings/subscription"} className="w-1/2 flex items-center justify-center gap-x-2 px-2 py-2 text-neutral-200 text-xs bg-gradient-to-br from-[#5141D8] via-[#6E3EEA] to-[#763BEC] rounded-md">
                                 <LuCrown />
                                 Upgrade
-                            </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

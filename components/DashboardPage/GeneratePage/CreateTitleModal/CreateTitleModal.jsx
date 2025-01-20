@@ -65,7 +65,8 @@ const CreateTitleModal = ({ asset_url, thumbnails, public_thumbnail, v, classNam
                 user_id: user?.id,
                 quota_type : quota_type,
                 generatedCounts : generatedCounts, 
-                groupId
+                groupId,
+                video_duration : v?.duration
             })
 
             if (res?.data?.success) {
