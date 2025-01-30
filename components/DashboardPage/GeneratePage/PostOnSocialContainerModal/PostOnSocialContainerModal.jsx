@@ -14,7 +14,7 @@ import {
 import Image from 'next/image';
 import { DefaultPlayer as Video } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
-import { FaInstagram, FaRegClipboard, FaRegClosedCaptioning } from 'react-icons/fa6';
+import { FaInstagram, FaRegClipboard, FaRegClosedCaptioning, FaSpinner } from 'react-icons/fa6';
 import { useToast } from '@/hooks/use-toast';
 import { BiError, BiImport } from 'react-icons/bi';
 // import CreateTitleModal from '../CreateTitleModal/CreateTitleModal';
@@ -55,38 +55,73 @@ const PostOnSocialContainerModal = ({ clip, clips, setClips, className }) => {
         }
     }
 
+    const loginWithInstagram = async () => {
+        const loginRes = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/auth/instagram-login`);
+        const loginData = loginRes?.data;
+
+        if (loginData?.success) {
+            window.location.href = loginData?.login_url;
+        }
+    }
+
     const handlePostInstagram = async () => {
         setIsPosting(true);
 
         try {
             const insta_access_token = JSON.parse(window.localStorage.getItem("insta_access_token"));
             const insta_user_id = JSON.parse(window.localStorage.getItem("insta_user_id"));
+            const insta_access_token_expires_in = JSON.parse(window.localStorage.getItem("insta_access_token_expires_in"));
 
-            if (!insta_access_token || !insta_user_id) {
+            if (!insta_access_token || !insta_user_id || !insta_access_token_expires_in) {
+                loginWithInstagram();
+            }
 
-                const loginRes = await axios.get(`${process.env.NEXT_PUBLIC_NODE_API_URL}/auth/instagram-login`);
-                const loginData = loginRes?.data;
+            function isExpired() {
+                const startTime = Math.floor(Date.now() / 1000);
+                const currentTime = Math.floor(Date.now() / 1000); // Get current time in seconds
+                return currentTime >= startTime + insta_access_token_expires_in;
+            }
+            
+            const token_expired = isExpired();
 
-                if (loginData?.success) {
-                    window.location.href = loginData?.login_url;
+            if(token_expired){
+                window.localStorage.removeItem("insta_access_token");
+                window.localStorage.removeItem("insta_user_id");
+                window.localStorage.removeItem("insta_access_token_expires_in");
+
+                loginWithInstagram(); 
+            }
+
+            if (insta_access_token && insta_user_id && insta_access_token_expires_in && !token_expired) {
+                const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/social-share/insta-reel-post`, {
+                    user_id: user?.id,
+                    clip_id: clip?._id,
+                    ACCESS_TOKEN: insta_access_token,
+                    INSTA_USER: insta_user_id,
+                    expires_in: insta_access_token_expires_in
+                })
+
+                if (res?.data?.success) {
+                    setIsPosting(false);
+                    toast({
+                        variant: "default",
+                        description: "Posted successfully",
+                        action: <div className='!bg-[#3faa56] p-1 flex items-center justify-center rounded-full'>
+                            <FaCheck className='!text-[#FDFFFF]' />
+                        </div>
+                    })
                 }
             }
 
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/social-share/insta-reel-post`, {
-                user_id: user?.id,
-                clip_id: clip?._id,
-                ACCESS_TOKEN: insta_access_token,
-                INSTA_USER: insta_user_id
-            })
         } catch (err) {
             console.log(err);
             toast({
                 variant: "default",
-                description: "Clip Updated",
-                action: <div className='!bg-[#39b64e]/80 p-1 flex items-center justify-center rounded-full'>
-                    <FaCheck className='!text-[#FDFFFF]' />
+                description: `Failed to post your clip`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
                 </div>
-            });
+            })
             setIsPosting(false);
         }
     }
@@ -108,20 +143,18 @@ const PostOnSocialContainerModal = ({ clip, clips, setClips, className }) => {
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] lg:max-w-[500px] min-h-[45vh] bg-black/95 border border-white/10 backdrop-blur-sm text-white flex flex-col ">
+                <DialogContent className="sm:max-w-[425px] lg:max-w-[500px] min-h-[25vh] bg-black/95 border border-white/10 backdrop-blur-sm text-white flex flex-col ">
                     <div className='flex items-start gap-x-2 pt-6'>
                         <IoShareSocial className='text-sm' />
                         <h4 className='text-neutral-400 text-xs'>Post on social</h4>
                     </div>
 
                     <div className='flex flex-col gap-y-3'>
-                        <button disabled={isPosting} onClick={() => handlePostInstagram()} className='w-full flex items-center gap-x-2 bg-[#FE026A] hover:bg-[#FE026A]/80 disabled:bg-[#FE026A]/50 transition-all duration-200 ease-in-out text-white rounded-md px-4 py-2 text-sm'>
-                            <FaInstagram className='text-lg' />
+                        <button disabled={isPosting} onClick={() => handlePostInstagram()} className='w-full flex items-center gap-x-2 bg-[#4f46e5] hover:bg-[#4f46e5]/80 disabled:bg-[#4f46e5]/50 transition-all duration-200 ease-in-out text-white rounded-md px-4 py-2 text-sm'>
+                            {
+                                isPosting ? <FaSpinner className='text-white animate-spin' /> : <FaInstagram className='text-lg' />
+                            }
                             Post on Instagram
-                        </button>
-                        <button disabled={isPosting} onClick={() => handlePost()} className='w-full flex items-center gap-x-2 bg-[#FE026A] hover:bg-[#FE026A]/80 disabled:bg-[#FE026A]/50 transition-all duration-200 ease-in-out text-white rounded-md px-4 py-2 text-sm'>
-                            <FaInstagram className='text-lg' />
-                            check cookie
                         </button>
                     </div>
 

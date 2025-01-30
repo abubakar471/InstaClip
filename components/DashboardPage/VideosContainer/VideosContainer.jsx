@@ -49,6 +49,7 @@ const VideosContainer = ({ userId, asset_status }) => {
     const searchParams = useSearchParams();
     const insta_access_token = searchParams.get('insta_access_token');
     const insta_user_id = searchParams.get('insta_user_id');
+    const insta_access_token_expires_in = searchParams.get('insta_access_token_expires_in');
 
     const limit = 18;
 
@@ -493,10 +494,13 @@ const VideosContainer = ({ userId, asset_status }) => {
 
     useEffect(() => {
         if (typeof (window) !== undefined) {
-            window.localStorage.setItem("insta_user_id", JSON.stringify(insta_user_id));
-            window.localStorage.setItem("insta_access_token", JSON.stringify(insta_access_token))
+            if (insta_user_id && insta_access_token && insta_access_token_expires_in) {
+                window.localStorage.setItem("insta_user_id", JSON.stringify(insta_user_id));
+                window.localStorage.setItem("insta_access_token", JSON.stringify(insta_access_token));
+                window.localStorage.setItem("insta_access_token_expires_in", insta_access_token_expires_in);
+            }
         }
-    }, [insta_user_id, insta_access_token])
+    }, [insta_user_id, insta_access_token, insta_access_token_expires_in])
 
     return (
         (isLoaded && isSignedIn) && (
@@ -701,7 +705,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                                     </Video> */}
 
                                     <VideoCard v={v} />
-                                    {/* <PostOnSocialContainerModal clip={v} /> */}
+                                    <PostOnSocialContainerModal clip={v} />
                                 </div>
                             ))
                         )

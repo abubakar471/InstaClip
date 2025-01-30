@@ -28,6 +28,8 @@ import { TbWorld } from "react-icons/tb"
 import { PiGlobe } from "react-icons/pi";
 import { IoMdShare } from "react-icons/io"
 import { HiOutlineUser } from "react-icons/hi"
+import { checkSubscription } from "@/lib/actions/checkSubscription"
+import axios from "axios"
 
 
 const poppins = Poppins({
@@ -42,9 +44,47 @@ export function AppSidebar() {
     const [activeLink, setActiveLink] = useState('');
     const pathname = usePathname();
     const [openProfile, setOpenProfile] = useState(false);
+    const [proUser, setProUser] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const checkUserPlan = async () => {
+        if (user) {
+            const isPro = await checkSubscription(user?.id);
+
+            if (isPro) {
+                setProUser(isPro);
+            }
+        }
+    }
+
+    const handleBillings = async () => {
+        try {
+            setIsLoading(true);
+
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/payments/stripe/manage-billings`, {
+                userId: user?.id,
+            });
+
+            const data = response?.data;
+
+            if (data?.url) {
+                window.location.href = data?.url;
+            }
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         setActiveLink(pathname);
     }, [pathname])
+
+    useEffect(() => {
+        if (user) {
+            checkUserPlan()
+        }
+    }, [user])
     return (
         <Sidebar>
             <SidebarHeader />
@@ -212,9 +252,13 @@ export function AppSidebar() {
                                 Free Plan
                             </div>
 
-                            <Link href={"/dashboard/settings/subscription"} className="w-1/2 flex items-center justify-center gap-x-2 px-2 py-2 text-neutral-200 text-xs bg-gradient-to-br from-[#5141D8] via-[#6E3EEA] to-[#763BEC] rounded-md">
+                            <Link href={proUser ? "#" : ((!isLoaded ? "#" : "/dashboard/settings/subscription") )} onClick={() => {
+                                if (proUser) {
+                                    handleBillings()
+                                }
+                            }} className="w-1/2 flex items-center justify-center gap-x-2 px-2 py-2 text-neutral-200 text-xs bg-gradient-to-br from-[#5141D8] via-[#6E3EEA] to-[#763BEC] rounded-md">
                                 <LuCrown />
-                                Upgrade
+                                {proUser ? "Basic" : "Upgrade"}
                             </Link>
                         </div>
                     </div>

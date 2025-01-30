@@ -360,7 +360,7 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
-                            </Select>
+                            </Select> 
                         </div>
                         <div className='w-full flex items-center gap-x-2 mt-2'>
                             <Select onValueChange={(value) => setFont(value)} className="">
