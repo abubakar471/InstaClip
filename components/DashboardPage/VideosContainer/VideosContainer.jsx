@@ -822,6 +822,7 @@ const VideosContainer = ({ userId, asset_status }) => {
                                     </Video> */}
 
                                     <VideoCard v={v} />
+                                    <PostOnSocialContainerModal clip={v} />
                                 </div>
                             ))
                         )

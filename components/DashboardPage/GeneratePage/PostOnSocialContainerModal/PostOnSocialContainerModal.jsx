@@ -136,7 +136,7 @@ const PostOnSocialContainerModal = ({ clip, clips, setClips, className }) => {
         <div className={cn("", className)}>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="grow mt-2 bg-[#36339E] !text-white py-1 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-x-2 border-none text-sm font-light w-full">
+                    <Button variant="outline" className="grow mt-2 bg-[#36339E] !text-white py-1 px-3 rounded hover:bg-[#36339E]/90 flex items-center justify-center gap-x-2 border-none text-sm font-light w-full">
                         <GiDuration />
 
                         Post on Social
