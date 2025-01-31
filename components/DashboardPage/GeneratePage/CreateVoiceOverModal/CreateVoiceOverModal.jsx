@@ -16,7 +16,7 @@ import { DefaultPlayer as Video } from 'react-html5video';
 import 'react-html5video/dist/styles.css'
 import { FaFileInvoice, FaRegClipboard, FaRegClosedCaptioning } from 'react-icons/fa6';
 import { useToast } from '@/hooks/use-toast';
-import { BiImport } from 'react-icons/bi';
+import { BiError, BiImport } from 'react-icons/bi';
 // import CreateTitleModal from '../CreateTitleModal/CreateTitleModal';
 import { cn } from '@/lib/utils';
 import { FaCheck } from 'react-icons/fa';
@@ -41,6 +41,7 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
     const [audioVolumeRatio, setAudioVolumeRatio] = useState(0);
     const [videoVolumeRatio, setVideoVolumeRatio] = useState(0);
     const [captionPosition, setCaptionPosition] = useState("");
+    const [captionVisibility, setCaptionVisibility] = useState("");
     const [voiceType, setVoiceType] = useState("");
     const [isCreated, setIsCreated] = useState(false);
     const [newVideo, setNewVideo] = useState(null);
@@ -50,46 +51,7 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
     const { toast } = useToast();
     const { user } = useUser();
 
-    // const handleUpdate = async (e) => {
-    //     e.preventDefault();
-    //     setIsUpdating(true);
 
-    //     try {
-    //         const res = await axios.post(`${process.env.NEXT_PUBLIC_NODE_API_URL}/assets/write-caption`, {
-    //             caption: caption, user_id: user?.id, clip_id: clip?._id
-    //         })
-
-    //         const data = res?.data;
-
-    //         if (data?.success) {
-    //             const filterArr = clips?.map(item => {
-    //                 if (item?._id === clip?._id) {
-    //                     // Perform the update logic here
-    //                     return {
-    //                         ...item, // Keep all existing fields
-    //                         caption: data?.clip?.caption || clip?.caption
-    //                     };
-    //                 }
-    //                 // Return the item unchanged if no match
-    //                 return item;
-    //             })
-
-    //             setClips(filterArr)
-
-    //             toast({
-    //                 variant: "default",
-    //                 description: "Caption Updated",
-    //                 action: <div className='!bg-[#39b64e]/80 p-1 flex items-center justify-center rounded-full'>
-    //                     <FaCheck className='!text-[#FDFFFF]' />
-    //                 </div>
-    //             });
-    //             setIsUpdating(false);
-    //         }
-    //     } catch (err) {
-    //         console.log(err);
-    //         setIsUpdating(false);
-    //     }
-    // }
 
     function extractUploadsPath(url) {
         const match = url.match(/\/uploads\/(.+)$/);
@@ -110,6 +72,92 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
         e.preventDefault();
         setIsUpdating(true);
 
+        if (!voiceScript) {
+            toast({
+                variant: "default",
+                description: `Please write your voiceover script`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            setIsUpdating(false);
+            return;
+        }
+
+        if (!audioVolumeRatio) {
+            toast({
+                variant: "default",
+                description: `Please select audio volume`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            setIsUpdating(false);
+            return;
+        }
+
+        if (!videoVolumeRatio) {
+            toast({
+                variant: "default",
+                description: `Please select video volume`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            setIsUpdating(false);
+            return;
+        }
+
+        if (!voiceType) {
+            toast({
+                variant: "default",
+                description: `Please select your voice type`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            setIsUpdating(false);
+            return;
+        }
+
+        if (!captionVisibility) {
+            toast({
+                variant: "default",
+                description: `Please select caption on/off`,
+                action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                    <BiError className='!text-[#FDFFFF]' />
+                </div>
+            })
+            setIsUpdating(false);
+            return;
+        }
+
+        if (captionVisibility === 'on') {
+            if (!captionPosition) {
+                toast({
+                    variant: "default",
+                    description: `Please select caption position`,
+                    action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                        <BiError className='!text-[#FDFFFF]' />
+                    </div>
+                })
+                setIsUpdating(false);
+                return;
+            }
+
+            if (!font) {
+                toast({
+                    variant: "default",
+                    description: `Please select caption font`,
+                    action: <div className='!bg-[#6760f1] p-1 flex items-center justify-center rounded-full'>
+                        <BiError className='!text-[#FDFFFF]' />
+                    </div>
+                })
+                setIsUpdating(false);
+                return;
+            }
+        }
+
         try {
             const isPro = await checkSubscription(user?.id);
             const checkQuotaStatus = await checkUserQuota(isPro, user?.id, 'create_voice_over_scripts_count', 1);
@@ -121,6 +169,7 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
                 formData.append("text", voiceScript);
                 formData.append("voice_id", voiceType);
                 formData.append("position_option", captionPosition);
+                formData.append("caption_visibility", captionVisibility);
                 formData.append("font", font);
                 formData.append("font_size", 24);
                 formData.append("font_color", "white");
@@ -336,6 +385,28 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
+                            <Select onValueChange={(value) => setCaptionVisibility(value)} className="">
+                                <SelectTrigger className="w-1/2 text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 !bg-[#333]/50 !drop-shadow-none py-4 px-4 rounded-md">
+                                    <div className='flex items-center gap-x-2 py-2'>
+                                        <FaRegClosedCaptioning />
+                                        <SelectValue className='' placeholder="Caption On/Off" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={"on"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            On
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value={"off"}>
+                                        <div className='flex items-center gap-x-2'>
+                                            Off
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className='w-full flex items-center gap-x-2 mt-2'>
                             <Select onValueChange={(value) => setCaptionPosition(value)} className="">
                                 <SelectTrigger className="w-1/2 text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 !bg-[#333]/50 !drop-shadow-none py-4 px-4 rounded-md">
                                     <div className='flex items-center gap-x-2 py-2'>
@@ -360,9 +431,7 @@ const CreateVoiceOverModal = ({ clip, clips, setClips, clip_url, fetchFreshNewVi
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
-                            </Select> 
-                        </div>
-                        <div className='w-full flex items-center gap-x-2 mt-2'>
+                            </Select>
                             <Select onValueChange={(value) => setFont(value)} className="">
                                 <SelectTrigger className="w-1/2 text-neutral-300 border-t-0 border-r-0 border-l-0 border-b-2 border-gray-500/40 !bg-[#333]/50 !drop-shadow-none py-4 px-4 rounded-md">
                                     <div className='flex items-center gap-x-2 py-2'>
