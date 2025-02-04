@@ -600,22 +600,23 @@ const VideosContainer = ({ userId, asset_status }) => {
                         <IoMenu className="text-gray-500 text-md" />
                       </PopoverTrigger>
                       <PopoverContent className="bg-[#000D18] flex flex-col gap-y-2 border-none">
-                        {v?.asset_status !== "PUBLISHED" && (
-                          <EditClipModal
-                            clip_url={v?.location}
-                            fetchFreshNewVideos={fetchFreshNewVideos}
-                            selectedFilter={selectedFilter}
-                            videos={videos}
-                            setVideos={setVideos}
-                            filteredVideos={filteredVideos}
-                            setFilteredVideos={setFilteredVideos}
-                            videoRenderKey={videoRenderKey}
-                            setVideoRenderKey={setVideoRenderKey}
-                            popoverOpen={popoverOpen}
-                            setPopoverOpen={setPopoverOpen}
-                          />
-                        )}
-
+                        {v?.asset_status !== "PUBLISHED" &&
+                          pathname === "/dashboard/private" && (
+                            <EditClipOptionsModal
+                              v={v}
+                              clip_url={v?.location}
+                              fetchFreshNewVideos={fetchFreshNewVideos}
+                              selectedFilter={selectedFilter}
+                              videos={videos}
+                              setVideos={setVideos}
+                              filteredVideos={filteredVideos}
+                              setFilteredVideos={setFilteredVideos}
+                              videoRenderKey={videoRenderKey}
+                              setVideoRenderKey={setVideoRenderKey}
+                              popoverOpen={popoverOpen}
+                              setPopoverOpen={setPopoverOpen}
+                            />
+                          )}
                         <button
                           onClick={() =>
                             handleDownload(v?.location, v?.filename)
@@ -731,7 +732,11 @@ const VideosContainer = ({ userId, asset_status }) => {
                                     </Video> */}
 
                 <VideoCard v={v} />
-                <PostOnSocialContainerModal clip={v} />
+
+                {pathname === "/dashboard/ready-to-post" &&
+                  asset_status === "DRAFT" && (
+                    <PostOnSocialContainerModal clip={v} />
+                  )}
               </div>
             ))}
 
@@ -857,7 +862,11 @@ const VideosContainer = ({ userId, asset_status }) => {
                                     </Video> */}
 
                 <VideoCard v={v} />
-                <PostOnSocialContainerModal clip={v} />
+
+                {pathname === "/dashboard/ready-to-post" &&
+                  asset_status === "DRAFT" && (
+                    <PostOnSocialContainerModal clip={v} />
+                  )}
               </div>
             ))}
 
