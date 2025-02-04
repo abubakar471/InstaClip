@@ -12,9 +12,9 @@ const PublishedPage = async () => {
             <div className='border-b border-[#162845]/50 pb-4 flex flex-col gap-y-2'>
                 <h1 className='flex items-center gap-x-2 font-semibold text-[#FDFFFF] text-2xl md:text-3xl lg:text-4xl pt-6 pb-0 flex-wrap md:flex-nowrap mb-0'>
                     <MdCollections className='text-[#FDFFFF] text-3xl lg:text-3xl xl:text-4xl' />
-                    Your Published Clips
+                    Ready to post your clips
                 </h1>
-                <p className="text-gray-400">Browse all your published clip that you can download instantly</p>
+                <p className="text-gray-400">Post your favourite clips instantly from InstaClip within a minute</p>
 
             </div>
             <div>
